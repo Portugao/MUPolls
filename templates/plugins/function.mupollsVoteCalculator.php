@@ -28,17 +28,40 @@ function smarty_function_mupollsVoteCalculator($params, $view)
     
     $pollId = $params['pollId'];
     
+    $where = 'tbl.idOfPoll = \'' . DataUtil::formatForStore($pollId) . '\'';
+    $selectionArgs = array('ot' => 'vote', 'where' => $where);
     
-
-    $result[] = array('text' => __('Options', $dom), 'value' => 'option');
-    $result[] = array('text' => __('Polls', $dom), 'value' => 'poll');
-    $result[] = array('text' => __('Votes', $dom), 'value' => 'vote');
+    $votes = ModUtil::apiFunc('MUPolls', 'selection', 'getEntities', $selectionArgs);
+    $countVotes = count($votes);
+    
+    $out = __('Es wurde folgende Anzahl an Stimmen abgegeben', $dom) . ': ' . $countVotes . '<br />';
+    
+    $where2 = 'tbl.idOfPoll = \'' . DataUtil::formatForStore($pollId) . '\'';
+    $selectionArgs2 = array('ot' => 'option', 'where' => $where2);
+    
+    $options = ModUtil::apiFunc('MUPolls', 'selection', 'getEntities', $selectionArgs2);
+    
+    $optionInfos = array();
+    
+    foreach ($options as $option) {
+    	$where3 = 'tbl.idOfOption = \'' . DataUtil::formatForStore($option['id']) . '\'';
+    	$selectionArgs3 = array('ot' => 'vote', 'where' => $where3);
+    	
+    	$optionVotes = ModUtil::apiFunc('MUPolls', 'selection', 'getEntities', $selectionArgs3);
+    	$countOptionVotes = count($optionVotes);
+    	
+    	$optionInfos[] = array('optionTitle' => $option['title'], 'optionPercent' => round($countOptionVotes / $countVotes * 100, 2));
+    }
+    
+    foreach ($optionInfos as $key => $info) {
+    	$out .= $info['optionTitle'] . ': ' . $info['optionPercent'] . '%<br />';
+    }
 
     if (array_key_exists('assign', $params)) {
-        $view->assign($params['assign'], $result);
+        $view->assign($params['assign'], $out);
 
         return;
     }
 
-    return $result;
+    return $out;
 }
