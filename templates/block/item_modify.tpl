@@ -9,7 +9,12 @@
     <span class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</span>
 </div>
 
-{if $catIds ne null && is_array($catIds)}
+<div class="z-formrow">
+    <label for="mUPollsItemId">{gt text='Item Id'}:</label>
+    <input type="text" id="mUPollsItemId" name="itemId" size="40" maxlength="80" value="{$itemId|default:''}" />
+</div>
+
+{*if $catIds ne null && is_array($catIds)}
     {gt text='All' assign='lblDefault'}
     {nocache}
     {foreach key='propertyName' item='propertyId' from=$catIds}
@@ -32,27 +37,13 @@
         </div>
     {/foreach}
     {/nocache}
-{/if}
-
-<div class="z-formrow">
-    <label for="mUPollsSorting">{gt text='Sorting'}:</label>
-    <select id="mUPollsSorting" name="sorting">
-        <option value="random"{if $sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
-        <option value="newest"{if $sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
-        <option value="default"{if $sorting eq 'default' || ($sorting ne 'random' && $sorting ne 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
-    </select>
-</div>
-
-<div class="z-formrow">
-    <label for="mUPollsAmount">{gt text='Amount'}:</label>
-    <input type="text" id="mUPollsAmount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}" />
-</div>
+{/if*}
 
 <div class="z-formrow">
     <label for="mUPollsTemplate">{gt text='Template'}:</label>
     <select id="mUPollsTemplate" name="template">
-        <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
-        <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
+        <option value="item_display.tpl"{if $template eq 'item_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
+        <option value="item_display_description.tpl"{if $template eq 'item_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
         <option value="custom"{if $template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
     </select>
 </div>
@@ -61,14 +52,6 @@
     <label for="mUPollsCustomTemplate">{gt text='Custom template'}:</label>
     <input type="text" id="mUPollsCustomTemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}" />
     <span class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_[objectType]_display.tpl</em></span>
-</div>
-
-<div class="z-formrow z-hide">
-    <label for="mUPollsFilter">{gt text='Filter (expert option)'}:</label>
-    <input type="text" id="mUPollsFilter" name="filter" size="40" value="{$filter|default:''}" />
-    <span class="z-sub z-formnote">
-        ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
-    </span>
 </div>
 
 {pageaddvar name='javascript' value='prototype'}
