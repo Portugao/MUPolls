@@ -75,8 +75,8 @@ function mUMUPollsValidateHtmlColour(val)
 function mUMUPollsValidateDateRangePoll(val)
 {
     var cmpVal, cmpVal2, result;
-    cmpVal = mUMUPollsReadDate($F('dateOfStart'), false);
-    cmpVal2 = mUMUPollsReadDate($F('dateOfEnd'), false);
+    cmpVal = mUMUPollsReadDate($F('dateOfStart'), true);
+    cmpVal2 = mUMUPollsReadDate($F('dateOfEnd'), true);
     result = (cmpVal <= cmpVal2);
     if (result) {
         $('advice-validate-daterange-poll-dateOfStart').hide();

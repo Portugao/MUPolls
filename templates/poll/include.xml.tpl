@@ -4,7 +4,7 @@
     <title><![CDATA[{$poll.title}]]></title>
     <description><![CDATA[{$poll.description}]]></description>
     <multiple>{if !$poll.multiple}0{else}1{/if}</multiple>
-    <dateOfStart>{$poll.dateOfStart|dateformat:'datebrief'}</dateOfStart>
-    <dateOfEnd>{$poll.dateOfEnd|dateformat:'datebrief'}</dateOfEnd>
+    <dateOfStart>{$poll.dateOfStart|dateformat:'datetimebrief'}</dateOfStart>
+    <dateOfEnd>{$poll.dateOfEnd|dateformat:'datetimebrief'}</dateOfEnd>
     <workflowState>{$poll.workflowState|mupollsObjectState:false|lower}</workflowState>
 </poll>

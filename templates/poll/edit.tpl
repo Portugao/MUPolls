@@ -108,9 +108,9 @@
         <div class="z-formrow">
             {formlabel for='dateOfStart' __text='Date of start' cssClass=''}
             {if $mode ne 'create'}
-                {mupollsDateInput group='poll' id='dateOfStart' mandatory=false __title='Enter the date of start of the poll' cssClass=' validate-daterange-poll'}
+                {formdateinput group='poll' id='dateOfStart' mandatory=false __title='Enter the date of start of the poll' includeTime=true cssClass=' validate-daterange-poll'}
             {else}
-                {mupollsDateInput group='poll' id='dateOfStart' mandatory=false __title='Enter the date of start of the poll' cssClass=' validate-daterange-poll'}
+                {formdateinput group='poll' id='dateOfStart' mandatory=false __title='Enter the date of start of the poll' includeTime=true cssClass=' validate-daterange-poll'}
             {/if}
             <span class="z-formnote z-sub"><a id="resetDateOfStartVal" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
             {mupollsValidationError id='dateOfStart' class='validate-daterange-poll'}
@@ -119,9 +119,9 @@
         <div class="z-formrow">
             {formlabel for='dateOfEnd' __text='Date of end' cssClass=''}
             {if $mode ne 'create'}
-                {mupollsDateInput group='poll' id='dateOfEnd' mandatory=false __title='Enter the date of end of the poll' cssClass=' validate-daterange-poll'}
+                {formdateinput group='poll' id='dateOfEnd' mandatory=false __title='Enter the date of end of the poll' includeTime=true cssClass=' validate-daterange-poll'}
             {else}
-                {mupollsDateInput group='poll' id='dateOfEnd' mandatory=false __title='Enter the date of end of the poll' cssClass=' validate-daterange-poll'}
+                {formdateinput group='poll' id='dateOfEnd' mandatory=false __title='Enter the date of end of the poll' includeTime=true cssClass=' validate-daterange-poll'}
             {/if}
             <span class="z-formnote z-sub"><a id="resetDateOfEndVal" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
             {mupollsValidationError id='dateOfEnd' class='validate-daterange-poll'}

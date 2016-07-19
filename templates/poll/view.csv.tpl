@@ -4,6 +4,6 @@
 {/strip}
 {foreach item='poll' from=$items}
 {strip}
-    "{$poll.title}";"{$poll.description}";"{if !$poll.multiple}0{else}1{/if}";"{$poll.dateOfStart|dateformat:'datebrief'}";"{$poll.dateOfEnd|dateformat:'datebrief'}";"{$poll.workflowState|mupollsObjectState:false|lower}"
+    "{$poll.title}";"{$poll.description}";"{if !$poll.multiple}0{else}1{/if}";"{$poll.dateOfStart|dateformat:'datetimebrief'}";"{$poll.dateOfEnd|dateformat:'datetimebrief'}";"{$poll.workflowState|mupollsObjectState:false|lower}"
 {/strip}
 {/foreach}

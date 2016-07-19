@@ -89,14 +89,14 @@ abstract class MUPolls_Entity_Base_Poll extends Zikula_EntityAccess
     protected $multiple = false;
     
     /**
-     * @ORM\Column(type="date", nullable=true)
-     * @var date $dateOfStart.
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var DateTime $dateOfStart.
      */
     protected $dateOfStart = null;
     
     /**
-     * @ORM\Column(type="date", nullable=true)
-     * @var date $dateOfEnd.
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var DateTime $dateOfEnd.
      */
     protected $dateOfEnd = null;
     
@@ -380,7 +380,7 @@ abstract class MUPolls_Entity_Base_Poll extends Zikula_EntityAccess
     /**
      * Gets the date of start.
      *
-     * @return date
+     * @return DateTime
      */
     public function getDateOfStart()
     {
@@ -390,7 +390,7 @@ abstract class MUPolls_Entity_Base_Poll extends Zikula_EntityAccess
     /**
      * Sets the date of start.
      *
-     * @param date $dateOfStart.
+     * @param DateTime $dateOfStart.
      *
      * @return void
      */
@@ -406,7 +406,7 @@ abstract class MUPolls_Entity_Base_Poll extends Zikula_EntityAccess
     /**
      * Gets the date of end.
      *
-     * @return date
+     * @return DateTime
      */
     public function getDateOfEnd()
     {
@@ -416,7 +416,7 @@ abstract class MUPolls_Entity_Base_Poll extends Zikula_EntityAccess
     /**
      * Sets the date of end.
      *
-     * @param date $dateOfEnd.
+     * @param DateTime $dateOfEnd.
      *
      * @return void
      */

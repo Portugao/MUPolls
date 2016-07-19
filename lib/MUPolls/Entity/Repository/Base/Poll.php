@@ -642,10 +642,10 @@ class MUPolls_Entity_Repository_Base_Poll extends EntityRepository
             $qb->andWhere('tbl.workflowState IN (:onlineStates)')
                ->setParameter('onlineStates', $onlineStates);
         }
-        $startDate = FormUtil::getPassedValue('dateOfStart', date('Y-m-d'), 'GET');
+        $startDate = FormUtil::getPassedValue('dateOfStart', date('Y-m-d H:i:s'), 'GET');
         $qb->andWhere('(tbl.dateOfStart <= :startDate OR tbl.dateOfStart IS NULL)')
            ->setParameter('startDate', $startDate);
-        $endDate = FormUtil::getPassedValue('dateOfEnd', date('Y-m-d'), 'GET');
+        $endDate = FormUtil::getPassedValue('dateOfEnd', date('Y-m-d H:i:s'), 'GET');
         $qb->andWhere('(tbl.dateOfEnd >= :endDate OR tbl.dateOfEnd IS NULL)')
            ->setParameter('endDate', $endDate);
     
