@@ -657,7 +657,7 @@ abstract class MUPolls_Entity_Base_Vote extends Zikula_EntityAccess
         $listHelper = new MUPolls_Util_ListEntries(ServiceUtil::getManager());
     
         $formattedTitle = ''
-                . 'userOfVote';
+                . $this->getIdOfOption();
     
         return $formattedTitle;
     }
