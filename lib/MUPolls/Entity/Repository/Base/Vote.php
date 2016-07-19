@@ -825,6 +825,7 @@ class MUPolls_Entity_Repository_Base_Vote extends EntityRepository
             $selection = 'tbl.id';
             
             
+            $selection .= ', tbl.idOfOption';
             $useJoins = false;
         }
     

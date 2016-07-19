@@ -57,9 +57,8 @@ class MUPolls_Controller_Vote extends MUPolls_Controller_Base_Vote
         	$pollId = $this->request->request->filter('poll', FILTER_VALIDATE_INT);
         	$optionId = $this->request->request->filter('option', FILTER_VALIDATE_INT);
         	$currentUrl = $this->request->request->filter('currentUrl');
-        	//$url = ModUtil::url($this->name, 'user', 'display', array('ot' => 'poll', 'id' => $pollId));
-        	if (!$optionId) {
-        		
+
+        	if (!$optionId) {    		
         		LogUtil::registerError(__('You have to select one option!', $dom));
         		return System::redirect($currentUrl);
         	}
