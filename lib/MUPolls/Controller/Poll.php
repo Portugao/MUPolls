@@ -107,8 +107,17 @@ class MUPolls_Controller_Poll extends MUPolls_Controller_Base_Poll
             $this->view->assign('currentUrl', $currentUrl);
         
             $this->view->assign('options', $options);  
-            $votedMUPoll = SessionUtil::getVar('votedMUPoll' . $entity['id']);
-            $this->view->assign('votedMUPoll', $votedMUPoll);
+            // check for vote session var
+        	$votedMUPoll = SessionUtil::getVar('votedMUPoll');
+        	if ($votedMUPoll) {
+        		if (in_array( $entity['id'], $votedMUPoll)) {
+        			$voted = 1;
+        		} else {
+        			$voted = 0;
+        		}
+        		
+        	$this->view->assign('voted', $voted);
+        	}
         }
         
         // assign output data to view object.

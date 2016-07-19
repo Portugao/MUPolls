@@ -35,9 +35,14 @@ class MUPolls_Api_User extends MUPolls_Api_Base_User
 		$entityManager->persist($newVote);		
 		$entityManager->flush();
 		
-		$votedMUPoll = SessionUtil::getVar('votedMUPoll' . $pollId);
+		$votedMUPoll = SessionUtil::getVar('votedMUPoll');
 		if (!$votedMUPoll) {
-			SessionUtil::setVar('votedMUPoll' . $pollId, '1');
+			$votedMUPoll = array();
+			$votedMUPoll[] = $pollId;
+			SessionUtil::setVar('votedMUPoll', $votedMUPoll);
+		} else {
+			$votedMUPoll[] = $pollId;
+			SessionUtil::setVar('votedMUPoll', $votedMUPoll);
 		}
 		
 		// we get a workflow helper
