@@ -55,10 +55,11 @@
     {/if}
     {if $lct eq 'user'}
         <div>
-        {$poll.description}<br /><br />
+        {if $item.description ne ''}
+		{$item.description}{/if}<br />
 
-		{if $poll.dateOfEnd >= $smarty.now|date_format:"%Y-%m-%d"}
-		{if !$votedMUPoll}
+		{if $poll.dateOfEnd|dateformat:'%Y-%m-%d %H:%M:%S' >= $smarty.now|date_format:"%Y-%m-%d %H:%M:%S"}
+		{if $voted eq '0'}
 		    <form action="{modurl modname='MUPolls' type='vote' func='edit'}" method="post">
             {foreach item='option' from=$options}
             <label>
@@ -68,7 +69,9 @@
             {/foreach}<br />
             <input type="hidden" name="poll" value={$poll.id} />
             <input type="hidden" name="currentUrl" value="{$currentUrl}" />
-            <input class="btn btn-success" type="submit" value="{gt text="Vote}" />
+            {if is_array($options)}
+                <input class="btn btn-success" type="submit" value="{gt text="Vote}" />
+            {/if}
             </form>
         {else}
         	{foreach item='option' from=$options}
