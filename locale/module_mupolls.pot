@@ -1,0 +1,1502 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Zikula 1.x\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-20 16:27+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/plugins/function.mupollsTemplateSelector.php:30
+#: templates/block/itemlist_modify.tpl:54 templates/block/item_modify.tpl:45
+msgid "Only item titles"
+msgstr ""
+
+#: templates/plugins/function.mupollsTemplateSelector.php:31
+#: templates/block/itemlist_modify.tpl:55 templates/block/item_modify.tpl:46
+msgid "With description"
+msgstr ""
+
+#: templates/plugins/function.mupollsTemplateSelector.php:32
+#: templates/contenttype/itemlist_edit.tpl:67
+#: templates/block/itemlist_modify.tpl:56
+#: templates/block/itemlist_modify.tpl:61 templates/block/item_modify.tpl:47
+#: templates/block/item_modify.tpl:52
+msgid "Custom template"
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:36
+msgid "This is a required field."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:37
+msgid "Please enter a valid number in this field."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:38
+msgid ""
+"Please use numbers only in this field. please avoid spaces or other "
+"characters such as dots or commas."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:39
+msgid "Please use letters only (a-z) in this field."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:40
+msgid ""
+"Please use only letters (a-z) or numbers (0-9) only in this field. No spaces "
+"or other characters are allowed."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:41
+msgid "Please enter a valid date."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:42
+msgid "Please enter a valid email address. For example yourname@example.com ."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:43
+msgid "Please enter a valid URL."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:44
+msgid ""
+"Please use this date format: dd/mm/yyyy. For example 17/03/2010 for the 17th "
+"of March, 2010."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:45
+msgid "Please enter a valid $ amount. For example $100.00 ."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:46
+msgid "Please make a selection."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:47
+msgid "Please select one of the above options."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:50
+msgid "This value must not contain spaces."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:51
+msgid "Please select a valid html colour code."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:52
+#: templates/plugins/function.mupollsValidationError.php:54
+#: templates/plugins/function.mupollsValidationError.php:56
+msgid "Please select a value in the past."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:53
+#: templates/plugins/function.mupollsValidationError.php:55
+#: templates/plugins/function.mupollsValidationError.php:57
+msgid "Please select a value in the future."
+msgstr ""
+
+#: templates/plugins/function.mupollsValidationError.php:58
+msgid "This value is already assigned, but must be unique. Please change it."
+msgstr ""
+
+#: templates/plugins/function.mupollsVoteCalculator.php:37
+msgid "Es wurde folgende Anzahl an Stimmen abgegeben"
+msgstr ""
+
+#: templates/plugins/function.mupollsObjectTypeSelector.php:30
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:70
+#: lib/MUPolls/Api/Base/User.php:49 lib/MUPolls/Api/Base/Admin.php:49
+#: templates/external/vote/find.tpl:26 templates/external/poll/find.tpl:26
+#: templates/search/options.tpl:5 templates/block/itemlist_modify.tpl:5
+#: templates/block/item_modify.tpl:5
+msgid "Options"
+msgstr ""
+
+#: templates/plugins/function.mupollsObjectTypeSelector.php:31
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:71
+#: lib/MUPolls/Api/Base/User.php:57 lib/MUPolls/Api/Base/Admin.php:57
+#: lib/MUPolls/Api/User.php:100 templates/external/vote/find.tpl:27
+#: templates/external/option/find.tpl:26 templates/search/options.tpl:9
+#: templates/block/itemlist_modify.tpl:6 templates/block/item_modify.tpl:6
+msgid "Polls"
+msgstr ""
+
+#: templates/plugins/function.mupollsObjectTypeSelector.php:32
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:72
+#: lib/MUPolls/Api/Base/User.php:65 lib/MUPolls/Api/Base/Admin.php:65
+#: templates/external/option/find.tpl:27 templates/external/poll/find.tpl:27
+#: templates/search/options.tpl:13 templates/block/itemlist_modify.tpl:7
+#: templates/block/item_modify.tpl:7
+msgid "Votes"
+msgstr ""
+
+#: templates/plugins/function.mupollsTemplateHeaders.php:31
+#, php-format
+msgid "%1$s: missing parameter '%2$s'"
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Admin/Base/Config.php:111
+msgid "Error! Failed to set configuration variables."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Admin/Base/Config.php:119
+msgid "Done! Module configuration updated."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Admin/Base/Config.php:121
+msgid "Operation cancelled."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:62
+msgid ""
+"Sorry, but you can not create the vote yet as other items are required which "
+"must be created before!"
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:164
+msgid "Done! Vote created."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:166
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:173
+msgid "Done! Vote updated."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:170
+msgid "Done! Vote deleted."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:204
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:204
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:204
+#: lib/MUPolls/Controller/Base/Option.php:514
+#: lib/MUPolls/Controller/Base/Option.php:608
+#: lib/MUPolls/Controller/Base/Poll.php:514
+#: lib/MUPolls/Controller/Base/Poll.php:608
+#: lib/MUPolls/Controller/Base/Vote.php:405
+#: lib/MUPolls/Controller/Base/Vote.php:499
+#, php-format
+msgid ""
+"Sorry, but an unknown error occured during the %s action. Please apply the "
+"changes again!"
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:62
+msgid ""
+"Sorry, but you can not create the option yet as other items are required "
+"which must be created before!"
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:164
+msgid "Done! Option created."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:166
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:173
+msgid "Done! Option updated."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Option/Base/Edit.php:170
+msgid "Done! Option deleted."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:229
+#: lib/MUPolls/Controller/Base/Option.php:386
+#: lib/MUPolls/Controller/Base/Poll.php:386
+msgid "Error! Could not determine workflow actions."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:267
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:300
+#: lib/MUPolls/Controller/Poll.php:70
+#: lib/MUPolls/Controller/Base/Option.php:274
+#: lib/MUPolls/Controller/Base/Option.php:378
+#: lib/MUPolls/Controller/Base/Poll.php:274
+#: lib/MUPolls/Controller/Base/Poll.php:378
+#: lib/MUPolls/Controller/Base/Vote.php:274
+#: lib/MUPolls/Controller/Base/External.php:84
+msgid "No such item."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:508
+msgid "Done! Item created."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:510
+msgid "Error! Creation attempt failed."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:515
+#: lib/MUPolls/Controller/Base/Option.php:524
+#: lib/MUPolls/Controller/Base/Option.php:618
+#: lib/MUPolls/Controller/Base/Poll.php:524
+#: lib/MUPolls/Controller/Base/Poll.php:618
+#: lib/MUPolls/Controller/Base/Vote.php:415
+#: lib/MUPolls/Controller/Base/Vote.php:509
+msgid "Done! Item updated."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:517
+msgid "Error! Update attempt failed."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:522
+#: lib/MUPolls/Controller/Base/Option.php:423
+#: lib/MUPolls/Controller/Base/Option.php:522
+#: lib/MUPolls/Controller/Base/Option.php:616
+#: lib/MUPolls/Controller/Base/Poll.php:423
+#: lib/MUPolls/Controller/Base/Poll.php:522
+#: lib/MUPolls/Controller/Base/Poll.php:616
+#: lib/MUPolls/Controller/Base/Vote.php:413
+#: lib/MUPolls/Controller/Base/Vote.php:507
+msgid "Done! Item deleted."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Common/Base/Edit.php:524
+msgid "Error! Deletion attempt failed."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:62
+msgid ""
+"Sorry, but you can not create the poll yet as other items are required which "
+"must be created before!"
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:164
+msgid "Done! Poll created."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:166
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:173
+msgid "Done! Poll updated."
+msgstr ""
+
+#: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:170
+msgid "Done! Poll deleted."
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/ColourInput.php:98
+msgid "Close"
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/ColourInput.php:142
+msgid "Error! Invalid colour."
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/DateInput.php:98
+msgid "Unknown date"
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/UserInput.php:97
+msgid "Search user"
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/UserInput.php:103
+msgid "No results found!"
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/UserInput.php:110
+msgid "This function requires JavaScript activated!"
+msgstr ""
+
+#: lib/MUPolls/Form/Plugin/Base/UserInput.php:152
+msgid "Error! Invalid user."
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:71
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:71
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:71
+#: templates/external/vote/find.tpl:105 templates/external/option/find.tpl:107
+#: templates/external/poll/find.tpl:109
+msgid "Change selection"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:79
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:79
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:79
+#: templates/vote/edit.tpl:100 templates/option/edit.tpl:149
+#: templates/option/delete.tpl:30 templates/external/vote/find.tpl:106
+#: templates/external/option/find.tpl:108 templates/external/poll/find.tpl:110
+#: templates/admin/config.tpl:29 templates/poll/edit.tpl:177
+#: templates/poll/delete.tpl:30
+msgid "Cancel"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:99
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:99
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:99
+#: templates/external/vote/find.tpl:41 templates/external/option/find.tpl:41
+#: templates/external/poll/find.tpl:41
+msgid "Paste as"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:105
+#: templates/external/vote/find.tpl:43
+msgid "Link to the vote"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:106
+#: templates/external/vote/find.tpl:44
+msgid "ID of vote"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:124
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:124
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:124
+#: templates/vote/viewQuickNav.tpl:28 templates/option/viewQuickNav.tpl:28
+#: templates/external/vote/find.tpl:69 templates/external/vote/select.tpl:25
+#: templates/external/option/find.tpl:70
+#: templates/external/option/select.tpl:25 templates/external/poll/find.tpl:70
+#: templates/external/poll/select.tpl:25 templates/poll/viewQuickNav.tpl:28
+msgid "Sort by"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:130
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:130
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:130
+#: templates/vote/viewQuickNav.tpl:31 templates/option/viewQuickNav.tpl:31
+#: templates/external/vote/find.tpl:71 templates/external/vote/select.tpl:27
+#: templates/external/option/find.tpl:72
+#: templates/external/option/select.tpl:27 templates/external/poll/find.tpl:72
+#: templates/external/poll/select.tpl:27 templates/poll/viewQuickNav.tpl:31
+msgid "Id"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:131
+#: templates/vote/viewQuickNav.tpl:32 templates/vote/display.tpl:24
+#: templates/vote/view.tpl:63 templates/vote/edit.tpl:40
+#: templates/vote/view.csv.tpl:3 templates/external/vote/find.tpl:72
+#: templates/external/vote/select.tpl:29
+msgid "Id of option"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:132
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:133
+#: templates/vote/viewQuickNav.tpl:33 templates/vote/display.tpl:26
+#: templates/vote/view.tpl:66 templates/vote/edit.tpl:47
+#: templates/vote/view.csv.tpl:3 templates/option/viewQuickNav.tpl:34
+#: templates/option/display.tpl:28 templates/option/view.tpl:70
+#: templates/option/edit.tpl:96 templates/option/view.csv.tpl:3
+#: templates/external/vote/find.tpl:73 templates/external/vote/select.tpl:30
+#: templates/external/option/find.tpl:75
+#: templates/external/option/select.tpl:31
+msgid "Id of poll"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:133
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:134
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:136
+#: templates/vote/viewQuickNav.tpl:34 templates/option/viewQuickNav.tpl:35
+#: templates/external/vote/find.tpl:74 templates/external/vote/select.tpl:31
+#: templates/external/option/find.tpl:76
+#: templates/external/option/select.tpl:32 templates/external/poll/find.tpl:78
+#: templates/external/poll/select.tpl:34 templates/poll/viewQuickNav.tpl:37
+msgid "Creation date"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:134
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:135
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:137
+#: templates/vote/viewQuickNav.tpl:35 templates/option/viewQuickNav.tpl:36
+#: templates/external/vote/find.tpl:75 templates/external/vote/select.tpl:32
+#: templates/external/option/find.tpl:77
+#: templates/external/option/select.tpl:33 templates/external/poll/find.tpl:79
+#: templates/external/poll/select.tpl:35 templates/poll/viewQuickNav.tpl:38
+msgid "Creator"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:135
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:136
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:138
+#: templates/vote/viewQuickNav.tpl:36 templates/option/viewQuickNav.tpl:37
+#: templates/external/vote/find.tpl:76 templates/external/vote/select.tpl:33
+#: templates/external/option/find.tpl:78
+#: templates/external/option/select.tpl:34 templates/external/poll/find.tpl:80
+#: templates/external/poll/select.tpl:36 templates/poll/viewQuickNav.tpl:39
+msgid "Update date"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:142
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:143
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:145
+msgid "Sort direction"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:148
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:149
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:151
+msgid "Ascending"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:149
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:150
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:152
+msgid "Descending"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:167
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:168
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:170
+#: templates/vote/viewQuickNav.tpl:47 templates/option/viewQuickNav.tpl:48
+#: templates/external/vote/find.tpl:85 templates/external/option/find.tpl:87
+#: templates/external/poll/find.tpl:89 templates/poll/viewQuickNav.tpl:50
+msgid "Page size"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:197
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:198
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:200
+#: templates/external/vote/find.tpl:98 templates/external/vote/select.tpl:42
+#: templates/external/option/find.tpl:100
+#: templates/external/option/select.tpl:43
+#: templates/external/poll/find.tpl:102 templates/external/poll/select.tpl:45
+msgid "Search for"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:105
+#: templates/external/option/find.tpl:43
+msgid "Link to the option"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:106
+#: templates/external/option/find.tpl:44
+msgid "ID of option"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:131
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:131
+#: lib/MUPolls/Util/Base/Translatable.php:36
+#: lib/MUPolls/Util/Base/Translatable.php:45
+#: templates/option/viewQuickNav.tpl:32 templates/option/display.tpl:24
+#: templates/option/view.tpl:64 templates/option/edit.tpl:49
+#: templates/option/edit.tpl:62 templates/option/edit.tpl:78
+#: templates/option/view.csv.tpl:3 templates/external/option/find.tpl:73
+#: templates/external/option/select.tpl:29 templates/external/poll/find.tpl:73
+#: templates/external/poll/select.tpl:29 templates/poll/viewQuickNav.tpl:32
+#: templates/poll/display.tpl:24 templates/poll/view.tpl:67
+#: templates/poll/edit.tpl:49 templates/poll/edit.tpl:67
+#: templates/poll/edit.tpl:88 templates/poll/view.csv.tpl:3
+msgid "Title"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:132
+#: templates/option/viewQuickNav.tpl:33 templates/option/display.tpl:26
+#: templates/option/view.tpl:67 templates/option/edit.tpl:89
+#: templates/option/view.csv.tpl:3 templates/external/option/find.tpl:74
+#: templates/external/option/select.tpl:30
+msgid "Color of option"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:105
+#: templates/external/poll/find.tpl:43
+msgid "Link to the poll"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:106
+#: templates/external/poll/find.tpl:44
+msgid "ID of poll"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:132
+#: lib/MUPolls/Util/Base/Translatable.php:48
+#: templates/external/poll/find.tpl:74 templates/external/poll/select.tpl:30
+#: templates/poll/viewQuickNav.tpl:33 templates/poll/display.tpl:26
+#: templates/poll/view.tpl:70 templates/poll/edit.tpl:55
+#: templates/poll/edit.tpl:73 templates/poll/edit.tpl:94
+#: templates/poll/view.csv.tpl:3
+msgid "Description"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:133
+#: templates/external/poll/find.tpl:75 templates/external/poll/select.tpl:31
+#: templates/poll/viewQuickNav.tpl:34 templates/poll/viewQuickNav.tpl:62
+#: templates/poll/view.tpl:73 templates/poll/edit.tpl:104
+#: templates/poll/view.csv.tpl:3
+msgid "Multiple"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:134
+#: templates/external/poll/find.tpl:76 templates/external/poll/select.tpl:32
+#: templates/poll/viewQuickNav.tpl:35 templates/poll/view.tpl:76
+#: templates/poll/edit.tpl:109 templates/poll/view.csv.tpl:3
+msgid "Date of start"
+msgstr ""
+
+#: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:135
+#: templates/external/poll/find.tpl:77 templates/external/poll/select.tpl:33
+#: templates/poll/viewQuickNav.tpl:36 templates/poll/view.tpl:79
+#: templates/poll/edit.tpl:120 templates/poll/view.csv.tpl:3
+msgid "Date of end"
+msgstr ""
+
+#: lib/MUPolls/ContentType/Base/Item.php:52
+msgid "MUPolls detail view"
+msgstr ""
+
+#: lib/MUPolls/ContentType/Base/Item.php:64
+msgid "Display or link a single MUPolls object."
+msgstr ""
+
+#: lib/MUPolls/ContentType/Base/Item.php:120
+msgid "No item selected."
+msgstr ""
+
+#: lib/MUPolls/ContentType/Base/ItemList.php:90
+#: lib/MUPolls/Block/Base/ItemList.php:42
+msgid "MUPolls list view"
+msgstr ""
+
+#: lib/MUPolls/ContentType/Base/ItemList.php:102
+#: lib/MUPolls/Block/Base/ItemList.php:43
+msgid "Display list of MUPolls objects."
+msgstr ""
+
+#: lib/MUPolls/Base/Installer.php:31 lib/MUPolls/Base/Installer.php:107
+msgid "Doctrine Exception"
+msgstr ""
+
+#: lib/MUPolls/Base/Installer.php:33
+#, php-format
+msgid ""
+"An error was encountered while creating the tables for the %s extension."
+msgstr ""
+
+#: lib/MUPolls/Base/Installer.php:35
+msgid ""
+"Please enable the development mode by editing the /config/config.php file in "
+"order to reveal the error details."
+msgstr ""
+
+#: lib/MUPolls/Base/Installer.php:100
+#, php-format
+msgid ""
+"An error was encountered while removing stored object workflows for the %s "
+"extension."
+msgstr ""
+
+#: lib/MUPolls/Base/Installer.php:109
+#, php-format
+msgid "An error was encountered while dropping tables for the %s extension."
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:30 templates/user/header.tpl:14
+msgid "M u polls"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:32
+msgid "M u polls module generated by ModuleStudio 0.7.0."
+msgstr ""
+
+#. ! url version of name, should be in lowercase without space
+#: lib/MUPolls/Base/Version.php:34
+msgid "mupolls"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:66
+msgid "mupolls. Options Display Hooks"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:84
+msgid "mupolls. Options Filter Hooks"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:89
+msgid "mupolls. Polls Display Hooks"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:107
+msgid "mupolls. Polls Filter Hooks"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:112
+msgid "mupolls. Votes Display Hooks"
+msgstr ""
+
+#: lib/MUPolls/Base/Version.php:130
+msgid "mupolls. Votes Filter Hooks"
+msgstr ""
+
+#: lib/MUPolls/Block/Base/Item.php:37 lib/MUPolls/Block/Base/ItemList.php:37
+msgid ""
+"Notice: This block will not be displayed until you activate the MUPolls "
+"module."
+msgstr ""
+
+#: lib/MUPolls/Block/Base/Item.php:42
+msgid "MUPolls item view"
+msgstr ""
+
+#: lib/MUPolls/Block/Base/Item.php:43
+msgid "Display item of MUPolls objects."
+msgstr ""
+
+#: lib/MUPolls/Block/Base/Item.php:146
+msgid "MUPolls item"
+msgstr ""
+
+#: lib/MUPolls/Block/Base/ItemList.php:135
+msgid "MUPolls items"
+msgstr ""
+
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:27
+msgid "Latest MUPolls items"
+msgstr ""
+
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:37
+msgid "List of polls and other MUPolls items"
+msgstr ""
+
+#: lib/MUPolls/NewsletterPlugin/ItemList.php:47
+msgid ""
+"This plugin shows a list of polls and other items of the MUPolls module."
+msgstr ""
+
+#: lib/MUPolls/Version.php:28
+msgid "MUPolls"
+msgstr ""
+
+#: lib/MUPolls/Version.php:30
+msgid "MPolls is a module for Polls."
+msgstr ""
+
+#: lib/MUPolls/Util/Base/ListEntries.php:187
+#: lib/MUPolls/Util/Base/ListEntries.php:213
+#: lib/MUPolls/Util/Base/ListEntries.php:239
+#: lib/MUPolls/Util/Base/Workflow.php:34
+msgid "Approved"
+msgstr ""
+
+#: lib/MUPolls/Util/Base/ListEntries.php:188
+#: lib/MUPolls/Util/Base/ListEntries.php:214
+#: lib/MUPolls/Util/Base/ListEntries.php:240
+msgid "Content has been approved and is available online."
+msgstr ""
+
+#: lib/MUPolls/Util/Base/ListEntries.php:194
+#: lib/MUPolls/Util/Base/ListEntries.php:220
+#: lib/MUPolls/Util/Base/ListEntries.php:246
+msgid "All except approved"
+msgstr ""
+
+#: lib/MUPolls/Util/Base/ListEntries.php:195
+#: lib/MUPolls/Util/Base/ListEntries.php:221
+#: lib/MUPolls/Util/Base/ListEntries.php:247
+msgid "Shows all items except these which are approved"
+msgstr ""
+
+#: lib/MUPolls/Util/Base/Workflow.php:29
+msgid "Initial"
+msgstr ""
+
+#: lib/MUPolls/Util/Base/Workflow.php:39
+msgid "Deleted"
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:31
+#: lib/MUPolls/Entity/Validator/Base/Option.php:63
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:31
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:31
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:43
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:55
+#, php-format
+msgid "Error! Field value may only contain digits (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:35
+#: lib/MUPolls/Entity/Validator/Base/Option.php:43
+#: lib/MUPolls/Entity/Validator/Base/Option.php:51
+#: lib/MUPolls/Entity/Validator/Base/Option.php:71
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:35
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:43
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:51
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:35
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:51
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:63
+#, php-format
+msgid "Error! Length of field value must not be higher than %2$s (%1$s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:39
+#: lib/MUPolls/Entity/Validator/Base/Option.php:47
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:39
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:47
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:39
+#, php-format
+msgid "Error! Field value must not be empty (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:55
+#, php-format
+msgid "Error! Field value must not contain space chars (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:59
+#, php-format
+msgid ""
+"Error! Field value must be a valid html colour code [#123 or #123456] (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Option.php:67
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:47
+#: lib/MUPolls/Entity/Validator/Base/Vote.php:59
+#, php-format
+msgid "Error! Field value must not be 0 (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:55
+#, php-format
+msgid "Error! Field value must be a valid boolean (%s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Validator/Base/Poll.php:59
+#, php-format
+msgid "Error! The start date (%1$s) must be before the end date (%2$s)."
+msgstr ""
+
+#: lib/MUPolls/Entity/Repository/Base/Option.php:245
+#: lib/MUPolls/Entity/Repository/Base/Option.php:274
+#: lib/MUPolls/Entity/Repository/Base/Option.php:301
+#: lib/MUPolls/Entity/Repository/Base/Option.php:328
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:253
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:282
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:309
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:336
+#: lib/MUPolls/Entity/Repository/Base/Vote.php:244
+#: lib/MUPolls/Entity/Repository/Base/Vote.php:273
+#: lib/MUPolls/Entity/Repository/Base/Vote.php:300
+#: lib/MUPolls/Entity/Repository/Base/Vote.php:327
+msgid "Invalid user identifier received."
+msgstr ""
+
+#: lib/MUPolls/Entity/Repository/Base/Option.php:369
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:377
+#: lib/MUPolls/Entity/Repository/Base/Vote.php:368
+#: lib/MUPolls/Api/Base/Selection.php:70
+msgid "Invalid identifier received."
+msgstr ""
+
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:177
+msgid "No"
+msgstr ""
+
+#: lib/MUPolls/Entity/Repository/Base/Poll.php:178
+msgid "Yes"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:622 lib/MUPolls/Entity/Base/Poll.php:688
+#: lib/MUPolls/Entity/Base/Vote.php:562
+msgid "Error! Could not remove stored workflow. Deletion has been aborted."
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:771 lib/MUPolls/Entity/Base/Poll.php:837
+#: lib/MUPolls/Entity/Base/Vote.php:711
+msgid "Error! Could not load the associated workflow."
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:854 lib/MUPolls/Entity/Base/Poll.php:920
+#: lib/MUPolls/Entity/Base/Vote.php:794
+msgid "Open preview page"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:855 lib/MUPolls/Entity/Base/Poll.php:921
+#: lib/MUPolls/Entity/Base/Vote.php:795
+msgid "Preview"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:861
+#: lib/MUPolls/Entity/Base/Option.php:903 lib/MUPolls/Entity/Base/Poll.php:927
+#: lib/MUPolls/Entity/Base/Poll.php:969 lib/MUPolls/Entity/Base/Vote.php:801
+#: lib/MUPolls/Entity/Base/Vote.php:843 templates/vote/display.tpl:13
+#: templates/option/display.tpl:13 templates/poll/display.tpl:13
+msgid "Details"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:869
+#: lib/MUPolls/Entity/Base/Option.php:870
+#: lib/MUPolls/Entity/Base/Option.php:911
+#: lib/MUPolls/Entity/Base/Option.php:912 lib/MUPolls/Entity/Base/Poll.php:935
+#: lib/MUPolls/Entity/Base/Poll.php:936 lib/MUPolls/Entity/Base/Poll.php:977
+#: lib/MUPolls/Entity/Base/Poll.php:978 lib/MUPolls/Entity/Base/Vote.php:809
+#: lib/MUPolls/Entity/Base/Vote.php:810 lib/MUPolls/Entity/Base/Vote.php:851
+#: lib/MUPolls/Entity/Base/Vote.php:852
+msgid "Edit"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:875
+#: lib/MUPolls/Entity/Base/Option.php:917 lib/MUPolls/Entity/Base/Poll.php:941
+#: lib/MUPolls/Entity/Base/Poll.php:983 lib/MUPolls/Entity/Base/Vote.php:815
+#: lib/MUPolls/Entity/Base/Vote.php:857
+msgid "Reuse for new item"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:876
+#: lib/MUPolls/Entity/Base/Option.php:918 lib/MUPolls/Entity/Base/Poll.php:942
+#: lib/MUPolls/Entity/Base/Poll.php:984 lib/MUPolls/Entity/Base/Vote.php:816
+#: lib/MUPolls/Entity/Base/Vote.php:858
+msgid "Reuse"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:883
+#: lib/MUPolls/Entity/Base/Option.php:884
+#: lib/MUPolls/Entity/Base/Option.php:925
+#: lib/MUPolls/Entity/Base/Option.php:926 lib/MUPolls/Entity/Base/Poll.php:949
+#: lib/MUPolls/Entity/Base/Poll.php:950 lib/MUPolls/Entity/Base/Poll.php:991
+#: lib/MUPolls/Entity/Base/Poll.php:992 lib/MUPolls/Entity/Base/Vote.php:823
+#: lib/MUPolls/Entity/Base/Vote.php:824 lib/MUPolls/Entity/Base/Vote.php:865
+#: lib/MUPolls/Entity/Base/Vote.php:866 templates/vote/view.tpl:120
+#: templates/option/view.tpl:127 templates/option/delete.tpl:12
+#: templates/option/delete.tpl:28 templates/poll/view.tpl:142
+#: templates/poll/delete.tpl:12 templates/poll/delete.tpl:28
+msgid "Delete"
+msgstr ""
+
+#: lib/MUPolls/Entity/Base/Option.php:892
+#: lib/MUPolls/Entity/Base/Option.php:893
+#: lib/MUPolls/Entity/Base/Option.php:934
+#: lib/MUPolls/Entity/Base/Option.php:935 lib/MUPolls/Entity/Base/Poll.php:958
+#: lib/MUPolls/Entity/Base/Poll.php:959 lib/MUPolls/Entity/Base/Poll.php:1000
+#: lib/MUPolls/Entity/Base/Poll.php:1001 lib/MUPolls/Entity/Base/Vote.php:832
+#: lib/MUPolls/Entity/Base/Vote.php:833 lib/MUPolls/Entity/Base/Vote.php:874
+#: lib/MUPolls/Entity/Base/Vote.php:875
+msgid "Back to overview"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Selection.php:173
+msgid "Invalid object type received."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Search.php:157
+msgid "Error! Could not save the search results."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Mailz.php:32
+msgid "3 newest polls"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Mailz.php:33
+msgid "A list of the three newest polls."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Mailz.php:38
+msgid "3 random polls"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Mailz.php:39
+msgid "A list of three random polls."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:39 lib/MUPolls/Api/User.php:90
+msgid "Backend"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:40 lib/MUPolls/Api/User.php:91
+msgid "Switch to administration area."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:50 lib/MUPolls/Api/Base/Admin.php:50
+#: templates/option/view.tpl:8
+msgid "Option list"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:58 lib/MUPolls/Api/Base/Admin.php:58
+#: lib/MUPolls/Api/User.php:101 templates/poll/view.tpl:8
+msgid "Poll list"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:66 lib/MUPolls/Api/Base/Admin.php:66
+#: templates/vote/view.tpl:8
+msgid "Vote list"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/User.php:84 lib/MUPolls/Api/Base/User.php:226
+msgid "Invalid arguments array received."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Admin.php:39
+msgid "Frontend"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Admin.php:40
+msgid "Switch to user area."
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Admin.php:72
+msgid "Configuration"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Admin.php:73
+msgid "Manage settings for this application"
+msgstr ""
+
+#: lib/MUPolls/Api/Base/Account.php:51
+msgid "M u polls Backend"
+msgstr ""
+
+#: lib/MUPolls/Controller/Poll.php:65
+#: lib/MUPolls/Controller/Base/Option.php:269
+#: lib/MUPolls/Controller/Base/Option.php:373
+#: lib/MUPolls/Controller/Base/Poll.php:269
+#: lib/MUPolls/Controller/Base/Poll.php:373
+#: lib/MUPolls/Controller/Base/Vote.php:269
+#: lib/MUPolls/Controller/Base/External.php:78
+msgid "Error! Invalid identifier received."
+msgstr ""
+
+#: lib/MUPolls/Controller/Base/Option.php:408
+msgid "Error! It is not allowed to delete this option."
+msgstr ""
+
+#: lib/MUPolls/Controller/Base/Poll.php:408
+msgid "Error! It is not allowed to delete this poll."
+msgstr ""
+
+#: lib/MUPolls/Controller/Base/External.php:145
+msgid "Error: Invalid editor context given for external controller action."
+msgstr ""
+
+#: lib/MUPolls/Controller/Vote.php:62
+msgid "You have to select one option!"
+msgstr ""
+
+#: lib/MUPolls/Controller/Vote.php:67
+msgid "Thank you for voting."
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:6 templates/option/viewQuickNav.tpl:6
+#: templates/poll/viewQuickNav.tpl:6
+msgid "Quick navigation"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:13 templates/option/viewQuickNav.tpl:13
+#: templates/poll/viewQuickNav.tpl:13 templates/block/itemlist_modify.tpl:13
+#: templates/block/item_modify.tpl:18
+msgid "All"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:15 templates/vote/view.csv.tpl:3
+#: templates/option/viewQuickNav.tpl:15 templates/option/view.csv.tpl:3
+#: templates/external/vote/select.tpl:28
+#: templates/external/option/select.tpl:28
+#: templates/external/poll/select.tpl:28 templates/poll/viewQuickNav.tpl:15
+#: templates/poll/view.csv.tpl:3
+msgid "Workflow state"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:24 templates/option/viewQuickNav.tpl:24
+#: templates/poll/viewQuickNav.tpl:24
+msgid "Search"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:39 templates/option/viewQuickNav.tpl:40
+#: templates/external/vote/find.tpl:79 templates/external/vote/select.tpl:36
+#: templates/external/option/find.tpl:81
+#: templates/external/option/select.tpl:37 templates/external/poll/find.tpl:83
+#: templates/external/poll/select.tpl:39 templates/poll/viewQuickNav.tpl:42
+msgid "ascending"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:40 templates/option/viewQuickNav.tpl:41
+#: templates/external/vote/find.tpl:80 templates/external/vote/select.tpl:37
+#: templates/external/option/find.tpl:82
+#: templates/external/option/select.tpl:38 templates/external/poll/find.tpl:84
+#: templates/external/poll/select.tpl:40 templates/poll/viewQuickNav.tpl:43
+msgid "descending"
+msgstr ""
+
+#: templates/vote/viewQuickNav.tpl:58 templates/option/viewQuickNav.tpl:59
+#: templates/poll/viewQuickNav.tpl:70
+msgid "OK"
+msgstr ""
+
+#: templates/vote/display.tpl:8 templates/external/vote/find.tpl:50
+#: templates/external/vote/select.tpl:14 templates/poll/display.tpl:72
+#: templates/block/item_poll_display.tpl:19
+msgid "Vote"
+msgstr ""
+
+#: templates/vote/display.tpl:14 templates/vote/display.tpl:18
+#: templates/vote/view.tpl:68 templates/vote/view.tpl:88
+#: templates/option/display.tpl:14 templates/option/display.tpl:18
+#: templates/option/view.tpl:72 templates/option/view.tpl:95
+#: templates/poll/display.tpl:14 templates/poll/display.tpl:18
+#: templates/poll/view.tpl:81 templates/poll/view.tpl:110
+msgid "Actions"
+msgstr ""
+
+#: templates/vote/main.tpl:7
+msgid "Welcome to the vote section of the M u polls application."
+msgstr ""
+
+#: templates/vote/view.tpl:21 templates/vote/edit.tpl:16
+msgid "Create vote"
+msgstr ""
+
+#: templates/vote/view.tpl:31 templates/option/view.tpl:31
+#: templates/poll/view.tpl:31
+msgid "Back to paginated view"
+msgstr ""
+
+#: templates/vote/view.tpl:35 templates/option/view.tpl:35
+#: templates/poll/view.tpl:35
+msgid "Show all entries"
+msgstr ""
+
+#: templates/vote/view.tpl:104 templates/mailz/itemlist_vote_text.tpl:7
+#: templates/mailz/itemlist_vote_html.tpl:11
+msgid "No votes found."
+msgstr ""
+
+#: templates/vote/view.tpl:117
+msgid "With selected votes"
+msgstr ""
+
+#: templates/vote/view.tpl:119 templates/option/view.tpl:126
+#: templates/poll/view.tpl:141
+msgid "Choose action"
+msgstr ""
+
+#: templates/vote/view.tpl:120 templates/option/view.tpl:127
+#: templates/poll/view.tpl:142
+msgid "Delete content permanently."
+msgstr ""
+
+#: templates/vote/view.tpl:122 templates/option/view.tpl:129
+#: templates/poll/view.tpl:144
+msgid "Submit"
+msgstr ""
+
+#: templates/vote/view.atom.tpl:8 templates/vote/view.rss.tpl:16
+msgid "Latest votes"
+msgstr ""
+
+#: templates/vote/view.atom.tpl:9 templates/vote/view.rss.tpl:19
+msgid "A direct feed showing the list of votes"
+msgstr ""
+
+#: templates/vote/edit.tpl:11
+msgid "Edit vote"
+msgstr ""
+
+#: templates/vote/edit.tpl:37
+msgid "Content"
+msgstr ""
+
+#: templates/vote/edit.tpl:41
+msgid "Enter the id of option of the vote"
+msgstr ""
+
+#: templates/vote/edit.tpl:48
+msgid "Enter the id of poll of the vote"
+msgstr ""
+
+#: templates/vote/edit.tpl:79 templates/option/edit.tpl:128
+#: templates/poll/edit.tpl:156
+msgid "Return control"
+msgstr ""
+
+#: templates/vote/edit.tpl:81 templates/option/edit.tpl:130
+#: templates/poll/edit.tpl:158
+msgid "Create another item after save"
+msgstr ""
+
+#: templates/vote/edit.tpl:94
+msgid "Really delete this vote?"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:14
+#: templates/contenttype/itemlist_edit.tpl:38
+#: templates/block/itemlist_modify.tpl:38
+msgid "Sorting"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:16
+#: templates/contenttype/itemlist_edit.tpl:42
+#: templates/block/itemlist_modify.tpl:40
+msgid "Random"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:17
+#: templates/contenttype/itemlist_edit.tpl:45
+#: templates/block/itemlist_modify.tpl:41
+msgid "Newest"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:18
+#: templates/contenttype/itemlist_edit.tpl:48
+#: templates/block/itemlist_modify.tpl:42
+msgid "Default"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:22
+#: templates/contenttype/itemlist_edit.tpl:54
+#: templates/block/itemlist_modify.tpl:47
+msgid "Amount"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:27
+#: templates/contenttype/itemlist_edit.tpl:74
+#: templates/block/itemlist_modify.tpl:67
+msgid "Filter (expert option)"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:30
+#: templates/contenttype/itemlist_edit.tpl:78
+#: templates/block/itemlist_modify.tpl:70
+msgid "Syntax examples"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:30
+#: templates/contenttype/itemlist_edit.tpl:78
+#: templates/block/itemlist_modify.tpl:70
+msgid "or"
+msgstr ""
+
+#: templates/plugin_config/ItemList.tpl:36
+msgid "No object types found."
+msgstr ""
+
+#: templates/option/display.tpl:8 templates/external/option/find.tpl:50
+#: templates/external/option/select.tpl:14
+msgid "Option"
+msgstr ""
+
+#: templates/option/main.tpl:7
+msgid "Welcome to the option section of the M u polls application."
+msgstr ""
+
+#: templates/option/view.tpl:21 templates/option/edit.tpl:16
+msgid "Create option"
+msgstr ""
+
+#: templates/option/view.tpl:85 templates/poll/view.tpl:94
+msgid "View detail page"
+msgstr ""
+
+#: templates/option/view.tpl:111 templates/mailz/itemlist_option_html.tpl:11
+#: templates/mailz/itemlist_option_text.tpl:7
+msgid "No options found."
+msgstr ""
+
+#: templates/option/view.tpl:124
+msgid "With selected options"
+msgstr ""
+
+#: templates/option/view.atom.tpl:8 templates/option/view.rss.tpl:16
+msgid "Latest options"
+msgstr ""
+
+#: templates/option/view.atom.tpl:9 templates/option/view.rss.tpl:19
+msgid "A direct feed showing the list of options"
+msgstr ""
+
+#: templates/option/edit.tpl:11
+msgid "Edit option"
+msgstr ""
+
+#: templates/option/edit.tpl:50 templates/option/edit.tpl:63
+#: templates/option/edit.tpl:79
+msgid "Enter the title of the option"
+msgstr ""
+
+#: templates/option/edit.tpl:86 templates/poll/edit.tpl:101
+msgid "Further properties"
+msgstr ""
+
+#: templates/option/edit.tpl:90
+msgid "Choose the color of option of the option"
+msgstr ""
+
+#: templates/option/edit.tpl:97
+msgid "Enter the id of poll of the option"
+msgstr ""
+
+#: templates/option/edit.tpl:143
+msgid "Really delete this option?"
+msgstr ""
+
+#: templates/option/delete.tpl:8
+msgid "Delete option"
+msgstr ""
+
+#: templates/option/delete.tpl:19
+msgid "Do you really want to delete this option ?"
+msgstr ""
+
+#: templates/option/delete.tpl:26 templates/poll/delete.tpl:26
+msgid "Confirmation prompt"
+msgstr ""
+
+#: templates/external/vote/find.tpl:5 templates/external/vote/find.tpl:38
+#: templates/external/option/find.tpl:27 templates/external/poll/find.tpl:27
+msgid "Search and select vote"
+msgstr ""
+
+#: templates/external/vote/find.tpl:25 templates/external/option/find.tpl:25
+#: templates/external/poll/find.tpl:25
+msgid "Switch to"
+msgstr ""
+
+#: templates/external/vote/find.tpl:26 templates/external/option/find.tpl:5
+#: templates/external/option/find.tpl:38 templates/external/poll/find.tpl:26
+msgid "Search and select option"
+msgstr ""
+
+#: templates/external/vote/find.tpl:27 templates/external/option/find.tpl:26
+#: templates/external/poll/find.tpl:5 templates/external/poll/find.tpl:38
+msgid "Search and select poll"
+msgstr ""
+
+#: templates/external/vote/find.tpl:62 templates/external/vote/select.tpl:19
+#: templates/external/option/find.tpl:63
+#: templates/external/option/select.tpl:19 templates/external/poll/find.tpl:63
+#: templates/external/poll/select.tpl:19
+#: templates/contenttype/itemlist_option_display_description.tpl:11
+#: templates/contenttype/itemlist_vote_display_description.tpl:8
+#: templates/contenttype/itemlist_poll_display_description.tpl:11
+msgid "No entries found."
+msgstr ""
+
+#: templates/external/vote/find.tpl:100 templates/external/vote/select.tpl:44
+#: templates/external/option/find.tpl:102
+#: templates/external/option/select.tpl:45
+#: templates/external/poll/find.tpl:104 templates/external/poll/select.tpl:47
+msgid "Filter"
+msgstr ""
+
+#: templates/external/vote/select.tpl:4
+msgid "Vote information"
+msgstr ""
+
+#: templates/external/option/select.tpl:4
+msgid "Option information"
+msgstr ""
+
+#: templates/external/poll/find.tpl:50 templates/external/poll/select.tpl:14
+#: templates/poll/display.tpl:8
+msgid "Poll"
+msgstr ""
+
+#: templates/external/poll/select.tpl:4
+msgid "Poll information"
+msgstr ""
+
+#: templates/admin/config.tpl:4 templates/admin/config.tpl:7
+msgid "Settings"
+msgstr ""
+
+#: templates/admin/config.tpl:15
+msgid "My settings"
+msgstr ""
+
+#: templates/admin/config.tpl:19
+msgid "Here you can manage all basic settings for this application."
+msgstr ""
+
+#: templates/admin/config.tpl:22
+msgid "Kind of voting"
+msgstr ""
+
+#: templates/admin/config.tpl:23
+msgid "Choose the kind of voting"
+msgstr ""
+
+#: templates/admin/config.tpl:28
+msgid "Update configuration"
+msgstr ""
+
+#: templates/poll/main.tpl:7
+msgid "Welcome to the poll section of the M u polls application."
+msgstr ""
+
+#: templates/poll/view.tpl:21 templates/poll/edit.tpl:16
+msgid "Create poll"
+msgstr ""
+
+#: templates/poll/view.tpl:126 templates/mailz/itemlist_poll_html.tpl:11
+#: templates/mailz/itemlist_poll_text.tpl:7
+msgid "No polls found."
+msgstr ""
+
+#: templates/poll/view.tpl:139
+msgid "With selected polls"
+msgstr ""
+
+#: templates/poll/view.atom.tpl:8 templates/poll/view.rss.tpl:16
+msgid "Latest polls"
+msgstr ""
+
+#: templates/poll/view.atom.tpl:9 templates/poll/view.rss.tpl:19
+msgid "A direct feed showing the list of polls"
+msgstr ""
+
+#: templates/poll/edit.tpl:11
+msgid "Edit poll"
+msgstr ""
+
+#: templates/poll/edit.tpl:50 templates/poll/edit.tpl:68
+#: templates/poll/edit.tpl:89
+msgid "Enter the title of the poll"
+msgstr ""
+
+#: templates/poll/edit.tpl:56 templates/poll/edit.tpl:74
+#: templates/poll/edit.tpl:95
+msgid "Enter the description of the poll"
+msgstr ""
+
+#: templates/poll/edit.tpl:105
+msgid "multiple ?"
+msgstr ""
+
+#: templates/poll/edit.tpl:111 templates/poll/edit.tpl:113
+msgid "Enter the date of start of the poll"
+msgstr ""
+
+#: templates/poll/edit.tpl:115 templates/poll/edit.tpl:126
+msgid "Reset to empty value"
+msgstr ""
+
+#: templates/poll/edit.tpl:122 templates/poll/edit.tpl:124
+msgid "Enter the date of end of the poll"
+msgstr ""
+
+#: templates/poll/edit.tpl:171
+msgid "Really delete this poll?"
+msgstr ""
+
+#: templates/poll/delete.tpl:8
+msgid "Delete poll"
+msgstr ""
+
+#: templates/poll/delete.tpl:19
+msgid "Do you really want to delete this poll ?"
+msgstr ""
+
+#: templates/contenttype/item_edit.tpl:5
+#: templates/contenttype/itemlist_edit.tpl:3
+#: templates/block/itemlist_modify.tpl:3 templates/block/item_modify.tpl:3
+msgid "Object type"
+msgstr ""
+
+#: templates/contenttype/item_edit.tpl:8
+#: templates/contenttype/itemlist_edit.tpl:7
+msgid ""
+"If you change this please save the element once to reload the parameters "
+"below."
+msgstr ""
+
+#: templates/contenttype/item_edit.tpl:11
+msgid ""
+"Please select your item here. You can resort the dropdown list and reduce "
+"it's entries by applying filters. On the right side you will see a preview "
+"of the selected entry."
+msgstr ""
+
+#: templates/contenttype/item_edit.tpl:17
+msgid "Link to object"
+msgstr ""
+
+#: templates/contenttype/item_edit.tpl:19
+msgid "Embed object display"
+msgstr ""
+
+#: templates/contenttype/itemlist_vote_display.tpl:4
+#: templates/contenttype/itemlist_option_display_description.tpl:8
+#: templates/contenttype/itemlist_option_display.tpl:4
+#: templates/contenttype/itemlist_vote_display_description.tpl:5
+#: templates/contenttype/itemlist_poll_display_description.tpl:8
+#: templates/contenttype/itemlist_poll_display.tpl:4
+msgid "Read more"
+msgstr ""
+
+#: templates/contenttype/itemlist_edit.tpl:22
+#: templates/block/itemlist_modify.tpl:18 templates/block/item_modify.tpl:23
+msgid "Category"
+msgstr ""
+
+#: templates/contenttype/itemlist_edit.tpl:25
+#: templates/block/itemlist_modify.tpl:23 templates/block/item_modify.tpl:28
+msgid "Categories"
+msgstr ""
+
+#: templates/contenttype/itemlist_edit.tpl:30
+#: templates/block/itemlist_modify.tpl:31 templates/block/item_modify.tpl:36
+msgid "This is an optional filter."
+msgstr ""
+
+#: templates/contenttype/itemlist_edit.tpl:60
+#: templates/block/itemlist_modify.tpl:52 templates/block/item_modify.tpl:43
+msgid "Template"
+msgstr ""
+
+#: templates/contenttype/itemlist_edit.tpl:70
+#: templates/block/itemlist_modify.tpl:63 templates/block/item_modify.tpl:54
+msgid "Example"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsDisplay.tpl:4
+#: templates/helper/includeStandardFieldsDisplay.tpl:7
+#: templates/helper/includeStandardFieldsEdit.tpl:4
+#: templates/helper/includeStandardFieldsEdit.tpl:9
+msgid "Creation and update"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsDisplay.tpl:11
+msgid "Creation"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsDisplay.tpl:23
+#, php-format
+msgid "Created by %1$s on %2$s"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsDisplay.tpl:26
+msgid "Last update"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsDisplay.tpl:38
+#, php-format
+msgid "Updated by %1$s on %2$s"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsEdit.tpl:13
+#, php-format
+msgid "Created by %s"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsEdit.tpl:14
+#, php-format
+msgid "Created on %s"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsEdit.tpl:18
+#, php-format
+msgid "Updated by %s"
+msgstr ""
+
+#: templates/helper/includeStandardFieldsEdit.tpl:19
+#, php-format
+msgid "Updated on %s"
+msgstr ""
+
+#: templates/block/itemlist_modify.tpl:9 templates/block/item_modify.tpl:9
+msgid ""
+"If you change this please save the block once to reload the parameters below."
+msgstr ""
+
+#: templates/block/item_modify.tpl:13
+msgid "Item Id"
+msgstr ""
