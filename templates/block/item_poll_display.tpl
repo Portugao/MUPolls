@@ -5,7 +5,7 @@
 {$item.description}{/if}<br />
 
 {if $item.dateOfEnd|dateformat:'%Y-%m-%d %H:%M:%S' >= $smarty.now|date_format:"%Y-%m-%d %H:%M:%S"}
-	{if $voted eq '0'}
+	{if $voted eq '0' || !$voted}
 	    <form action="{modurl modname='MUPolls' type='vote' func='edit'}" method="post">
         {foreach item='option' from=$options}
         <label>
