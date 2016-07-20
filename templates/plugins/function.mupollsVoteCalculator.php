@@ -50,11 +50,12 @@ function smarty_function_mupollsVoteCalculator($params, $view)
     	$optionVotes = ModUtil::apiFunc('MUPolls', 'selection', 'getEntities', $selectionArgs3);
     	$countOptionVotes = count($optionVotes);
     	
-    	$optionInfos[] = array('optionTitle' => $option['title'], 'optionPercent' => round($countOptionVotes / $countVotes * 100, 2));
+    	$optionInfos[] = array('optionTitle' => $option['title'],'optionColor' => $option['colorOfOption'] , 'optionPercent' => round($countOptionVotes / $countVotes * 100, 1));
     }
     
     foreach ($optionInfos as $key => $info) {
     	$out .= $info['optionTitle'] . ': ' . $info['optionPercent'] . '%<br />';
+    	$out .= '<span style="background-color: ' . $info['optionColor'] . '; width: ' . $info['optionPercent'] . '%; height: 10px; display: block;"></span>';
     }
 
     if (array_key_exists('assign', $params)) {
