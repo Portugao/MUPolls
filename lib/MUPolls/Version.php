@@ -27,7 +27,7 @@ class MUPolls_Version extends MUPolls_Base_Version
     	
     	$meta['displayname']          = $this->__('MUPolls');
     	// the module description
-    	$meta['description']          = $this->__('MPolls is a module for Polls.');
+    	$meta['description']          = $this->__('MUPolls is a module for Polls.');
     	
     	return $meta;
     	
