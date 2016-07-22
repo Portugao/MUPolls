@@ -54,7 +54,7 @@
                             <li>
                                 {assign var='itemId' value=$poll.id}
                                 <a href="#" onclick="mUPolls.finder.selectItem({$itemId})" onkeypress="mUPolls.finder.selectItem({$itemId})">{$poll->getTitleFromDisplayPattern()}</a>
-                                <input type="hidden" id="url{$itemId}" value="{modurl modname='MUPolls' type='user' func='display' ot='poll'  id=$poll.id fqurl=true}" />
+                                <input type="hidden" id="url{$itemId}" value="{modurl modname='MUPolls' type='user' func='display' ot='poll' id=$poll.id fqurl=true}" />
                                 <input type="hidden" id="title{$itemId}" value="{$poll->getTitleFromDisplayPattern()|replace:"\"":""}" />
                                 <input type="hidden" id="desc{$itemId}" value="{capture assign='description'}{% if poll.description is not empty %}{{ poll.description }}{% endif %}
                                 {/capture}{$description|strip_tags|replace:"\"":""}" />
