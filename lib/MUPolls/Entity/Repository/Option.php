@@ -18,5 +18,8 @@
  */
 class MUPolls_Entity_Repository_Option extends MUPolls_Entity_Repository_Base_Option
 {
-    // feel free to add your own methods here, like for example reusable DQL queries
+    /**
+     * @var string The default sorting field/expression.
+     */
+    protected $defaultSortingField = 'id';
 }
