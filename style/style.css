@@ -71,3 +71,10 @@ div.mupolls-view form.mupolls-quicknav fieldset #num {
     width: 50px;
     text-align: right;
 }
+
+/***************EIGENES*****************/
+
+#mupoll-votecalculate {
+	max-width: 250px;	
+}
+}

@@ -18,13 +18,19 @@
             {if is_array($options)}
                 <input class="btn btn-success" type="submit" value="{gt text="Vote}">
             {/if}
-            </form>
+        </form>
+        
     {else}
         {foreach item='option' from=$options}
         	<ul>
         	    <li>{$option.title}</li>
         	</ul>      	
         {/foreach}
+    {/if}<br />
+    {if $item.dateOfEnd ne ''}
+    	<div id="mupoll-votecalculate">
+        {gt text='This poll ends on'} {$item.dateOfEnd|dateformat:'datetimebrief'}
+        </div>
     {/if}
 {else}
     <br />{mupollsVoteCalculator pollId=$item.id assign='out'}
