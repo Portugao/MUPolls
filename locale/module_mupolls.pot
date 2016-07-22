@@ -1500,3 +1500,6 @@ msgstr ""
 #: templates/block/item_modify.tpl:13
 msgid "Item Id"
 msgstr ""
+
+msgid "This poll ends on"
+msgstr ""

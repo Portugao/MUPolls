@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Zikula 1.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-20 18:28+0200\n"
-"PO-Revision-Date: 2016-07-20 18:53+0200\n"
+"POT-Creation-Date: 2016-07-20 21:51+0200\n"
+"PO-Revision-Date: 2016-07-20 23:26+0200\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.4\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de_DE\n"
 
 #: templates/plugins/function.mupollsTemplateSelector.php:30
 #: templates/block/itemlist_modify.tpl:54 templates/block/item_modify.tpl:45
@@ -1395,15 +1395,15 @@ msgstr ""
 
 #: templates/poll/edit.tpl:171
 msgid "Really delete this poll?"
-msgstr ""
+msgstr "Diese Umfrage wirklich löschen?"
 
 #: templates/poll/delete.tpl:8
 msgid "Delete poll"
-msgstr ""
+msgstr "Umfrage löschen"
 
 #: templates/poll/delete.tpl:19
 msgid "Do you really want to delete this poll ?"
-msgstr ""
+msgstr "Möchtest Du diese Umfrage wirklich löschen?"
 
 #: templates/contenttype/item_edit.tpl:5
 #: templates/contenttype/itemlist_edit.tpl:3
@@ -1527,3 +1527,6 @@ msgstr ""
 #: templates/block/item_modify.tpl:13
 msgid "Item Id"
 msgstr ""
+
+msgid "This poll ends on"
+msgstr "Diese Umfrage endet am"
