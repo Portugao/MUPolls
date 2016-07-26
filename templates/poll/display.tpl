@@ -55,8 +55,8 @@
     {/if}
     {if $lct eq 'user'}
         <div>
-        {if $item.description ne ''}
-		{$item.description}{/if}<br />
+        {if $poll.description ne ''}
+		{$poll.description}{/if}<br />
 
 		{if $poll.dateOfEnd|dateformat:'%Y-%m-%d %H:%M:%S' >= $smarty.now|date_format:"%Y-%m-%d %H:%M:%S"}
 		{if $voted eq '0' || !$voted}
