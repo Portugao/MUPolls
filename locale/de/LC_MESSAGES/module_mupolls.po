@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Zikula 1.x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-20 21:51+0200\n"
-"PO-Revision-Date: 2016-07-20 23:26+0200\n"
+"PO-Revision-Date: 2016-08-02 10:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -289,16 +289,16 @@ msgstr ""
 
 #: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:164
 msgid "Done! Poll created."
-msgstr ""
+msgstr "Erledigt! Umfrage erstellt."
 
 #: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:166
 #: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:173
 msgid "Done! Poll updated."
-msgstr ""
+msgstr "Erledigt! Umfrage aktualisiert."
 
 #: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:170
 msgid "Done! Poll deleted."
-msgstr ""
+msgstr "Erledigt! Umfrage gelöscht."
 
 #: lib/MUPolls/Form/Plugin/Base/ColourInput.php:98
 msgid "Close"
@@ -538,7 +538,7 @@ msgstr "Beschreibung"
 #: templates/poll/view.tpl:73 templates/poll/edit.tpl:104
 #: templates/poll/view.csv.tpl:3
 msgid "Multiple"
-msgstr ""
+msgstr "Mehrfach"
 
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:134
 #: templates/external/poll/find.tpl:76 templates/external/poll/select.tpl:32
@@ -808,7 +808,7 @@ msgstr "Fehler! Ungültiger Bezeichner aufgerufen."
 
 #: lib/MUPolls/Entity/Repository/Base/Poll.php:177
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: lib/MUPolls/Entity/Repository/Base/Poll.php:178
 msgid "Yes"
@@ -929,17 +929,17 @@ msgstr "Wechsel zum Administrationsbereich."
 #: lib/MUPolls/Api/Base/User.php:50 lib/MUPolls/Api/Base/Admin.php:50
 #: templates/option/view.tpl:8
 msgid "Option list"
-msgstr ""
+msgstr "Liste der Optionen"
 
 #: lib/MUPolls/Api/Base/User.php:58 lib/MUPolls/Api/Base/Admin.php:58
 #: lib/MUPolls/Api/User.php:101 templates/poll/view.tpl:8
 msgid "Poll list"
-msgstr ""
+msgstr "Liste der Umfragen"
 
 #: lib/MUPolls/Api/Base/User.php:66 lib/MUPolls/Api/Base/Admin.php:66
 #: templates/vote/view.tpl:8
 msgid "Vote list"
-msgstr ""
+msgstr "Liste der Abstimmungen"
 
 #: lib/MUPolls/Api/Base/User.php:84 lib/MUPolls/Api/Base/User.php:226
 msgid "Invalid arguments array received."
@@ -963,7 +963,7 @@ msgstr "Verwalte die Einstellungen für MUPolls"
 
 #: lib/MUPolls/Api/Base/Account.php:51
 msgid "M u polls Backend"
-msgstr ""
+msgstr "MUPolls Backend"
 
 #: lib/MUPolls/Controller/Poll.php:65
 #: lib/MUPolls/Controller/Base/Option.php:269
@@ -990,7 +990,7 @@ msgstr ""
 
 #: lib/MUPolls/Controller/Vote.php:62
 msgid "You have to select one option!"
-msgstr ""
+msgstr "Sie müssen eine Option auswählen!"
 
 #: lib/MUPolls/Controller/Vote.php:67
 msgid "Thank you for voting."
@@ -1059,7 +1059,7 @@ msgstr "Aktionen"
 
 #: templates/vote/main.tpl:7
 msgid "Welcome to the vote section of the M u polls application."
-msgstr ""
+msgstr "Willkommen zum Bereich der Abstimmungen in MUPoll."
 
 #: templates/vote/view.tpl:21 templates/vote/edit.tpl:16
 msgid "Create vote"
@@ -1192,7 +1192,7 @@ msgstr "Fehler! Keine Objekttypen gefunden."
 #: templates/option/display.tpl:8 templates/external/option/find.tpl:50
 #: templates/external/option/select.tpl:14
 msgid "Option"
-msgstr ""
+msgstr "Option"
 
 #: templates/option/main.tpl:7
 msgid "Welcome to the option section of the M u polls application."
@@ -1200,7 +1200,7 @@ msgstr ""
 
 #: templates/option/view.tpl:21 templates/option/edit.tpl:16
 msgid "Create option"
-msgstr ""
+msgstr "Option erstellen"
 
 #: templates/option/view.tpl:85 templates/poll/view.tpl:94
 msgid "View detail page"
@@ -1209,7 +1209,7 @@ msgstr "Detailseite ansehen"
 #: templates/option/view.tpl:111 templates/mailz/itemlist_option_html.tpl:11
 #: templates/mailz/itemlist_option_text.tpl:7
 msgid "No options found."
-msgstr ""
+msgstr "Keine Optionen gefunden."
 
 #: templates/option/view.tpl:124
 msgid "With selected options"
@@ -1308,7 +1308,7 @@ msgstr ""
 #: templates/external/poll/find.tpl:50 templates/external/poll/select.tpl:14
 #: templates/poll/display.tpl:8
 msgid "Poll"
-msgstr ""
+msgstr "Umfrage"
 
 #: templates/external/poll/select.tpl:4
 msgid "Poll information"
@@ -1379,7 +1379,7 @@ msgstr ""
 
 #: templates/poll/edit.tpl:105
 msgid "multiple ?"
-msgstr ""
+msgstr "mehrfach?"
 
 #: templates/poll/edit.tpl:111 templates/poll/edit.tpl:113
 msgid "Enter the date of start of the poll"
