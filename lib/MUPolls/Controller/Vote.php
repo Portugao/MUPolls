@@ -54,11 +54,11 @@ class MUPolls_Controller_Vote extends MUPolls_Controller_Base_Vote
         } else {
         	$dom = ZLanguage::getModuleDomain($this->name);
         	
-        	$pollId = $this->request->request->filter('poll', FILTER_VALIDATE_INT);
-        	$optionId = $this->request->request->filter('option', FILTER_VALIDATE_INT);
+        	$pollId = $this->request->request->filter('poll', 0, FILTER_VALIDATE_INT);
+        	$optionId = $this->request->request->filter('option', 0, FILTER_VALIDATE_INT);
         	$currentUrl = $this->request->request->filter('currentUrl');
 
-        	if (!$optionId) {    		
+        	if ($optionId == 0) {    		
         		LogUtil::registerError(__('You have to select one option!', $dom));
         		return System::redirect($currentUrl);
         	}
