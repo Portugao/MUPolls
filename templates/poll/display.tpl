@@ -4,6 +4,11 @@
     {assign var='lct' value='admin'}
 {/if}
 {include file="`$lct`/header.tpl"}
+{if $lct eq 'user'}
+    {if $poll.description ne ''}
+        {pagesetvar name=description value=$poll.description|strip_tags|truncate:160}
+    {/if}
+{/if}
 <div class="mupolls-poll mupolls-display">
     {gt text='Poll' assign='templateTitle'}
     {assign var='templateTitle' value=$poll->getTitleFromDisplayPattern()|default:$templateTitle}
@@ -27,6 +32,11 @@
         <dd>{$poll.description}</dd>
         
     </dl>
+    {if $out ne ''}
+        <div id="mupoll-votecalculate">
+            {$out}
+        </div>
+    {/if}
     {include file='helper/includeStandardFieldsDisplay.tpl' obj=$poll}
 
     {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
