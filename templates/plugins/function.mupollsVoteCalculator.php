@@ -12,7 +12,7 @@
  */
 
 /**
- * The mupollsVoteCalculator plugin provides items for a dropdown selector.
+ * The mupollsVoteCalculator plugin provides an output about votes made.
  *
  * Available parameters:
  *   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
