@@ -14,7 +14,7 @@
 	/**
  * Version information base class.
  */
-class MUPolls_Version extends MUPolls_Base_Version
+class MUPolls_Version extends MUPolls_Base_AbstractVersion
 {
     /**
      * Retrieves meta data information for this application.
