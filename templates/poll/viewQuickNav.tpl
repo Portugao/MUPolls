@@ -67,7 +67,7 @@
             {/foreach}
             </select>
         {/if}
-        <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}" />
+        <input type="submit" name="updateview" id="mupolls_pollquicknav_updateview" value="{gt text='OK'}" />
     </fieldset>
 </form>
 <script type="text/javascript">
@@ -76,7 +76,7 @@
         mUMUPollsInitQuickNavigation('poll');
         {{if isset($searchFilter) && $searchFilter eq false}}
             {{* we can hide the submit button if we have no quick search field *}}
-            $('quicknavSubmit').addClassName('z-hide');
+            $('mupolls_pollquicknav_updateview').addClassName('z-hide');
         {{/if}}
     });
 /* ]]> */

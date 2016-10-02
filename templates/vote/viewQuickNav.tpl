@@ -55,7 +55,7 @@
                 <option value="100"{if $pageSize eq 100} selected="selected"{/if}>100</option>
             </select>
         {/if}
-        <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}" />
+        <input type="submit" name="updateview" id="mupolls_votequicknav_updateview" value="{gt text='OK'}" />
     </fieldset>
 </form>
 <script type="text/javascript">
@@ -64,7 +64,7 @@
         mUMUPollsInitQuickNavigation('vote');
         {{if isset($searchFilter) && $searchFilter eq false}}
             {{* we can hide the submit button if we have no quick search field *}}
-            $('quicknavSubmit').addClassName('z-hide');
+            $('mupolls_votequicknav_updateview').addClassName('z-hide');
         {{/if}}
     });
 /* ]]> */
