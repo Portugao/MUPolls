@@ -36,9 +36,8 @@
         <a href="{modurl modname='MUPolls' type=$lct func='view' ot='poll' all=1}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
     {/if}
 
-	{if $lct eq 'admin'}
-        {include file='poll/viewQuickNav.tpl' all=$all own=$own workflowStateFilter=false}{* see template file for available options *}
-	{/if}
+    {include file='poll/viewQuickNav.tpl' all=$all own=$own workflowStateFilter=false}{* see template file for available options *}
+
     {if $lct eq 'admin'}
     <form action="{modurl modname='MUPolls' type='poll' func='handleSelectedEntries' lct=$lct}" method="post" id="pollsViewForm" class="z-form">
         <div>
@@ -100,10 +99,10 @@
                     {$poll.multiple|yesno:true}
                 </td>
                 <td headers="hDateOfStart" class="z-left">
-                    {$poll.dateOfStart|dateformat:'datebrief'}
+                    {$poll.dateOfStart|dateformat:'datetimebrief'}
                 </td>
                 <td headers="hDateOfEnd" class="z-left">
-                    {$poll.dateOfEnd|dateformat:'datebrief'}
+                    {$poll.dateOfEnd|dateformat:'datetimebrief'}
                 </td>
                 <td id="itemActions{$poll.id}" headers="hItemActions" class="z-right z-nowrap z-w02">
                     {if count($poll._actions) gt 0}
