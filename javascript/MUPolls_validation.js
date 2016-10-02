@@ -35,6 +35,7 @@ function mUMUPollsToday(format)
         }
         todayDate += hours + ':' + minutes;// + ':' + seconds;
     }
+
     return todayDate;
 }
 
@@ -52,6 +53,7 @@ function mUMUPollsReadDate(val, includeTime)
         if (includeTime === true) {
             newVal += ' ' + val.substr(11, 5);
         }
+
         return newVal;
     }
 }
@@ -77,7 +79,13 @@ function mUMUPollsValidateDateRangePoll(val)
     var cmpVal, cmpVal2, result;
     cmpVal = mUMUPollsReadDate($F('dateOfStart'), true);
     cmpVal2 = mUMUPollsReadDate($F('dateOfEnd'), true);
-    result = (cmpVal <= cmpVal2);
+
+    if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
+        result = true;
+    } else {
+        result = (cmpVal <= cmpVal2);
+    }
+
     if (result) {
         $('advice-validate-daterange-poll-dateOfStart').hide();
         $('advice-validate-daterange-poll-dateOfEnd').hide();
