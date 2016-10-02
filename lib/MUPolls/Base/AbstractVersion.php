@@ -25,7 +25,7 @@ abstract class MUPolls_Base_AbstractVersion extends Zikula_AbstractVersion
     {
         $meta = array();
         // the current module version
-        $meta['version']              = '0.5.0';
+        $meta['version']              = '1.0.0';
         // the displayed name of the module
         $meta['displayname']          = $this->__('M u polls');
         // the module description
