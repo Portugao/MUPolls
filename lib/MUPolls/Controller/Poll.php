@@ -16,7 +16,7 @@ include_once 'modules/MUPolls/templates/plugins/function.mupollsVoteCalculator.p
 /**
  * Poll controller class providing navigation and interaction functionality.
  */
-class MUPolls_Controller_Poll extends MUPolls_Controller_Base_Poll
+class MUPolls_Controller_Poll extends MUPolls_Controller_Base_AbstractPoll
 {
     /**
      * This action provides a item detail view.

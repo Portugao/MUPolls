@@ -14,7 +14,7 @@
 /**
  * This is the User api helper class.
  */
-class MUPolls_Api_User extends MUPolls_Api_Base_User
+class MUPolls_Api_User extends MUPolls_Api_Base_AbstracttUser
 {
     /*
      * This function is for getting votes of users saved

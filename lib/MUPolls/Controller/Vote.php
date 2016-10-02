@@ -14,7 +14,7 @@
 /**
  * Vote controller class providing navigation and interaction functionality.
  */
-class MUPolls_Controller_Vote extends MUPolls_Controller_Base_Vote
+class MUPolls_Controller_Vote extends MUPolls_Controller_Base_AbstractVote
 {
     /**
      * This action provides a handling of edit requests.
