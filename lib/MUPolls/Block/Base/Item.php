@@ -14,7 +14,7 @@
 /**
  * Generic item block base class.
  */
-class MUPolls_Block_Base_Item extends Zikula_Controller_AbstractBlock
+class MUPolls_Block_Base_AbstractItem extends Zikula_Controller_AbstractBlock
 {
     /**
      * Initialise the block.

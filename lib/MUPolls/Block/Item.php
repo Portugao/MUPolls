@@ -14,7 +14,7 @@
 /**
  * Generic item block implementation class.
  */
-class MUPolls_Block_Item extends MUPolls_Block_Base_Item
+class MUPolls_Block_Item extends MUPolls_Block_Base_AbstractItem
 {
     // feel free to extend the item block here
 }
