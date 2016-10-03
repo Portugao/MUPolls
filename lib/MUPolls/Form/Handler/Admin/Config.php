@@ -16,5 +16,34 @@
  */
 class MUPolls_Form_Handler_Admin_Config extends MUPolls_Form_Handler_Admin_Base_AbstractConfig
 {
-    // feel free to extend the base handler class here
+    /**
+     * Initialize form handler.
+     *
+     * This method takes care of all necessary initialisation of our data and form states.
+     *
+     * @param Zikula_Form_View $view The form view instance
+     *
+     * @return boolean False in case of initialization errors, otherwise true
+     */
+    public function initialize(Zikula_Form_View $view)
+    {
+        // permission check
+        if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+            return $view->registerError(LogUtil::registerPermissionError());
+        }
+
+        // retrieve module vars
+        $modVars = $this->getVars();
+
+        // initialise list entries for the 'kind of voting' setting
+        
+        $modVars['kindOfVotingItems'] = array(array(array('value' => 'session', 'text' => 'Session'))
+        );
+
+        // assign all module vars
+        $this->view->assign('config', $modVars);
+
+        // everything okay, no initialization errors occured
+        return true;
+    }
 }
