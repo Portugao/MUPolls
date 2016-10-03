@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Zikula 1.x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-20 21:51+0200\n"
-"PO-Revision-Date: 2016-08-02 10:00+0200\n"
+"PO-Revision-Date: 2016-10-03 12:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -175,6 +175,8 @@ msgid ""
 "Sorry, but you can not create the vote yet as other items are required which "
 "must be created before!"
 msgstr ""
+"Entschuldigung, aber Du kannst eine Abstimmung nicht erstellen solange "
+"andere Elemente nicht erstellt sind!"
 
 #: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:164
 msgid "Done! Vote created."
@@ -187,7 +189,7 @@ msgstr "Erledigt! Abstimmung aktualisiert."
 
 #: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:170
 msgid "Done! Vote deleted."
-msgstr ""
+msgstr "Erledigt! Abstimmung gelöscht."
 
 #: lib/MUPolls/Form/Handler/Vote/Base/Edit.php:204
 #: lib/MUPolls/Form/Handler/Option/Base/Edit.php:204
@@ -211,6 +213,8 @@ msgid ""
 "Sorry, but you can not create the option yet as other items are required "
 "which must be created before!"
 msgstr ""
+"Entschuldigung, aber Du kannst eine Option nicht erstellen solange andere "
+"Elemente nicht erstellt sind!"
 
 #: lib/MUPolls/Form/Handler/Option/Base/Edit.php:164
 msgid "Done! Option created."
@@ -223,7 +227,7 @@ msgstr "Erledigt! Option aktualisiert."
 
 #: lib/MUPolls/Form/Handler/Option/Base/Edit.php:170
 msgid "Done! Option deleted."
-msgstr ""
+msgstr "Erledigt! Option gelöscht."
 
 #: lib/MUPolls/Form/Handler/Common/Base/Edit.php:229
 #: lib/MUPolls/Controller/Base/Option.php:386
@@ -286,6 +290,8 @@ msgid ""
 "Sorry, but you can not create the poll yet as other items are required which "
 "must be created before!"
 msgstr ""
+"Entschuldigung, aber Du kannst eine Umfrage nicht erstellen solange andere "
+"Elemente nicht erstellt sind!"
 
 #: lib/MUPolls/Form/Handler/Poll/Base/Edit.php:164
 msgid "Done! Poll created."
@@ -314,7 +320,7 @@ msgstr "Unbekanntes Datum"
 
 #: lib/MUPolls/Form/Plugin/Base/UserInput.php:97
 msgid "Search user"
-msgstr ""
+msgstr "Suche Benutzer"
 
 #: lib/MUPolls/Form/Plugin/Base/UserInput.php:103
 msgid "No results found!"
@@ -326,7 +332,7 @@ msgstr "Diese Funktion verlangt aktiviertes Javascript!"
 
 #: lib/MUPolls/Form/Plugin/Base/UserInput.php:152
 msgid "Error! Invalid user."
-msgstr ""
+msgstr "Fehler. Ungültiger Benutzer."
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:71
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:71
@@ -358,12 +364,12 @@ msgstr "Einfügen als"
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:105
 #: templates/external/vote/find.tpl:43
 msgid "Link to the vote"
-msgstr ""
+msgstr "Link zur Abstimmung"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:106
 #: templates/external/vote/find.tpl:44
 msgid "ID of vote"
-msgstr ""
+msgstr "ID der Abstimmung"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:124
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:124
@@ -393,7 +399,7 @@ msgstr "Id"
 #: templates/vote/view.csv.tpl:3 templates/external/vote/find.tpl:72
 #: templates/external/vote/select.tpl:29
 msgid "Id of option"
-msgstr ""
+msgstr "ID der Option"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:132
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:133
@@ -406,7 +412,7 @@ msgstr ""
 #: templates/external/option/find.tpl:75
 #: templates/external/option/select.tpl:31
 msgid "Id of poll"
-msgstr ""
+msgstr "ID der Umfrage"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:133
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:134
@@ -445,19 +451,19 @@ msgstr "Aktualisierungsdatum"
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:143
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:145
 msgid "Sort direction"
-msgstr ""
+msgstr "Sortierrichtung"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:148
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:149
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:151
 msgid "Ascending"
-msgstr ""
+msgstr "Aufsteigend"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:149
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:150
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:152
 msgid "Descending"
-msgstr ""
+msgstr "Absteigend"
 
 #: lib/MUPolls/Form/Type/Finder/Base/VoteFinderType.php:167
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:168
@@ -476,17 +482,17 @@ msgstr "Seitengröße"
 #: templates/external/option/select.tpl:43 templates/external/poll/find.tpl:102
 #: templates/external/poll/select.tpl:45
 msgid "Search for"
-msgstr ""
+msgstr "Suche nach"
 
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:105
 #: templates/external/option/find.tpl:43
 msgid "Link to the option"
-msgstr ""
+msgstr "Link zur Option"
 
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:106
 #: templates/external/option/find.tpl:44
 msgid "ID of option"
-msgstr ""
+msgstr "ID der Option"
 
 #: lib/MUPolls/Form/Type/Finder/Base/OptionFinderType.php:131
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:131
@@ -510,12 +516,12 @@ msgstr "Titel"
 #: templates/option/view.csv.tpl:3 templates/external/option/find.tpl:74
 #: templates/external/option/select.tpl:30
 msgid "Color of option"
-msgstr ""
+msgstr "Farbe der Option"
 
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:105
 #: templates/external/poll/find.tpl:43
 msgid "Link to the poll"
-msgstr ""
+msgstr "Link zur Umfrage"
 
 #: lib/MUPolls/Form/Type/Finder/Base/PollFinderType.php:106
 #: templates/external/poll/find.tpl:44
@@ -556,11 +562,11 @@ msgstr "Enddatum"
 
 #: lib/MUPolls/ContentType/Base/Item.php:52
 msgid "MUPolls detail view"
-msgstr ""
+msgstr "MUPolls Detailansicht"
 
 #: lib/MUPolls/ContentType/Base/Item.php:64
 msgid "Display or link a single MUPolls object."
-msgstr ""
+msgstr "Zeige oder verweise auf ein einzelnes MUPolls Objekt."
 
 #: lib/MUPolls/ContentType/Base/Item.php:120
 msgid "No item selected."
@@ -569,16 +575,16 @@ msgstr "Kein Element ausgewählt."
 #: lib/MUPolls/ContentType/Base/ItemList.php:90
 #: lib/MUPolls/Block/Base/ItemList.php:42
 msgid "MUPolls list view"
-msgstr ""
+msgstr "MUPolls Listensicht"
 
 #: lib/MUPolls/ContentType/Base/ItemList.php:102
 #: lib/MUPolls/Block/Base/ItemList.php:43
 msgid "Display list of MUPolls objects."
-msgstr ""
+msgstr "Zeige eine Liste von MUPolls Objekten."
 
 #: lib/MUPolls/Base/Installer.php:31 lib/MUPolls/Base/Installer.php:107
 msgid "Doctrine Exception"
-msgstr ""
+msgstr "Doctrine Ausnahme"
 
 #: lib/MUPolls/Base/Installer.php:33
 #, php-format
@@ -612,32 +618,32 @@ msgstr ""
 
 #: lib/MUPolls/Base/Version.php:30 templates/user/header.tpl:14
 msgid "M u polls"
-msgstr ""
+msgstr "MUPolls"
 
 #: lib/MUPolls/Base/Version.php:32
 msgid "M u polls module generated by ModuleStudio 0.7.0."
-msgstr ""
+msgstr "MUPolls generiert mit ModuleStudio 0.7.0."
 
 #. ! url version of name, should be in lowercase without space
 #: lib/MUPolls/Base/Version.php:34
 msgid "mupolls"
-msgstr ""
+msgstr "mupolls"
 
 #: lib/MUPolls/Base/Version.php:66
 msgid "mupolls. Options Display Hooks"
-msgstr ""
+msgstr "mupolls. Optionen Display Hooks"
 
 #: lib/MUPolls/Base/Version.php:84
 msgid "mupolls. Options Filter Hooks"
-msgstr ""
+msgstr "mupolls. Optionen Filter Hooks"
 
 #: lib/MUPolls/Base/Version.php:89
 msgid "mupolls. Polls Display Hooks"
-msgstr ""
+msgstr "mupolls. Umfragen Display Hooks"
 
 #: lib/MUPolls/Base/Version.php:107
 msgid "mupolls. Polls Filter Hooks"
-msgstr ""
+msgstr "mupolls. Umfragen Filter Hooks"
 
 #: lib/MUPolls/Base/Version.php:112
 msgid "mupolls. Votes Display Hooks"
@@ -655,23 +661,23 @@ msgstr ""
 
 #: lib/MUPolls/Block/Base/Item.php:42
 msgid "MUPolls item view"
-msgstr ""
+msgstr "MUPolls Element Ansicht"
 
 #: lib/MUPolls/Block/Base/Item.php:43
 msgid "Display item of MUPolls objects."
-msgstr ""
+msgstr "Zeige ein Element von MUPolls Objekten."
 
 #: lib/MUPolls/Block/Base/Item.php:146
 msgid "MUPolls item"
-msgstr ""
+msgstr "MUPolls Element"
 
 #: lib/MUPolls/Block/Base/ItemList.php:135
 msgid "MUPolls items"
-msgstr ""
+msgstr "MUPolls Elemente"
 
 #: lib/MUPolls/NewsletterPlugin/ItemList.php:27
 msgid "Latest MUPolls items"
-msgstr ""
+msgstr "Letzte MUPolls Elemente"
 
 #: lib/MUPolls/NewsletterPlugin/ItemList.php:37
 msgid "List of polls and other MUPolls items"
@@ -904,7 +910,7 @@ msgstr "Fehler! Konnte das Suchergebnis nicht speichern."
 
 #: lib/MUPolls/Api/Base/Mailz.php:32
 msgid "3 newest polls"
-msgstr ""
+msgstr "3 aktuelle Umfragen"
 
 #: lib/MUPolls/Api/Base/Mailz.php:33
 msgid "A list of the three newest polls."
@@ -912,7 +918,7 @@ msgstr ""
 
 #: lib/MUPolls/Api/Base/Mailz.php:38
 msgid "3 random polls"
-msgstr ""
+msgstr "3 zufällige Umfragen"
 
 #: lib/MUPolls/Api/Base/Mailz.php:39
 msgid "A list of three random polls."
@@ -1063,7 +1069,7 @@ msgstr "Willkommen zum Bereich der Abstimmungen in MUPoll."
 
 #: templates/vote/view.tpl:21 templates/vote/edit.tpl:16
 msgid "Create vote"
-msgstr ""
+msgstr "Abstimmung erstellen"
 
 #: templates/vote/view.tpl:31 templates/option/view.tpl:31
 #: templates/poll/view.tpl:31
@@ -1078,11 +1084,11 @@ msgstr "Alle Einträge anzeigen"
 #: templates/vote/view.tpl:104 templates/mailz/itemlist_vote_text.tpl:7
 #: templates/mailz/itemlist_vote_html.tpl:11
 msgid "No votes found."
-msgstr ""
+msgstr "Keine Abstimmungen gefunden."
 
 #: templates/vote/view.tpl:117
 msgid "With selected votes"
-msgstr ""
+msgstr "Die ausgewählten Abstimmungen"
 
 #: templates/vote/view.tpl:119 templates/option/view.tpl:126
 #: templates/poll/view.tpl:141
@@ -1213,7 +1219,7 @@ msgstr "Keine Optionen gefunden."
 
 #: templates/option/view.tpl:124
 msgid "With selected options"
-msgstr ""
+msgstr "Die ausgewählten Optionen"
 
 #: templates/option/view.atom.tpl:8 templates/option/view.rss.tpl:16
 msgid "Latest options"
@@ -1320,7 +1326,7 @@ msgstr "Einstellungen"
 
 #: templates/admin/config.tpl:15
 msgid "My settings"
-msgstr ""
+msgstr "Meine Einstellungen"
 
 #: templates/admin/config.tpl:19
 msgid "Here you can manage all basic settings for this application."
@@ -1328,7 +1334,7 @@ msgstr "Hier kannst Du die Grundeinstellungen für dieses Modul verwalten."
 
 #: templates/admin/config.tpl:22
 msgid "Kind of voting"
-msgstr ""
+msgstr "Art der Abstimmung"
 
 #: templates/admin/config.tpl:23
 msgid "Choose the kind of voting"
@@ -1340,16 +1346,16 @@ msgstr "Einstellungen aktualisieren"
 
 #: templates/poll/main.tpl:7
 msgid "Welcome to the poll section of the M u polls application."
-msgstr ""
+msgstr "Willkommen zum Bereich der Umfragen"
 
 #: templates/poll/view.tpl:21 templates/poll/edit.tpl:16
 msgid "Create poll"
-msgstr ""
+msgstr "Umfrage erstellen"
 
 #: templates/poll/view.tpl:126 templates/mailz/itemlist_poll_html.tpl:11
 #: templates/mailz/itemlist_poll_text.tpl:7
 msgid "No polls found."
-msgstr ""
+msgstr "Keine Umfragen gefunden."
 
 #: templates/poll/view.tpl:139
 msgid "With selected polls"
