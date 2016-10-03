@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Zikula 1.x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-20 21:51+0200\n"
-"PO-Revision-Date: 2016-10-03 12:29+0200\n"
+"PO-Revision-Date: 2016-10-03 12:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -647,17 +647,19 @@ msgstr "mupolls. Umfragen Filter Hooks"
 
 #: lib/MUPolls/Base/Version.php:112
 msgid "mupolls. Votes Display Hooks"
-msgstr ""
+msgstr "mupolls. Abstimmungen Display Hooks"
 
 #: lib/MUPolls/Base/Version.php:130
 msgid "mupolls. Votes Filter Hooks"
-msgstr ""
+msgstr "mupolls. Abstimmungen Filter Hooks"
 
 #: lib/MUPolls/Block/Base/Item.php:37 lib/MUPolls/Block/Base/ItemList.php:37
 msgid ""
 "Notice: This block will not be displayed until you activate the MUPolls "
 "module."
 msgstr ""
+"Anmerkung. Dieser Block wird nur angezeigt, wenn das Modul MUPolls aktiviert "
+"ist."
 
 #: lib/MUPolls/Block/Base/Item.php:42
 msgid "MUPolls item view"
@@ -681,12 +683,14 @@ msgstr "Letzte MUPolls Elemente"
 
 #: lib/MUPolls/NewsletterPlugin/ItemList.php:37
 msgid "List of polls and other MUPolls items"
-msgstr ""
+msgstr "Liste von Umfragen und anderen Elementen"
 
 #: lib/MUPolls/NewsletterPlugin/ItemList.php:47
 msgid ""
 "This plugin shows a list of polls and other items of the MUPolls module."
 msgstr ""
+"Dieses Plugin zeigt eine Liste von Umfragen und anderen Elementen von "
+"MUPolls."
 
 #: lib/MUPolls/Version.php:28
 msgid "MUPolls"
@@ -694,7 +698,7 @@ msgstr "MUPolls"
 
 #: lib/MUPolls/Version.php:30
 msgid "MPolls is a module for Polls."
-msgstr ""
+msgstr "MUPolls ist ein Modul für Umfragen"
 
 #: lib/MUPolls/Util/Base/ListEntries.php:187
 #: lib/MUPolls/Util/Base/ListEntries.php:213
@@ -765,13 +769,13 @@ msgstr "Fehler! Der Wert des Feldes darf nicht leer sein (%s)."
 #: lib/MUPolls/Entity/Validator/Base/Option.php:55
 #, php-format
 msgid "Error! Field value must not contain space chars (%s)."
-msgstr ""
+msgstr "Fehler! Der Wert des Feldes darf keine Leerzeichen enthalten (%s)."
 
 #: lib/MUPolls/Entity/Validator/Base/Option.php:59
 #, php-format
 msgid ""
 "Error! Field value must be a valid html colour code [#123 or #123456] (%s)."
-msgstr ""
+msgstr "Fehler! Der Wert des Feldes muss ein gültiger html Farbcode sein (%s)."
 
 #: lib/MUPolls/Entity/Validator/Base/Option.php:67
 #: lib/MUPolls/Entity/Validator/Base/Vote.php:47
@@ -788,7 +792,7 @@ msgstr "Fehler! Das Feld benötigt einen gültigen booleschen Wert (%s)."
 #: lib/MUPolls/Entity/Validator/Base/Poll.php:59
 #, php-format
 msgid "Error! The start date (%1$s) must be before the end date (%2$s)."
-msgstr ""
+msgstr "Fehler! Das Startdatum (%1$s) muss vor dem Enddatum liegen (%2$s)."
 
 #: lib/MUPolls/Entity/Repository/Base/Option.php:245
 #: lib/MUPolls/Entity/Repository/Base/Option.php:274
@@ -914,7 +918,7 @@ msgstr "3 aktuelle Umfragen"
 
 #: lib/MUPolls/Api/Base/Mailz.php:33
 msgid "A list of the three newest polls."
-msgstr ""
+msgstr "Eine Liste 3 aktueller Umfragen."
 
 #: lib/MUPolls/Api/Base/Mailz.php:38
 msgid "3 random polls"
@@ -922,7 +926,7 @@ msgstr "3 zufällige Umfragen"
 
 #: lib/MUPolls/Api/Base/Mailz.php:39
 msgid "A list of three random polls."
-msgstr ""
+msgstr "Eine Liste 3 zufälliger Umfragen."
 
 #: lib/MUPolls/Api/Base/User.php:39 lib/MUPolls/Api/User.php:90
 msgid "Backend"
@@ -983,11 +987,11 @@ msgstr "Fehler! Ungültiger Bezeichner aufgerufen."
 
 #: lib/MUPolls/Controller/Base/Option.php:408
 msgid "Error! It is not allowed to delete this option."
-msgstr ""
+msgstr "Fehler! Es ist nicht erlaubt, die Option zu löschen."
 
 #: lib/MUPolls/Controller/Base/Poll.php:408
 msgid "Error! It is not allowed to delete this poll."
-msgstr ""
+msgstr "Fehler! Es ist nicht erlaubt, die Umfrage zu löschen."
 
 #: lib/MUPolls/Controller/Base/External.php:145
 msgid "Error: Invalid editor context given for external controller action."
@@ -1107,15 +1111,15 @@ msgstr "Abschicken"
 
 #: templates/vote/view.atom.tpl:8 templates/vote/view.rss.tpl:16
 msgid "Latest votes"
-msgstr ""
+msgstr "Letzte Abstimmungen"
 
 #: templates/vote/view.atom.tpl:9 templates/vote/view.rss.tpl:19
 msgid "A direct feed showing the list of votes"
-msgstr ""
+msgstr "Ein Feed, der eine Liste von Abstimmungen zeigt"
 
 #: templates/vote/edit.tpl:11
 msgid "Edit vote"
-msgstr ""
+msgstr "Abstimmung bearbeiten"
 
 #: templates/vote/edit.tpl:37
 msgid "Content"
@@ -1123,11 +1127,11 @@ msgstr "Inhalt"
 
 #: templates/vote/edit.tpl:41
 msgid "Enter the id of option of the vote"
-msgstr ""
+msgstr "Gib die ID der Option für die Abstimmung ein"
 
 #: templates/vote/edit.tpl:48
 msgid "Enter the id of poll of the vote"
-msgstr ""
+msgstr "Gib die ID der Umfrage für die Abstimmung ein"
 
 #: templates/vote/edit.tpl:79 templates/option/edit.tpl:128
 #: templates/poll/edit.tpl:156
@@ -1141,7 +1145,7 @@ msgstr "Ein weiteres Element nach dem Speichern erstellen"
 
 #: templates/vote/edit.tpl:94
 msgid "Really delete this vote?"
-msgstr ""
+msgstr "Diese Abstimmung wirklich löschen?"
 
 #: templates/plugin_config/ItemList.tpl:14
 #: templates/contenttype/itemlist_edit.tpl:38
@@ -1189,7 +1193,7 @@ msgstr "Syntax Beispiele"
 #: templates/contenttype/itemlist_edit.tpl:78
 #: templates/block/itemlist_modify.tpl:70
 msgid "or"
-msgstr ""
+msgstr "oder"
 
 #: templates/plugin_config/ItemList.tpl:36
 msgid "No object types found."
@@ -1202,7 +1206,7 @@ msgstr "Option"
 
 #: templates/option/main.tpl:7
 msgid "Welcome to the option section of the M u polls application."
-msgstr ""
+msgstr "Willkommen zum Bereich der Optionen."
 
 #: templates/option/view.tpl:21 templates/option/edit.tpl:16
 msgid "Create option"
@@ -1223,44 +1227,44 @@ msgstr "Die ausgewählten Optionen"
 
 #: templates/option/view.atom.tpl:8 templates/option/view.rss.tpl:16
 msgid "Latest options"
-msgstr ""
+msgstr "Letzte Optionen"
 
 #: templates/option/view.atom.tpl:9 templates/option/view.rss.tpl:19
 msgid "A direct feed showing the list of options"
-msgstr ""
+msgstr "Ein Feed, der eine Liste der Optionen anzeigt"
 
 #: templates/option/edit.tpl:11
 msgid "Edit option"
-msgstr ""
+msgstr "Option bearbeiten"
 
 #: templates/option/edit.tpl:50 templates/option/edit.tpl:63
 #: templates/option/edit.tpl:79
 msgid "Enter the title of the option"
-msgstr ""
+msgstr "Gib den Titel der Option ein"
 
 #: templates/option/edit.tpl:86 templates/poll/edit.tpl:101
 msgid "Further properties"
-msgstr ""
+msgstr "Weitere Eigenschaften"
 
 #: templates/option/edit.tpl:90
 msgid "Choose the color of option of the option"
-msgstr ""
+msgstr "Wähle die Farbe der Option"
 
 #: templates/option/edit.tpl:97
 msgid "Enter the id of poll of the option"
-msgstr ""
+msgstr "Gib die ID der Umfrage für die Option ein"
 
 #: templates/option/edit.tpl:143
 msgid "Really delete this option?"
-msgstr ""
+msgstr "Diese Option wirklich löschen?"
 
 #: templates/option/delete.tpl:8
 msgid "Delete option"
-msgstr ""
+msgstr "Option löschen"
 
 #: templates/option/delete.tpl:19
 msgid "Do you really want to delete this option ?"
-msgstr ""
+msgstr "Willst Du diese Option wirklich löschen?"
 
 #: templates/option/delete.tpl:26 templates/poll/delete.tpl:26
 msgid "Confirmation prompt"
@@ -1269,7 +1273,7 @@ msgstr "Sicherheitsabfrage"
 #: templates/external/vote/find.tpl:5 templates/external/vote/find.tpl:38
 #: templates/external/option/find.tpl:27 templates/external/poll/find.tpl:27
 msgid "Search and select vote"
-msgstr ""
+msgstr "Suche und wähle ein Abstimmung"
 
 #: templates/external/vote/find.tpl:25 templates/external/option/find.tpl:25
 #: templates/external/poll/find.tpl:25
@@ -1279,12 +1283,12 @@ msgstr "Wechsel zu"
 #: templates/external/vote/find.tpl:26 templates/external/option/find.tpl:5
 #: templates/external/option/find.tpl:38 templates/external/poll/find.tpl:26
 msgid "Search and select option"
-msgstr ""
+msgstr "Suche und wähle ein Option"
 
 #: templates/external/vote/find.tpl:27 templates/external/option/find.tpl:26
 #: templates/external/poll/find.tpl:5 templates/external/poll/find.tpl:38
 msgid "Search and select poll"
-msgstr ""
+msgstr "Suche und wähle ein Umfrage"
 
 #: templates/external/vote/find.tpl:62 templates/external/vote/select.tpl:19
 #: templates/external/option/find.tpl:63
@@ -1305,11 +1309,11 @@ msgstr "Filter"
 
 #: templates/external/vote/select.tpl:4
 msgid "Vote information"
-msgstr ""
+msgstr "Abstimmungs Informationen"
 
 #: templates/external/option/select.tpl:4
 msgid "Option information"
-msgstr ""
+msgstr "Optionen Informationen"
 
 #: templates/external/poll/find.tpl:50 templates/external/poll/select.tpl:14
 #: templates/poll/display.tpl:8
@@ -1318,7 +1322,7 @@ msgstr "Umfrage"
 
 #: templates/external/poll/select.tpl:4
 msgid "Poll information"
-msgstr ""
+msgstr "Umfrage Informationen"
 
 #: templates/admin/config.tpl:4 templates/admin/config.tpl:7
 msgid "Settings"
@@ -1338,7 +1342,7 @@ msgstr "Art der Abstimmung"
 
 #: templates/admin/config.tpl:23
 msgid "Choose the kind of voting"
-msgstr ""
+msgstr "Wähle die Art der Abstimmungen"
 
 #: templates/admin/config.tpl:28
 msgid "Update configuration"
@@ -1359,7 +1363,7 @@ msgstr "Keine Umfragen gefunden."
 
 #: templates/poll/view.tpl:139
 msgid "With selected polls"
-msgstr ""
+msgstr "Gewählte Umfragen"
 
 #: templates/poll/view.atom.tpl:8 templates/poll/view.rss.tpl:16
 msgid "Latest polls"
@@ -1367,21 +1371,21 @@ msgstr "Neuste Umfragen"
 
 #: templates/poll/view.atom.tpl:9 templates/poll/view.rss.tpl:19
 msgid "A direct feed showing the list of polls"
-msgstr ""
+msgstr "Ein Feed, der eine Liste der Umfragen anzeigt"
 
 #: templates/poll/edit.tpl:11
 msgid "Edit poll"
-msgstr ""
+msgstr "Umfrage bearbeiten"
 
 #: templates/poll/edit.tpl:50 templates/poll/edit.tpl:68
 #: templates/poll/edit.tpl:89
 msgid "Enter the title of the poll"
-msgstr ""
+msgstr "Gib den Titel der Umfrage ein"
 
 #: templates/poll/edit.tpl:56 templates/poll/edit.tpl:74
 #: templates/poll/edit.tpl:95
 msgid "Enter the description of the poll"
-msgstr ""
+msgstr "Gib die Beschreibung der Umfrage ein"
 
 #: templates/poll/edit.tpl:105
 msgid "multiple ?"
@@ -1389,7 +1393,7 @@ msgstr "mehrfach?"
 
 #: templates/poll/edit.tpl:111 templates/poll/edit.tpl:113
 msgid "Enter the date of start of the poll"
-msgstr ""
+msgstr "Gib das Startdatum der Umfrage ein"
 
 #: templates/poll/edit.tpl:115 templates/poll/edit.tpl:126
 msgid "Reset to empty value"
@@ -1397,7 +1401,7 @@ msgstr "Zurück setzen"
 
 #: templates/poll/edit.tpl:122 templates/poll/edit.tpl:124
 msgid "Enter the date of end of the poll"
-msgstr ""
+msgstr "Gib das Enddatum der Umfrage ein"
 
 #: templates/poll/edit.tpl:171
 msgid "Really delete this poll?"
@@ -1532,7 +1536,7 @@ msgstr ""
 
 #: templates/block/item_modify.tpl:13
 msgid "Item Id"
-msgstr ""
+msgstr "Element ID"
 
 msgid "This poll ends on"
 msgstr "Diese Umfrage endet am"
