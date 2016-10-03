@@ -37,7 +37,7 @@ class MUPolls_Form_Handler_Admin_Config extends MUPolls_Form_Handler_Admin_Base_
 
         // initialise list entries for the 'kind of voting' setting
         
-        $modVars['kindOfVotingItems'] = array(array(array('value' => 'session', 'text' => 'Session'))
+        $modVars['kindOfVotingItems'] = array(array('value' => 'session', 'text' => 'Session')
         );
 
         // assign all module vars
