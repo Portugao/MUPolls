@@ -16,7 +16,7 @@
  *
  * This is the concrete repository class for option entities.
  */
-class MUPolls_Entity_Repository_Option extends MUPolls_Entity_Repository_Base_Option
+class MUPolls_Entity_Repository_Option extends MUPolls_Entity_Repository_Base_AbstractOption
 {
     /**
      * @var string The default sorting field/expression.
