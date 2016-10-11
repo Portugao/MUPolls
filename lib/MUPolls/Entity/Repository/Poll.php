@@ -18,5 +18,36 @@
  */
 class MUPolls_Entity_Repository_Poll extends MUPolls_Entity_Repository_Base_AbstractPoll
 {
-    // feel free to add your own methods here, like for example reusable DQL queries
+    /**
+     * Adds default filters as where clauses.
+     *
+     * @param QueryBuilder $qb         Query builder to be enhanced
+     * @param array        $parameters List of determined filter options
+     *
+     * @return QueryBuilder Enriched query builder instance
+     */
+    protected function applyDefaultFilters(QueryBuilder $qb, $parameters = array())
+    {
+        $currentModule = ModUtil::getName();
+        $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+        if ($currentLegacyControllerType == 'admin' && $currentModule == 'MUPolls') {
+            return $qb;
+        }
+    
+        if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+            // per default we show approved polls only
+            $onlineStates = array('approved');
+            $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+               ->setParameter('onlineStates', $onlineStates);
+        }
+        /* we do not need this
+        $startDate = FormUtil::getPassedValue('dateOfStart', date('Y-m-d H:i:s'), 'GET');
+        $qb->andWhere('(tbl.dateOfStart <= :startDate OR tbl.dateOfStart IS NULL)')
+           ->setParameter('startDate', $startDate);
+        $endDate = FormUtil::getPassedValue('dateOfEnd', date('Y-m-d H:i:s'), 'GET');
+        $qb->andWhere('(tbl.dateOfEnd >= :endDate OR tbl.dateOfEnd IS NULL)')
+           ->setParameter('endDate', $endDate);*/
+    
+        return $qb;
+    }
 }

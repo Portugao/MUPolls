@@ -72,6 +72,13 @@ class MUPolls_Controller_Poll extends MUPolls_Controller_Base_AbstractPoll
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
         
+        $now = date('Y-m-d H:i:s');
+        $dateOfStart = $entity['dateOfStart']->format('Y-m-d H:i:s');
+        if ($dateOfStart > $now && $legacyControllerType == 'user') {
+        	LogUtil::registerError($dateOfStart);
+        	return System::redirect(ModUtil::url($this->name, 'user'));
+        }
+        
         $entity->initWorkflow();
         
         // build ModUrl instance for display hooks; also create identifier for permission check
@@ -133,5 +140,193 @@ class MUPolls_Controller_Poll extends MUPolls_Controller_Base_AbstractPoll
         
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($this->view, $objectType, 'display', array(), $templateFile);
+    }
+    
+    /**
+     * This action provides an item list overview.
+     *
+     * @param string  $sort         Sorting field
+     * @param string  $sortdir      Sorting direction
+     * @param int     $pos          Current pager position
+     * @param int     $num          Amount of entries to display
+     * @param string  $tpl          Name of alternative template (to be used instead of the default template)
+     * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output)
+     *
+     * @return mixed Output
+     */
+    public function view()
+    {
+    	$legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+    	System::queryStringSetVar('type', $legacyControllerType);
+    	$this->request->query->set('type', $legacyControllerType);
+    
+    	$controllerHelper = new MUPolls_Util_Controller($this->serviceManager);
+    
+    	// parameter specifying which type of objects we are treating
+    	$objectType = 'poll';
+    	$utilArgs = array('controller' => 'poll', 'action' => 'view');
+    	$permLevel = $legacyControllerType == 'admin' ? ACCESS_ADMIN : ACCESS_READ;
+    	$this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', $permLevel), LogUtil::getErrorMsgPermission());
+    	$entityClass = $this->name . '_Entity_' . ucfirst($objectType);
+    	$repository = $this->entityManager->getRepository($entityClass);
+    	$repository->setControllerArguments(array());
+    	$viewHelper = new MUPolls_Util_View($this->serviceManager);
+    
+    	// convenience vars to make code clearer
+    	$currentUrlArgs = array();
+    	$where = '';
+    
+    	//$showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
+    	//$showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
+    	
+    	$showOwnEntries = 0;
+    	$showAllEntries = 1;
+    
+    	$this->view->assign('showOwnEntries', $showOwnEntries)
+    	->assign('showAllEntries', $showAllEntries);
+    	if ($showOwnEntries == 1) {
+    		$currentUrlArgs['own'] = 1;
+    	}
+    	if ($showAllEntries == 1) {
+    		$currentUrlArgs['all'] = 1;
+    	}
+    
+    	$additionalParameters = $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs);
+    
+    	$resultsPerPage = 0;
+    	if ($showAllEntries != 1) {
+    		// the number of items displayed on a page for pagination
+    		$resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+    		if ($resultsPerPage == 0) {
+    			$resultsPerPage = $this->getVar('pageSize', 10);
+    		}
+    	}
+    
+    	// parameter for used sorting field
+    	$sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
+    	if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+    		$sort = $repository->getDefaultSortingField();
+    	}
+    
+    	// parameter for used sort order
+    	$sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+    	$sortdir = strtolower($sortdir);
+    	if ($sortdir != 'asc' && $sortdir != 'desc') {
+    		$sortdir = 'asc';
+    	}
+    	
+    	$now = date('Y-m-d H:i:s');
+    	
+    	$where = '';
+    	
+    	if ($legacyControllerType == 'user') {
+    	    $where = '(tbl.dateOfStart <= \'' . DataUtil::formatForStore($now) . '\'';
+    	    $where .= ' OR ';
+    	    $where .= 'tbl.dateOfStart is NULL)';
+    	    $where .= ' AND ';
+    	    $where .= '(tbl.dateOfEnd >= \'' . DataUtil::formatForStore($now) . '\'';
+    	    $where .= ' OR ';
+    	    $where .= 'tbl.dateOfEnd is NULL)';
+    	}
+    
+    	$selectionArgs = array(
+    			'ot' => $objectType,
+    			'where' => $where,
+    			'orderBy' => $sort . ' ' . $sortdir
+    	);
+    	
+    	if ($legacyControllerType == 'user') {   		
+    		$where2 = 'tbl.dateOfStart > \'' . DataUtil::formatForStore($now) . '\'';
+
+    	    $selectionArgs2 = array(
+    			'ot' => $objectType,
+    			'where' => $where2,
+    			'orderBy' => $sort . ' ' . $sortdir
+    	);
+    	
+    	    $where3 = 'tbl.dateOfEnd < \'' . DataUtil::formatForStore($now) . '\'';
+    	    
+    	    $selectionArgs3 = array(
+    			'ot' => $objectType,
+    			'where' => $where3,
+    			'orderBy' => $sort . ' ' . $sortdir
+    	    );
+    	}
+    
+    	// prepare access level for cache id
+    	$accessLevel = ACCESS_READ;
+    	$component = 'MUPolls:' . ucfirst($objectType) . ':';
+    	$instance = '::';
+    	if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+    		$accessLevel = ACCESS_COMMENT;
+    	}
+    	if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+    		$accessLevel = ACCESS_EDIT;
+    	}
+    
+    	$templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', array());
+    	$cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
+    	if ($showAllEntries == 1) {
+    		// set cache id
+    		$this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
+    
+    		// if page is cached return cached content
+    		if ($this->view->is_cached($templateFile)) {
+    			return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
+    		}
+    
+    		// retrieve item list without pagination
+    		$entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+    		if ($legacyControllerType == 'user') {
+    		    $comingEntities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs2);
+    		    $terminatedEntities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs3);
+    		}
+    	} else {
+    		// the current offset which is used to calculate the pagination
+    		$currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
+    
+    		// set cache id
+    		$this->view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
+    
+    		// if page is cached return cached content
+    		if ($this->view->is_cached($templateFile)) {
+    			return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
+    		}
+    
+    		// retrieve item list with pagination
+    		$selectionArgs['currentPage'] = $currentPage;
+    		$selectionArgs['resultsPerPage'] = $resultsPerPage;
+    		list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+    
+    		$this->view->assign('currentPage', $currentPage)
+    		->assign('pager', array('numitems'     => $objectCount,
+    				'itemsperpage' => $resultsPerPage));
+    	}
+    
+    	foreach ($entities as $k => $entity) {
+    		$entity->initWorkflow();
+    	}
+    
+    	// build ModUrl instance for display hooks
+    	$currentUrlObject = new Zikula_ModUrl($this->name, 'poll', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+    
+    	// assign the object data, sorting information and details for creating the pager
+    	$this->view->assign('items', $entities)
+    	->assign('sort', $sort)
+    	->assign('sdir', $sortdir)
+    	->assign('pageSize', $resultsPerPage)
+    	->assign('currentUrlObject', $currentUrlObject)
+    	->assign($additionalParameters);
+    	
+    	if ($legacyControllerType == 'user') {
+    		$this->view->assign('comingItems', $comingEntities)
+    		->assign('terminatedItems', $terminatedEntities);
+    	}
+    
+    	$modelHelper = new MUPolls_Util_Model($this->serviceManager);
+    	$this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
+    
+    	// fetch and return the appropriate template
+    	return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
     }
 }
