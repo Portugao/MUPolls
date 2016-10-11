@@ -75,7 +75,6 @@ class MUPolls_Controller_Poll extends MUPolls_Controller_Base_AbstractPoll
         $now = date('Y-m-d H:i:s');
         $dateOfStart = $entity['dateOfStart']->format('Y-m-d H:i:s');
         if ($dateOfStart > $now && $legacyControllerType == 'user') {
-        	LogUtil::registerError($dateOfStart);
         	return System::redirect(ModUtil::url($this->name, 'user'));
         }
         
