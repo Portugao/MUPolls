@@ -104,7 +104,7 @@ abstract class MUPolls_Entity_Base_AbstractPoll extends Zikula_EntityAccess
      * @ORM\Column(type="boolean", nullable=true)
      * @var boolean $inFrontend
      */
-    protected $inFrontend = false;
+    protected $inFrontend = true;
     
     
     /**
