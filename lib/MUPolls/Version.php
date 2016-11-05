@@ -25,6 +25,8 @@ class MUPolls_Version extends MUPolls_Base_AbstractVersion
     {
     	$meta = parent::getMetaData();
     	
+    	// the current module version
+    	$meta['version']              = '1.0.1';  	
     	$meta['displayname']          = $this->__('MUPolls');
     	// the module description
     	$meta['description']          = $this->__('MUPolls is a module for Polls.');
