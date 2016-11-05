@@ -58,8 +58,9 @@
                 <col id="cDateOfStart" />
                 <col id="cDateOfEnd" />
                 {if $lct eq 'admin'}
-                <col id="cItemActions" />
+                <col id="cInFrontend" />
                 {/if}
+                <col id="cItemActions" />
             </colgroup>
             <thead>
             <tr>
@@ -85,6 +86,11 @@
                 <th id="hDateOfEnd" scope="col" class="z-left">
                     {sortlink __linktext='Date of end' currentsort=$sort modname='MUPolls' type=$lct func='view' sort='dateOfEnd' sortdir=$sdir all=$all own=$own workflowState=$workflowState q=$q pageSize=$pageSize multiple=$multiple ot='poll'}
                 </th>
+                {if $lct eq 'admin'}
+                <th id="hInFrontend" scope="col" class="z-center">
+                    {sortlink __linktext='In frontend' currentsort=$sort modname='MUPolls' type=$lct func='view' sort='inFrontend' sortdir=$sdir all=$all own=$own workflowState=$workflowState q=$q pageSize=$pageSize multiple=$multiple inFrontend=$inFrontend ot='poll'}
+                </th>
+                {/if}
                 <th id="hItemActions" scope="col" class="z-right z-order-unsorted">{gt text='Actions'}</th>
             </tr>
             </thead>
@@ -116,6 +122,11 @@
                 <td headers="hDateOfEnd" class="z-left">
                     {$poll.dateOfEnd|dateformat:'datetimebrief'}
                 </td>
+                {if $lct eq 'admin'}
+                    <td headers="hInFrontend" class="z-center">
+                    {$poll.inFrontend|yesno:true}
+                    </td>
+                {/if}
                 <td id="itemActions{$poll.id}" headers="hItemActions" class="z-right z-nowrap z-w02">
                     {if count($poll._actions) gt 0}
                         {icon id="itemActions`$poll.id`Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
@@ -165,6 +176,11 @@
                 <td headers="hDateOfEnd" class="z-left">
                     {$comingpoll.dateOfEnd|dateformat:'datetimebrief'}
                 </td>
+                {if $lct eq 'admin'}
+                    <td headers="hInFrontend" class="z-center">
+                    {$poll.inFrontend|yesno:true}
+                    </td>
+                {/if}
                 <td id="itemActions{$comingpoll.id}" headers="hItemActions" class="z-right z-nowrap z-w02">
                     {*if count($comingpoll._actions) gt 0}
                         {icon id="itemActions`$comingpoll.id`Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
@@ -214,6 +230,11 @@
                 <td headers="hDateOfEnd" class="z-left">
                     {$poll.dateOfEnd|dateformat:'datetimebrief'}
                 </td>
+                {if $lct eq 'admin'}
+                    <td headers="hInFrontend" class="z-center">
+                    {$poll.inFrontend|yesno:true}
+                    </td>
+                {/if}
                 <td id="itemActions{$poll.id}" headers="hItemActions" class="z-right z-nowrap z-w02">
                     {if count($poll._actions) gt 0}
                         {icon id="itemActions`$poll.id`Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
