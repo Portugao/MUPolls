@@ -100,12 +100,6 @@ abstract class MUPolls_Entity_Base_AbstractPoll extends Zikula_EntityAccess
      */
     protected $dateOfEnd = null;
     
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @var boolean $inFrontend
-     */
-    protected $inFrontend = false;
-    
     
     /**
      * Field for storing the locale of this entity.
@@ -436,30 +430,6 @@ abstract class MUPolls_Entity_Base_AbstractPoll extends Zikula_EntityAccess
     }
     
     /**
-     * Gets the in frontend.
-     *
-     * @return boolean
-     */
-    public function getInFrontend()
-    {
-        return $this->inFrontend;
-    }
-    
-    /**
-     * Sets the in frontend.
-     *
-     * @param boolean $inFrontend
-     *
-     * @return void
-     */
-    public function setInFrontend($inFrontend)
-    {
-        if ($inFrontend !== $this->inFrontend) {
-            $this->inFrontend = (bool)$inFrontend;
-        }
-    }
-    
-    /**
      * Gets the locale.
      *
      * @return string
@@ -599,7 +569,6 @@ abstract class MUPolls_Entity_Base_AbstractPoll extends Zikula_EntityAccess
         $this->formatTextualField('title', $currentFunc, $usesCsvOutput);
         $this->formatTextualField('description', $currentFunc, $usesCsvOutput);
         $this['multiple'] = (bool) $this['multiple'];
-        $this['inFrontend'] = (bool) $this['inFrontend'];
         
         $this->prepareItemActions();
         

@@ -126,11 +126,6 @@
             <span class="z-formnote z-sub"><a id="resetDateOfEndVal" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
             {mupollsValidationError id='dateOfEnd' class='validate-daterange-poll'}
         </div>
-        
-        <div class="z-formrow">
-            {formlabel for='inFrontend' __text='In frontend' cssClass=''}
-            {formcheckbox group='poll' id='inFrontend' readOnly=false __title='in frontend ?' cssClass=''}
-        </div>
     </fieldset>
     
     {if $mode ne 'create'}

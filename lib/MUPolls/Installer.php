@@ -16,31 +16,5 @@
  */
 class MUPolls_Installer extends MUPolls_Base_AbstractInstaller
 {
-    /**
-     * Upgrade the MUPolls application from an older version.
-     *
-     * If the upgrade fails at some point, it returns the last upgraded version.
-     *
-     * @param integer $oldVersion Version to upgrade from
-     *
-     * @return boolean True on success, false otherwise
-     */
-    public function upgrade($oldVersion)
-    {
-        // Upgrade dependent on old version number
-        switch ($oldVersion) {
-            case '1.0.0':
-                // do something
-                // ...
-                // update the database schema
-                try {
-                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
-                } catch (\Exception $e) {
-                    return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                }
-        }
-    
-        // update successful
-        return true;
-    }
+    // feel free to extend the installer here
 }
