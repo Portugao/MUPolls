@@ -40,6 +40,13 @@ class MUPolls_Entity_Repository_Poll extends MUPolls_Entity_Repository_Base_Abst
             $qb->andWhere('tbl.workflowState IN (:onlineStates)')
                ->setParameter('onlineStates', $onlineStates);
         }
+        
+        // only polls with frontend eq true
+        if ($currentModule == 'MUPolls') {
+            $qb->andWhere('tbl.inFrontend = :front')
+               ->setParameter('front', 1);
+        }
+        
         /* we do not need this
         $startDate = FormUtil::getPassedValue('dateOfStart', date('Y-m-d H:i:s'), 'GET');
         $qb->andWhere('(tbl.dateOfStart <= :startDate OR tbl.dateOfStart IS NULL)')
