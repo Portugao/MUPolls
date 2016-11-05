@@ -1550,3 +1550,6 @@ msgstr ""
 #: templates/option/delete.tpl:19
 msgid "Do you really want to delete this option ?"
 msgstr ""
+
+msgid "Closed"
+msgstr ""

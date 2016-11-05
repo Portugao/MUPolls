@@ -1,6 +1,6 @@
 {* Purpose of this template: Display items within a block (fallback template) *}
 
-<h4>{$item.title}</h4>
+<h4>{$item.title} {if $item.dateOfEnd|dateformat:'%Y-%m-%d %H:%M:%S' < $smarty.now|date_format:"%Y-%m-%d %H:%M:%S"}({gt text='Closed'}){/if}</h4>
 {if $item.description ne ''}
 {$item.description}{/if}<br />
 
