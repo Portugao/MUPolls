@@ -1,0 +1,6 @@
+{# Purpose of this template: Display votes within an external context #}
+{% for vote in items %}
+    <h3>{{ vote.getTitleFromDisplayPattern() }}</h3>
+    <p><a href="{{ path('mupollsmodule_vote_display', { 'id': vote.id }) }}">{{ __('Read more') }}</a>
+    </p>
+{% endfor %}

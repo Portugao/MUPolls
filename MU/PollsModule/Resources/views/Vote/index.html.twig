@@ -1,0 +1,7 @@
+{# purpose of this template: votes index view #}
+{% extends routeArea == 'admin' ? 'MUPollsModule::adminBase.html.twig' : 'MUPollsModule::base.html.twig' %}
+{% block title __('votes') %}
+{% block admin_page_icon 'home' %}
+{% block content %}
+    <p>{{ __('Welcome to the vote section of the Polls application.') }}</p>
+{% endblock %}

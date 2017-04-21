@@ -1,0 +1,74 @@
+services:
+    # Event subscribers and listeners
+    mu_polls_module.entity_lifecycle_listener:
+        class: MU\PollsModule\Listener\EntityLifecycleListener
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: doctrine.event_subscriber }
+    
+    mu_polls_module.kernel_listener:
+        class: MU\PollsModule\Listener\KernelListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.installer_listener:
+        class: MU\PollsModule\Listener\InstallerListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.moduledispatch_listener:
+        class: MU\PollsModule\Listener\ModuleDispatchListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.mailer_listener:
+        class: MU\PollsModule\Listener\MailerListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.theme_listener:
+        class: MU\PollsModule\Listener\ThemeListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.userlogin_listener:
+        class: MU\PollsModule\Listener\UserLoginListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.userlogout_listener:
+        class: MU\PollsModule\Listener\UserLogoutListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.user_listener:
+        class: MU\PollsModule\Listener\UserListener
+        arguments:
+            - "@translator.default"
+            - "@mu_polls_module.entity_factory"
+            - "@zikula_users_module.current_user"
+            - "@logger"
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.userregistration_listener:
+        class: MU\PollsModule\Listener\UserRegistrationListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.users_listener:
+        class: MU\PollsModule\Listener\UsersListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.group_listener:
+        class: MU\PollsModule\Listener\GroupListener
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    mu_polls_module.thirdparty_listener:
+        class: MU\PollsModule\Listener\ThirdPartyListener
+        tags:
+            - { name: kernel.event_subscriber }
+    

@@ -1,0 +1,20 @@
+{# Purpose of this template: Display search options #}
+<input type="hidden" id="mUPollsModuleActive" name="active[MUPollsModule]" value="1" />
+{% if active_option is defined %}
+    <div>
+        <input type="checkbox" id="active_mUPollsModuleOptions" name="mUPollsModuleSearchTypes[]" value="option"{% if active_option %} checked="checked"{% endif %} />
+        <label for="active_mUPollsModuleOptions">{{ __('Options', 'mupollsmodule') }}</label>
+    </div>
+{% endif %}
+{% if active_poll is defined %}
+    <div>
+        <input type="checkbox" id="active_mUPollsModulePolls" name="mUPollsModuleSearchTypes[]" value="poll"{% if active_poll %} checked="checked"{% endif %} />
+        <label for="active_mUPollsModulePolls">{{ __('Polls', 'mupollsmodule') }}</label>
+    </div>
+{% endif %}
+{% if active_vote is defined %}
+    <div>
+        <input type="checkbox" id="active_mUPollsModuleVotes" name="mUPollsModuleSearchTypes[]" value="vote"{% if active_vote %} checked="checked"{% endif %} />
+        <label for="active_mUPollsModuleVotes">{{ __('Votes', 'mupollsmodule') }}</label>
+    </div>
+{% endif %}

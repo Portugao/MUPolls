@@ -1,0 +1,20 @@
+application "Polls" { vendor "MU" author "Michael Ueberschaer" email "kontakt@webdesign-in-bremen.com" url "http://webdesign-in-bremen.com" version "1.1.0"
+    prefix "polls" generatorSettings { settingsContainer "Settings" targetCoreVersion ZK14 generateMailzApi false generateExternalControllerAndFinder false
+        generateScribitePlugins false
+        generateAtomTemplates false
+        generateCsvTemplates false
+        generateXmlTemplates false
+        generateJsonTemplates false
+        generateKmlTemplates false
+        generateIcsTemplates false
+        versionAllGeneratedFiles false
+        generatePoweredByBacklinksIntoFooterTemplates false generateTests false
+        writeModelToDocs true
+    markFiles ""
+    } entities { entity "option" { nameMultiple "options" displayPattern "#title#" fields { string "title" translatable , string "colorOfOption" nospace htmlcolour { mandatory false } , integer "idOfPoll" { defaultValue "0" } } actions { mainAction "Index" , viewAction "View" , displayAction "Display" , editAction "Edit" , deleteAction "Delete" } } , entity "poll" leading { nameMultiple "polls" displayPattern "#title#" fields { string "title" translatable { cssClass "" } , text "description" translatable { mandatory false length 3000 } , boolean "multiple" { defaultValue "" mandatory false } , datetime "dateOfStart" nullable startDate { defaultValue "" mandatory false } , datetime "dateOfEnd" nullable endDate { defaultValue "" mandatory false } ,
+                boolean "inFrontend" nullable {
+                    defaultValue ""
+                    mandatory false
+                }
+            }
+            actions { mainAction "Index" , viewAction "View" , displayAction "Display" , editAction "Edit" , deleteAction "Delete" } } , entity "vote" { nameMultiple "votes" displayPattern "#idOfOption#" fields {  integer "idOfOption" { defaultValue "0" } , integer "idOfPoll" { defaultValue "0" } } actions { mainAction "Index" , viewAction "View" , displayAction "Display" , editAction "Edit" } } } variables { varContainer "MySettings" { vars { listVar "kindOfVoting" { value "Session" items {  listVarItem  "Cookie" ,  listVarItem default "Session" ,  listVarItem "User" } } } } } }

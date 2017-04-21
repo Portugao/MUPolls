@@ -1,0 +1,13 @@
+{# Purpose of this template: Display options within an external context #}
+<dl>
+    {% for option in items %}
+        <dt>{{ option.getTitleFromDisplayPattern() }}</dt>
+        {% if option.title %}
+            <dd>{{ option.title|striptags|truncate(200, true, '&hellip;') }}</dd>
+        {% endif %}
+        <dd><a href="{{ path('mupollsmodule_option_display', { 'id': option.id }) }}">{{ __('Read more') }}</a>
+        </dd>
+    {% else %}
+        <dt>{{ __('No entries found.') }}</dt>
+    {% endfor %}
+</dl>

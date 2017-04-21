@@ -1,0 +1,5 @@
+mupollsmodule:
+    # define routing support for these controllers
+    resource: "@MUPollsModule/Controller"
+    # enable support for defining routes by annotations
+    type: annotation
