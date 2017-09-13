@@ -1,6 +1,6 @@
 {# Purpose of this template: Display options within an external context #}
 {% for option in items %}
-    <h3>{{ option.getTitleFromDisplayPattern() }}</h3>
-    <p><a href="{{ path('mupollsmodule_option_display', { 'id': option.id }) }}">{{ __('Read more') }}</a>
+    <h3>{{ option|mupollsmodule_formattedTitle }}</h3>
+    <p><a href="{{ path('mupollsmodule_option_display', {'id': option.getId()}) }}" title="{{ __('Read more')|e('html_attr') }}">{{ __('Read more') }}</a>
     </p>
 {% endfor %}

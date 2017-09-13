@@ -1,17 +1,16 @@
-{# purpose of this template: options display view #}
-{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+{# purpose of this template: options user display view #}
+{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : 'base' %}
 {% extends 'MUPollsModule::' ~ baseTemplate ~ '.html.twig' %}
-{% block pageTitle %}{{ option.getTitleFromDisplayPattern()|default(__('Option')) }}{% endblock %}
+{% block pageTitle %}{{ option|mupollsmodule_formattedTitle|default(__('Option')) }}{% endblock %}
 {% block title %}
-    {% set templateTitle = option.getTitleFromDisplayPattern()|default(__('Option')) %}
-    {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.options.filter') }}
-    {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], { entity: option, area: routeArea, context: 'display' }) %}
+    {% set templateTitle = option|mupollsmodule_formattedTitle|default(__('Option')) %}
+    {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.options.filter')|safeHtml }}
+    {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], {entity: option, area: routeArea, context: 'display'}) %}
     <div class="dropdown">
-        <a id="itemActions{{ option.id }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
-        {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
+        <a id="itemActions{{ option.getKey() }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
+        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
     </div>
 {% endblock %}
-{% block admin_page_icon 'eye' %}
 {% block content %}
     {% set isQuickView = app.request.query.getBoolean('raw', false) %}
     <div class="mupollsmodule-option mupollsmodule-display">
@@ -32,15 +31,11 @@
         
     </dl>
 
-    {{ include('@MUPollsModule/Helper/includeStandardFieldsDisplay.html.twig', { obj: option }) }}
+    {{ include('@MUPollsModule/Helper/includeStandardFieldsDisplay.html.twig', {obj: option}) }}
 
     {{ block('display_hooks') }}
 </div>
 {% endblock %}
 {% block display_hooks %}
-    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.display_view', id=option.id, urlObject=currentUrlObject) %}
-    {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-        <h4>{{ providerArea }}</h4>
-        {{ hook }}
-    {% endfor %}
+    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.display_view', id=option.getKey(), urlObject=currentUrlObject) }}
 {% endblock %}

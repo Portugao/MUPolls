@@ -1,0 +1,167 @@
+{# purpose of this template: polls admin list view #}
+{% extends 'MUPollsModule::adminBase.html.twig' %}
+{% block title own ? __('My polls') : __('Polls list') %}
+{% block admin_page_icon 'list-alt' %}
+{% block content %}
+<div class="mupollsmodule-poll mupollsmodule-view">
+
+    {{ block('page_nav_links') }}
+
+    {{ include('@MUPollsModule/Poll/Admin/viewQuickNav.html.twig') }}{# see template file for available options #}
+
+    {% if routeArea == 'admin' %}
+    <form action="{{ path('mupollsmodule_poll_' ~ routeArea ~ 'handleselectedentries') }}" method="post" id="pollsViewForm" class="form-horizontal" role="form">
+        <div>
+    {% endif %}
+        <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover{% if routeArea == 'admin' %} table-condensed{% endif %}">
+            <colgroup>
+                {% if routeArea == 'admin' %}
+                    <col id="cSelect" />
+                {% endif %}
+                <col id="cItemActions" />
+                {% if routeArea == 'admin' %}
+                <col id="cWorkflowState" />
+                {% endif %}
+                <col id="cTitle" />
+                <col id="cDescription" />
+                <col id="cMultiple" />
+                <col id="cDateOfStart" />
+                <col id="cDateOfEnd" />
+            </colgroup>
+            <thead>
+            <tr>
+                {% if routeArea == 'admin' %}
+                    <th id="hSelect" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}text-center z-w02">
+                        <input type="checkbox" class="mupolls-mass-toggle" />
+                    </th>
+                {% endif %}
+                <th id="hItemActions" scope="col" class="{% if items|length > 0 %}fixed-column {% endif %}z-order-unsorted z-w02">{{ __('Actions') }}</th>
+                {% if routeArea == 'admin' %}
+                <th id="hWorkflowState" scope="col" class="text-left">
+                    <a href="{{ sort.workflowState.url }}" title="{{ __f('Sort by %s', {'%s': 'state'}) }}" class="{{ sort.workflowState.class }}">{{ __('State') }}</a>
+                </th>
+                {% endif %}
+                <th id="hTitle" scope="col" class="text-left">
+                    <a href="{{ sort.title.url }}" title="{{ __f('Sort by %s', {'%s': 'title'}) }}" class="{{ sort.title.class }}">{{ __('Title') }}</a>
+                </th>
+                <th id="hDescription" scope="col" class="text-left">
+                    <a href="{{ sort.description.url }}" title="{{ __f('Sort by %s', {'%s': 'description'}) }}" class="{{ sort.description.class }}">{{ __('Description') }}</a>
+                </th>
+                <th id="hMultiple" scope="col" class="text-center">
+                    <a href="{{ sort.multiple.url }}" title="{{ __f('Sort by %s', {'%s': 'multiple'}) }}" class="{{ sort.multiple.class }}">{{ __('Multiple') }}</a>
+                </th>
+                <th id="hDateOfStart" scope="col" class="text-left">
+                    <a href="{{ sort.dateOfStart.url }}" title="{{ __f('Sort by %s', {'%s': 'date of start'}) }}" class="{{ sort.dateOfStart.class }}">{{ __('Date of start') }}</a>
+                </th>
+                <th id="hDateOfEnd" scope="col" class="text-left">
+                    <a href="{{ sort.dateOfEnd.url }}" title="{{ __f('Sort by %s', {'%s': 'date of end'}) }}" class="{{ sort.dateOfEnd.class }}">{{ __('Date of end') }}</a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+        
+        {% for poll in items %}
+            <tr>
+                {% if routeArea == 'admin' %}
+                    <td headers="hSelect" class="fixed-column text-center z-w02">
+                        <input type="checkbox" name="items[]" value="{{ poll.getKey() }}" class="mupolls-toggle-checkbox" />
+                    </td>
+                {% endif %}
+                <td id="itemActions{{ poll.getKey() }}" headers="hItemActions" class="fixed-column actions nowrap z-w02">
+                    {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], {entity: poll, area: routeArea, context: 'view'}) %}
+                    <div class="dropdown">
+                        <a id="itemActions{{ poll.getKey() }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> <span class="caret"></span></a>
+                        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
+                    </div>
+                </td>
+                {% if routeArea == 'admin' %}<td headers="hWorkflowState" class="text-left nowrap">
+                    {{ poll.workflowState|mupollsmodule_objectState }}
+                </td>
+                {% endif %}<td headers="hTitle" class="text-left">
+                    <a href="{{ path('mupollsmodule_poll_' ~ routeArea ~ 'display', {'id': poll.getId()}) }}" title="{{ __('View detail page')|e('html_attr') }}">{{ poll.title|notifyFilters('mupollsmodule.filterhook.polls')|safeHtml }}</a>
+                </td>
+                <td headers="hDescription" class="text-left">
+                    {{ poll.description|striptags|truncate(50) }}
+                </td>
+                <td headers="hMultiple" class="text-center">
+                    {% if poll.multiple %}
+                        <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                    {% else %}
+                        <i class="fa fa-times" title="{{ __('No') }}"></i>
+                    {% endif %}
+                </td>
+                <td headers="hDateOfStart" class="text-left">
+                    {% if poll.dateOfStart is not empty %}
+                        {{ poll.dateOfStart|localizeddate('medium', 'short') }}
+                    {% endif %}
+                </td>
+                <td headers="hDateOfEnd" class="text-left">
+                    {% if poll.dateOfEnd is not empty %}
+                        {{ poll.dateOfEnd|localizeddate('medium', 'short') }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr class="z-{{ routeArea == 'admin' ? 'admin' : 'data' }}tableempty">
+                <td class="text-left" colspan="{% if routeArea == 'admin' %}8{% else %}7{% endif %}">
+            {{ __('No polls found.') }}
+              </td>
+            </tr>
+        {% endfor %}
+        
+            </tbody>
+        </table>
+        </div>
+        
+        {% if all != 1 and pager|default %}
+            {{ pager({rowcount: pager.amountOfItems, limit: pager.itemsPerPage, display: 'page', route: 'mupollsmodule_poll_' ~ routeArea ~ 'view'}) }}
+        {% endif %}
+    {% if routeArea == 'admin' %}
+            <fieldset>
+                <label for="mUPollsModuleAction" class="col-sm-3 control-label">{{ __('With selected polls') }}</label>
+                <div class="col-sm-6">
+                    <select id="mUPollsModuleAction" name="action" class="form-control input-sm">
+                        <option value="">{{ __('Choose action') }}</option>
+                        <option value="unpublish" title="{{ __('Hide content temporarily.') }}">{{ __('Unpublish') }}</option>
+                        <option value="publish" title="{{ __('Make content available again.') }}">{{ __('Publish') }}</option>
+                        <option value="archive" title="{{ __('Move content into the archive.') }}">{{ __('Archive') }}</option>
+                        <option value="unarchive" title="{{ __('Move content out of the archive.') }}">{{ __('Unarchive') }}</option>
+                        <option value="delete" title="{{ __('Delete content permanently.') }}">{{ __('Delete') }}</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <input type="submit" value="{{ __('Submit') }}" class="btn btn-default btn-sm" />
+                </div>
+            </fieldset>
+        </div>
+    </form>
+    {% endif %}
+
+    {{ block('display_hooks') }}
+</div>
+{% endblock %}
+{% block page_nav_links %}
+    <p>
+        {% if canBeCreated %}
+            {% if hasPermission('MUPollsModule:Poll:', '::', 'ACCESS_EDIT') %}
+                {% set createTitle = __('Create poll') %}
+                <a href="{{ path('mupollsmodule_poll_' ~ routeArea ~ 'edit') }}" title="{{ createTitle|e('html_attr') }}" class="fa fa-plus">{{ createTitle }}</a>
+            {% endif %}
+        {% endif %}
+        {% if all == 1 %}
+            {% set linkTitle = __('Back to paginated view') %}
+            <a href="{{ path('mupollsmodule_poll_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
+        {% else %}
+            {% set linkTitle = __('Show all entries') %}
+            <a href="{{ path('mupollsmodule_poll_' ~ routeArea ~ 'view', {all: 1}) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
+        {% endif %}
+    </p>
+{% endblock %}
+{% block display_hooks %}
+    
+    {# here you can activate calling display hooks for the view page if you need it #}
+    {# % if routeArea != 'admin' %}
+        {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.display_view', urlObject=currentUrlObject) }}
+    {% endif % #}
+{% endblock %}

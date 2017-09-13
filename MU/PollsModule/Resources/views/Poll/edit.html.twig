@@ -1,15 +1,15 @@
-{# purpose of this template: build the form to edit an instance of poll #}
-{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+{# purpose of this template: build the user form to edit an instance of poll #}
+{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : 'base' %}
 {% extends 'MUPollsModule::' ~ baseTemplate ~ '.html.twig' %}
 
 {% block header %}
     {{ parent() }}
     {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.Validation.js'), 98) }}
     {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.EditFunctions.js'), 99) }}
-    {{ pageAddAsset('javascript', asset('typeahead/typeahead.bundle.min.js')) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.InlineEditing.js'), 99) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.AutoCompletion.js'), 99) }}
 {% endblock %}
 {% block title mode == 'create' ? __('Create poll') : __('Edit poll') %}
-{% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
 {% block content %}
     <div class="mupollsmodule-poll mupollsmodule-edit">
         {% form_theme form with [
@@ -62,22 +62,18 @@
             {{ form_row(form.multiple) }}
             {{ form_row(form.dateOfStart) }}
             {{ form_row(form.dateOfEnd) }}
-            {{ form_row(form.inFrontend) }}
         </fieldset>
         
         {% if mode != 'create' %}
-            {{ include('@MUPollsModule/Helper/includeStandardFieldsEdit.html.twig', { obj: poll }) }}
+            {{ include('@MUPollsModule/Helper/includeStandardFieldsEdit.html.twig', {obj: poll}) }}
         {% endif %}
         
-        {% set hookId = mode != 'create' ? poll.id : null %}
-        {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.form_edit', id=hookId) %}
-        {% if hooks is iterable and hooks|length > 0 %}
-            {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-                <fieldset>
-                    <legend>{{ providerArea }}</legend>
-                    {{ hook }}
-                </fieldset>
-            {% endfor %}
+        {% if formHookTemplates|length > 0 %}
+            <fieldset>
+                {% for hookTemplate in formHookTemplates %}
+                    {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
+                {% endfor %}
+            </fieldset>
         {% endif %}
         
         {% if form.moderationSpecificCreator is defined %}
@@ -109,27 +105,30 @@
             </div>
         </div>
         {{ form_end(form) }}
+        {% set hookId = mode != 'create' ? poll.id : null %}
+        {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.form_edit', id=hookId) }}
+        
     </div>
 {% endblock %}
 {% block footer %}
     {{ parent() }}
-    {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-    {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
-    
-    <script type="text/javascript">
-    /* <![CDATA[ */
-        
-        ( function($) {
-            $(document).ready(function() {
-                // initialise auto completion for user fields
-                {% if form.moderationSpecificCreator is defined %}
-                    mUPollsInitUserField('mupollsmodule_poll_moderationSpecificCreator', 'getCommonUsersList');
-                {% endif %}
-                mUPollsInitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ poll.id }}{% endif %}');
-                mUPollsInitDateField('mupollsmodule_poll_dateOfStart');
-                mUPollsInitDateField('mupollsmodule_poll_dateOfEnd');
-            });
-        })(jQuery);
-    /* ]]> */
-    </script>
+    {% set formInitScript %}
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            
+            ( function($) {
+                $(document).ready(function() {
+                    // initialise auto completion for user fields
+                    {% if form.moderationSpecificCreator is defined %}
+                        initUserLiveSearch('mupollsmodule_poll_moderationSpecificCreator');
+                    {% endif %}
+                    mUPollsInitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ poll.id }}{% endif %}');
+                    mUPollsInitDateField('mupollsmodule_poll_dateOfStart');
+                    mUPollsInitDateField('mupollsmodule_poll_dateOfEnd');
+                });
+            })(jQuery);
+        /* ]]> */
+        </script>
+    {% endset %}
+    {{ pageAddAsset('footer', formInitScript) }}
 {% endblock %}

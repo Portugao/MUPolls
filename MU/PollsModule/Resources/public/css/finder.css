@@ -1,0 +1,36 @@
+body {
+    background-color: #ddd;
+    margin: 10px;
+    text-align: left;
+}
+
+#mupollsmoduleItemContainer {
+    background-color: #eee;
+    height: 300px;
+    overflow: auto;
+    padding: 5px;
+}
+
+#mupollsmoduleItemContainer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#mupollsmoduleItemContainer a {
+    color: #000;
+    margin: 0.1em 0.2em;
+    text-decoration: underline;
+}
+#mupollsmoduleItemContainer a:hover,
+#mupollsmoduleItemContainer a:focus,
+#mupollsmoduleItemContainer a:active {
+    color: #900;
+    text-decoration: none;
+}
+
+.mupollsmodule-finderform fieldset,
+.mupollsmodule-finderform fieldset legend {
+    background-color: #fff;
+    border: none;
+}

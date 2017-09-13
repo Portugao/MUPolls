@@ -1,10 +1,9 @@
-{# purpose of this template: polls delete confirmation view #}
-{% extends routeArea == 'admin' ? 'MUPollsModule::adminBase.html.twig' : 'MUPollsModule::base.html.twig' %}
+{# purpose of this template: polls user delete confirmation view #}
+{% extends 'MUPollsModule::base.html.twig' %}
 {% block title __('Delete poll') %}
-{% block admin_page_icon 'trash-o' %}
 {% block content %}
     <div class="mupollsmodule-poll mupollsmodule-delete">
-        <p class="alert alert-warning">{{ __f('Do you really want to delete this poll: "%name%" ?', {'%name%': poll.getTitleFromDisplayPattern()}) }}</p>
+        <p class="alert alert-warning">{{ __f('Do you really want to delete this poll: "%name%" ?', {'%name%': poll|mupollsmodule_formattedTitle}) }}</p>
 
         {% form_theme deleteForm with [
             '@MUPollsModule/Form/bootstrap_3.html.twig',
@@ -13,6 +12,13 @@
         {{ form_start(deleteForm) }}
         {{ form_errors(deleteForm) }}
 
+        {% if formHookTemplates|length > 0 %}
+            <fieldset>
+                {% for hookTemplate in formHookTemplates %}
+                    {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
+                {% endfor %}
+            </fieldset>
+        {% endif %}
         <fieldset>
             <legend>{{ __('Confirmation prompt') }}</legend>
             <div class="form-group">
@@ -22,19 +28,11 @@
                 </div>
             </div>
         </fieldset>
+        {{ form_end(deleteForm) }}
 
         {{ block('display_hooks') }}
-        {{ form_end(deleteForm) }}
     </div>
 {% endblock %}
 {% block display_hooks %}
-    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.form_delete', id=poll.id) %}
-    {% if hooks is iterable and hooks|length > 0 %}
-        {% for providerArea, hook in hooks %}
-            <fieldset>
-                {# <legend>{{ hookName }}</legend> #}
-                {{ hook }}
-            </fieldset>
-        {% endfor %}
-    {% endif %}
+    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.form_delete', id=poll.getKey()) }}
 {% endblock %}

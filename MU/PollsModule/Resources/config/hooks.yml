@@ -1,0 +1,74 @@
+services:
+    mu_polls_module.hook_subscriber.filter_hooks.options:
+        class: MU\PollsModule\HookSubscriber\OptionFilterHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.filter_hooks.options' }
+
+    mu_polls_module.hook_subscriber.form_aware_hook.options:
+        class: MU\PollsModule\HookSubscriber\OptionFormAwareHookSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.form_aware_hook.options' }
+
+    mu_polls_module.hook_subscriber.ui_hooks.options:
+        class: MU\PollsModule\HookSubscriber\OptionUiHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.ui_hooks.options' }
+
+    mu_polls_module.hook_subscriber.filter_hooks.polls:
+        class: MU\PollsModule\HookSubscriber\PollFilterHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.filter_hooks.polls' }
+
+    mu_polls_module.hook_subscriber.form_aware_hook.polls:
+        class: MU\PollsModule\HookSubscriber\PollFormAwareHookSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.form_aware_hook.polls' }
+
+    mu_polls_module.hook_subscriber.ui_hooks.polls:
+        class: MU\PollsModule\HookSubscriber\PollUiHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.ui_hooks.polls' }
+
+    mu_polls_module.hook_subscriber.filter_hooks.votes:
+        class: MU\PollsModule\HookSubscriber\VoteFilterHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.filter_hooks.votes' }
+
+    mu_polls_module.hook_subscriber.form_aware_hook.votes:
+        class: MU\PollsModule\HookSubscriber\VoteFormAwareHookSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.form_aware_hook.votes' }
+
+    mu_polls_module.hook_subscriber.ui_hooks.votes:
+        class: MU\PollsModule\HookSubscriber\VoteUiHooksSubscriber
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: zikula.hook_subscriber, areaName: 'subscriber.mupollsmodule.ui_hooks.votes' }
+
+    mu_polls_module.hook_provider.ui_hooks.polls:
+        class: MU\PollsModule\HookProvider\PollUiHooksProvider
+        arguments:
+            - "@translator.default"
+            - "@request_stack"
+            - "@mu_polls_module.entity_factory"
+            - "@twig"
+        tags:
+            - { name: zikula.hook_provider, areaName: 'provider.mupollsmodule.ui_hooks.polls' }
+

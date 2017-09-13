@@ -1,10 +1,13 @@
 services:
     # Entity factory
     mu_polls_module.entity_factory:
-        class: MU\PollsModule\Entity\Factory\PollsFactory
+        class: MU\PollsModule\Entity\Factory\EntityFactory
         arguments:
             - "@doctrine.orm.default_entity_manager"
             - "@mu_polls_module.entity_initialiser"
+            - "@mu_polls_module.collection_filter_helper"
+            - "@mu_polls_module.feature_activation_helper"
+    
     # Entity initialiser
     mu_polls_module.entity_initialiser:
         class: MU\PollsModule\Entity\Factory\EntityInitialiser

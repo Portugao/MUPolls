@@ -1,22 +1,25 @@
-{# purpose of this template: polls display view #}
-{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : (routeArea == 'admin' ? 'adminBase' : 'base') %}
+{# purpose of this template: polls user display view #}
+{% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : 'base' %}
 {% extends 'MUPollsModule::' ~ baseTemplate ~ '.html.twig' %}
-{% block pageTitle %}{{ poll.getTitleFromDisplayPattern()|default(__('Poll')) }}{% endblock %}
+{% block pageTitle %}{{ poll|mupollsmodule_formattedTitle|default(__('Poll')) }}{% endblock %}
 {% block title %}
-    {% set templateTitle = poll.getTitleFromDisplayPattern()|default(__('Poll')) %}
-    {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.polls.filter') }}
-    {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], { entity: poll, area: routeArea, context: 'display' }) %}
+    {% set templateTitle = poll|mupollsmodule_formattedTitle|default(__('Poll')) %}
+    {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.polls.filter')|safeHtml }}{% if routeArea == 'admin' %} <small>({{ poll.workflowState|mupollsmodule_objectState(false)|lower }})</small>{% endif %}
+    {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], {entity: poll, area: routeArea, context: 'display'}) %}
     <div class="dropdown">
-        <a id="itemActions{{ poll.id }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
-        {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
+        <a id="itemActions{{ poll.getKey() }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
+        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
     </div>
 {% endblock %}
-{% block admin_page_icon 'eye' %}
 {% block content %}
     {% set isQuickView = app.request.query.getBoolean('raw', false) %}
     <div class="mupollsmodule-poll mupollsmodule-display">
 
     <dl>
+        {% if poll.workflowState is not empty and routeArea == 'admin' %}
+            <dt>{{ __('State') }}</dt>
+            <dd>{{ poll.workflowState|mupollsmodule_listEntry('poll', 'workflowState') }}</dd>
+        {% endif %}
         {% if poll.title is not empty %}
             <dt>{{ __('Title') }}</dt>
             <dd>{{ poll.title }}</dd>
@@ -36,33 +39,35 @@
         {% endif %}
         {% if poll.dateOfStart is not empty %}
             <dt>{{ __('Date of start') }}</dt>
-            <dd>{{ poll.dateOfStart|localizeddate('medium', 'short') }}</dd>
+            <dd>{% if poll.dateOfStart is not empty %}
+                {{ poll.dateOfStart|localizeddate('medium', 'short') }}
+            {% endif %}</dd>
         {% endif %}
         {% if poll.dateOfEnd is not empty %}
             <dt>{{ __('Date of end') }}</dt>
-            <dd>{{ poll.dateOfEnd|localizeddate('medium', 'short') }}</dd>
-        {% endif %}
-        {% if poll.inFrontend is not empty %}
-            <dt>{{ __('In frontend') }}</dt>
-            <dd>{% if poll.inFrontend %}
-                <i class="fa fa-check" title="{{ __('Yes') }}"></i>
-            {% else %}
-                <i class="fa fa-times" title="{{ __('No') }}"></i>
-            {% endif %}
-            </dd>
+            <dd>{% if poll.dateOfEnd is not empty %}
+                {{ poll.dateOfEnd|localizeddate('medium', 'short') }}
+            {% endif %}</dd>
         {% endif %}
         
     </dl>
 
-    {{ include('@MUPollsModule/Helper/includeStandardFieldsDisplay.html.twig', { obj: poll }) }}
+    <h3 class="hook-assignments">{{ __('Hook assignments') }}</h3>
+        {% if hookAssignments|length > 0 %}
+            <p>{{ __('This poll is assigned to the following data objects:') }}</p>
+            <ul>
+            {% for assignment in hookAssignments %}
+            	<li><a href="{{ assignment.url|e('html_attr') }}" title="{{ __('View this object')|e('html_attr') }}">{{ assignment.date|localizeddate('medium', 'short') }} - {{ assignment.text }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>{{ __('This poll is not assigned to any data objects yet.') }}</p>
+        {% endif %}
+    {{ include('@MUPollsModule/Helper/includeStandardFieldsDisplay.html.twig', {obj: poll}) }}
 
     {{ block('display_hooks') }}
 </div>
 {% endblock %}
 {% block display_hooks %}
-    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.display_view', id=poll.id, urlObject=currentUrlObject) %}
-    {% for providerArea, hook in hooks if providerArea != 'provider.scribite.ui_hooks.editor' %}
-        <h4>{{ providerArea }}</h4>
-        {{ hook }}
-    {% endfor %}
+    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.display_view', id=poll.getKey(), urlObject=currentUrlObject) }}
 {% endblock %}

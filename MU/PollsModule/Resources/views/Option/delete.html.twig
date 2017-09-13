@@ -1,10 +1,9 @@
-{# purpose of this template: options delete confirmation view #}
-{% extends routeArea == 'admin' ? 'MUPollsModule::adminBase.html.twig' : 'MUPollsModule::base.html.twig' %}
+{# purpose of this template: options user delete confirmation view #}
+{% extends 'MUPollsModule::base.html.twig' %}
 {% block title __('Delete option') %}
-{% block admin_page_icon 'trash-o' %}
 {% block content %}
     <div class="mupollsmodule-option mupollsmodule-delete">
-        <p class="alert alert-warning">{{ __f('Do you really want to delete this option: "%name%" ?', {'%name%': option.getTitleFromDisplayPattern()}) }}</p>
+        <p class="alert alert-warning">{{ __f('Do you really want to delete this option: "%name%" ?', {'%name%': option|mupollsmodule_formattedTitle}) }}</p>
 
         {% form_theme deleteForm with [
             '@MUPollsModule/Form/bootstrap_3.html.twig',
@@ -13,6 +12,13 @@
         {{ form_start(deleteForm) }}
         {{ form_errors(deleteForm) }}
 
+        {% if formHookTemplates|length > 0 %}
+            <fieldset>
+                {% for hookTemplate in formHookTemplates %}
+                    {{ include(hookTemplate.0, hookTemplate.1, ignore_missing = true) }}
+                {% endfor %}
+            </fieldset>
+        {% endif %}
         <fieldset>
             <legend>{{ __('Confirmation prompt') }}</legend>
             <div class="form-group">
@@ -22,19 +28,11 @@
                 </div>
             </div>
         </fieldset>
+        {{ form_end(deleteForm) }}
 
         {{ block('display_hooks') }}
-        {{ form_end(deleteForm) }}
     </div>
 {% endblock %}
 {% block display_hooks %}
-    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.form_delete', id=option.id) %}
-    {% if hooks is iterable and hooks|length > 0 %}
-        {% for providerArea, hook in hooks %}
-            <fieldset>
-                {# <legend>{{ hookName }}</legend> #}
-                {{ hook }}
-            </fieldset>
-        {% endfor %}
-    {% endif %}
+    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.form_delete', id=option.getKey()) }}
 {% endblock %}

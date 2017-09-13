@@ -1,0 +1,80 @@
+{# Purpose of this template: Display a popup selector of polls for scribite integration #}
+{% set useFinder = true %}
+{% extends 'MUPollsModule::raw.html.twig' %}
+{% block title __('Search and select poll') %}
+{% block content %}
+    <div class="container">
+        <div class="zikula-bootstrap-tab-container">
+            <ul class="nav nav-tabs">
+            {% set activatedObjectTypes = getModVar('MUPollsModule', 'enabledFinderTypes', []) %}
+            {% if 'option' in activatedObjectTypes %}
+                <li{{ objectType == 'option' ? ' class="active"' : '' }}><a href="{{ path('mupollsmodule_external_finder', {objectType: 'option', editor: editorName}) }}" title="{{ __('Search and select option') }}">{{ __('Options') }}</a></li>
+            {% endif %}
+            {% if 'poll' in activatedObjectTypes %}
+                <li{{ objectType == 'poll' ? ' class="active"' : '' }}><a href="{{ path('mupollsmodule_external_finder', {objectType: 'poll', editor: editorName}) }}" title="{{ __('Search and select poll') }}">{{ __('Polls') }}</a></li>
+            {% endif %}
+            {% if 'vote' in activatedObjectTypes %}
+                <li{{ objectType == 'vote' ? ' class="active"' : '' }}><a href="{{ path('mupollsmodule_external_finder', {objectType: 'vote', editor: editorName}) }}" title="{{ __('Search and select vote') }}">{{ __('Votes') }}</a></li>
+            {% endif %}
+            </ul>
+        </div>
+        {% form_theme finderForm with [
+            '@MUPollsModule/Form/bootstrap_3.html.twig',
+            'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+        ] %}
+        {{ form_start(finderForm, {attr: {id: 'mUPollsModuleSelectorForm'}}) }}
+        {{ form_errors(finderForm) }}
+        <fieldset>
+            <legend>{{ __('Search and select poll') }}</legend>
+            {{ form_row(finderForm.pasteAs) }}
+            <br />
+            <div class="form-group">
+                <label class="col-sm-3 control-label">{{ __('Poll') }}:</label>
+                <div class="col-sm-9">
+                    <div id="mupollsmoduleItemContainer">
+                        <ul>
+                            {% for poll in items %}
+                                <li>
+                                    {% set itemId = poll.getKey() %}
+                                    <a href="#" data-itemid="{{ itemId }}">
+                                        {{ poll|mupollsmodule_formattedTitle }}
+                                    </a>
+                                    <input type="hidden" id="path{{ itemId }}" value="{{ path('mupollsmodule_poll_display', {'id': poll.getId()}) }}" />
+                                    <input type="hidden" id="url{{ itemId }}" value="{{ url('mupollsmodule_poll_display', {'id': poll.getId()}) }}" />
+                                    <input type="hidden" id="title{{ itemId }}" value="{{ poll|mupollsmodule_formattedTitle|e('html_attr') }}" />
+                                    <input type="hidden" id="desc{{ itemId }}" value="{% set description %}{% if poll.description is not empty %}{{ poll.description }}{% endif %}
+                                    {% endset %}{{ description|striptags|e('html_attr') }}" />
+                                </li>
+                            {% else %}
+                                <li>{{ __('No polls found.') }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {{ form_row(finderForm.sort) }}
+            {{ form_row(finderForm.sortdir) }}
+            {{ form_row(finderForm.num) }}
+            {{ form_row(finderForm.q) }}
+            <div>
+                {{ pager({display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: 'mupollsmodule_external_finder'}) }}
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    {{ form_widget(finderForm.update) }}
+                    {{ form_widget(finderForm.cancel) }}
+                </div>
+            </div>
+        </fieldset>
+        {{ form_end(finderForm) }}
+    </div>
+
+    {#
+    <div class="mupollsmodule-finderform">
+        <fieldset>
+            {{ render(controller('MUPollsModule:Poll:edit')) }}
+        </fieldset>
+    </div>
+    #}
+{% endblock %}

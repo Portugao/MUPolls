@@ -28,8 +28,8 @@ services:
         tags:
             - { name: form.type }
     
-    mu_polls_module.form.handler.option:
-        class: MU\PollsModule\Form\Handler\Option\EditHandler
+    mu_polls_module.form.handler.common:
+        abstract: true
         arguments:
             - "@kernel"
             - "@translator.default"
@@ -49,8 +49,11 @@ services:
             - "@mu_polls_module.feature_activation_helper"
         calls:
             - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
-        tags:
-            - { name: form.type }
+    
+    
+    mu_polls_module.form.handler.option:
+        class: MU\PollsModule\Form\Handler\Option\EditHandler
+        parent: mu_polls_module.form.handler.common
     
     mu_polls_module.form.type.option:
         class: MU\PollsModule\Form\Type\OptionType
@@ -66,27 +69,7 @@ services:
     
     mu_polls_module.form.handler.poll:
         class: MU\PollsModule\Form\Handler\Poll\EditHandler
-        arguments:
-            - "@kernel"
-            - "@translator.default"
-            - "@form.factory"
-            - "@request_stack"
-            - "@router"
-            - "@logger"
-            - "@zikula_permissions_module.api.permission"
-            - "@zikula_extensions_module.api.variable"
-            - "@zikula_users_module.current_user"
-            - "@mu_polls_module.entity_factory"
-            - "@mu_polls_module.controller_helper"
-            - "@mu_polls_module.model_helper"
-            - "@mu_polls_module.workflow_helper"
-            - "@mu_polls_module.hook_helper"
-            - "@mu_polls_module.translatable_helper"
-            - "@mu_polls_module.feature_activation_helper"
-        calls:
-            - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
-        tags:
-            - { name: form.type }
+        parent: mu_polls_module.form.handler.common
     
     mu_polls_module.form.type.poll:
         class: MU\PollsModule\Form\Type\PollType
@@ -102,27 +85,7 @@ services:
     
     mu_polls_module.form.handler.vote:
         class: MU\PollsModule\Form\Handler\Vote\EditHandler
-        arguments:
-            - "@kernel"
-            - "@translator.default"
-            - "@form.factory"
-            - "@request_stack"
-            - "@router"
-            - "@logger"
-            - "@zikula_permissions_module.api.permission"
-            - "@zikula_extensions_module.api.variable"
-            - "@zikula_users_module.current_user"
-            - "@mu_polls_module.entity_factory"
-            - "@mu_polls_module.controller_helper"
-            - "@mu_polls_module.model_helper"
-            - "@mu_polls_module.workflow_helper"
-            - "@mu_polls_module.hook_helper"
-            - "@mu_polls_module.translatable_helper"
-            - "@mu_polls_module.feature_activation_helper"
-        calls:
-            - [setLockingApi, ["@?zikula_pagelock_module.api.locking"]]
-        tags:
-            - { name: form.type }
+        parent: mu_polls_module.form.handler.common
     
     mu_polls_module.form.type.vote:
         class: MU\PollsModule\Form\Type\VoteType
@@ -134,13 +97,6 @@ services:
         tags:
             - { name: form.type }
     
-    mu_polls_module.form.type.deleteentity:
-        class: MU\PollsModule\Form\DeleteEntityType
-        arguments:
-            - "@translator.default"
-        tags:
-            - { name: form.type }
-    
     mu_polls_module.form.type.block.itemlist:
         class: MU\PollsModule\Block\Form\Type\ItemListBlockType
         arguments:
@@ -148,10 +104,43 @@ services:
         tags:
             - { name: form.type }
     
-    mu_polls_module.form.type.appsettings:
-        class: MU\PollsModule\Form\AppSettingsType
+    mu_polls_module.form.type.block.item:
+        class: MU\PollsModule\Block\Form\Type\ItemBlockType
         arguments:
             - "@translator.default"
-            - "@zikula_extensions_module.api.variable"
+            - "@mu_polls_module.entity_factory"
+            - "@mu_polls_module.entity_display_helper"
+        tags:
+            - { name: form.type }
+    
+    mu_polls_module.form.type.optionfinder:
+        class: MU\PollsModule\Form\Type\Finder\OptionFinderType
+        arguments:
+            - "@translator.default"
+            - "@mu_polls_module.feature_activation_helper"
+        tags:
+            - { name: form.type }
+    
+    mu_polls_module.form.type.pollfinder:
+        class: MU\PollsModule\Form\Type\Finder\PollFinderType
+        arguments:
+            - "@translator.default"
+            - "@mu_polls_module.feature_activation_helper"
+        tags:
+            - { name: form.type }
+    
+    mu_polls_module.form.type.votefinder:
+        class: MU\PollsModule\Form\Type\Finder\VoteFinderType
+        arguments:
+            - "@translator.default"
+            - "@mu_polls_module.feature_activation_helper"
+        tags:
+            - { name: form.type }
+    
+    mu_polls_module.form.type.config:
+        class: MU\PollsModule\Form\Type\ConfigType
+        arguments:
+            - "@translator.default"
+            - "@=service('zikula_extensions_module.api.variable').getAll('MUPollsModule')"
         tags:
             - { name: form.type }

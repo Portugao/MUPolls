@@ -1,0 +1,4 @@
+{# Purpose of this template: Display item information for previewing from other modules #}
+<dl id="vote{{ vote.getKey() }}">
+<dt>{{ vote|mupollsmodule_formattedTitle|notifyFilters('polls.filter_hooks.votes.filter')|safeHtml }}</dt>
+</dl>

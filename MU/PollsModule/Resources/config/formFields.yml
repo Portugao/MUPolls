@@ -1,19 +1,7 @@
 services:
     # Form field types
     
-    mu_polls_module.form.type.field.colour:
-        class: MU\PollsModule\Form\Type\Field\ColourType
-        tags:
-            - { name: form.type }
-    
     mu_polls_module.form.type.field.translation:
         class: MU\PollsModule\Form\Type\Field\TranslationType
-        tags:
-            - { name: form.type }
-    
-    mu_polls_module.form.type.field.user:
-        class: MU\PollsModule\Form\Type\Field\UserType
-        arguments:
-            - "@zikula_users_module.user_repository"
         tags:
             - { name: form.type }

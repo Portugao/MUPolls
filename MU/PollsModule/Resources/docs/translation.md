@@ -16,7 +16,7 @@ Note you can even include custom views in `app/Resources/MUPollsModule/views/` a
 
 `php app/console translation:extract en --bundle=MUPollsModule --enable-extractor=jms_i18n_routing --output-format=po --dir=./modules/MU/PollsModule --dir=./app/Resources/MUPollsModule`
 
-For questions and other remarks visit our homepage http://webdesign-in-bremen.com.
+For questions and other remarks visit our homepage https://homepages-mit-zikula.de.
 
-Michael Ueberschaer (kontakt@webdesign-in-bremen.com)
-http://webdesign-in-bremen.com
+Michael Ueberschaer (info@homepages-mit-zikula.de)
+https://homepages-mit-zikula.de

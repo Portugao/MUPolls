@@ -5,7 +5,7 @@ services:
         arguments:
             - "@translator.default"
             - "@zikula_extensions_module.api.variable"
-            - "@zikula_users_module.user_repository"
+            - "@mu_polls_module.entity_display_helper"
             - "@mu_polls_module.workflow_helper"
             - "@mu_polls_module.listentries_helper"
         public: false

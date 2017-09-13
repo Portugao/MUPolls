@@ -1,0 +1,5 @@
+{# Purpose of this template: Display item information for previewing from other modules #}
+<dl id="option{{ option.getKey() }}">
+<dt>{{ option|mupollsmodule_formattedTitle|notifyFilters('polls.filter_hooks.options.filter')|safeHtml }}</dt>
+{% if option.title is not empty %}<dd>{{ option.title }}</dd>{% endif %}
+</dl>

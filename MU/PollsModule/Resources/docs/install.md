@@ -3,7 +3,7 @@
 1. Copy MUPollsModule into your `modules` directory. Afterwards you should have a folder named `modules/MU/PollsModule/Resources`.
 2. Initialize and activate MUPollsModule in the extensions administration.
 
-For questions and other remarks visit our homepage http://webdesign-in-bremen.com.
+For questions and other remarks visit our homepage https://homepages-mit-zikula.de.
 
-Michael Ueberschaer (kontakt@webdesign-in-bremen.com)
-http://webdesign-in-bremen.com
+Michael Ueberschaer (info@homepages-mit-zikula.de)
+https://homepages-mit-zikula.de

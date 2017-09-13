@@ -66,14 +66,6 @@ function mUPollsValidateNoSpace(val)
     return (valStr.indexOf(' ') === -1);
 }
 
-function mUPollsValidateHtmlColour(val)
-{
-    var valStr;
-    valStr = new String(val);
-
-    return valStr === '' || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr));
-}
-
 function mUPollsValidateDateRangePoll(val)
 {
     var cmpVal, cmpVal2, result;
@@ -97,13 +89,6 @@ function mUPollsExecuteCustomValidationConstraints(objectType, currentEntityId)
     jQuery('.validate-nospace').each( function() {
         if (!mUPollsValidateNoSpace(jQuery(this).val())) {
             document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value must not contain spaces.'));
-        } else {
-            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
-        }
-    });
-    jQuery('.validate-htmlcolour').each( function() {
-        if (!mUPollsValidateHtmlColour(jQuery(this).val())) {
-            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid html colour code.'));
         } else {
             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
         }
