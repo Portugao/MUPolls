@@ -22,10 +22,17 @@ use Doctrine\ORM\Mapping as ORM;
  * This is the concrete translation class for poll entities.
  *
  * @ORM\Entity(repositoryClass="MU\PollsModule\Entity\Repository\PollTranslationRepository")
- * @ORM\Table(name="mu_polls_poll_translation",
+ * @ORM\Table(
+ *     name="mu_polls_poll_translation",
+ *     options={"row_format":"DYNAMIC"},
  *     indexes={
  *         @ORM\Index(name="translations_lookup_idx", columns={
  *             "locale", "object_class", "foreign_key"
+ *         })
+ *     },
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="lookup_unique_idx", columns={
+ *             "locale", "object_class", "field", "foreign_key"
  *         })
  *     }
  * )

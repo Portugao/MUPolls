@@ -20,6 +20,7 @@ use Zikula\UsersModule\Constant as UsersConstant;
 use MU\PollsModule\Entity\OptionEntity;
 use MU\PollsModule\Entity\PollEntity;
 use MU\PollsModule\Entity\VoteEntity;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * Entity collection filter helper base class.
@@ -30,6 +31,11 @@ abstract class AbstractCollectionFilterHelper
      * @var Request
      */
     protected $request;
+
+    /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
 
     /**
      * @var CurrentUserApiInterface
@@ -45,15 +51,18 @@ abstract class AbstractCollectionFilterHelper
      * CollectionFilterHelper constructor.
      *
      * @param RequestStack $requestStack RequestStack service instance
+     * @param PermissionHelper $permissionHelper PermissionHelper service instance
      * @param CurrentUserApiInterface $currentUserApi CurrentUserApi service instance
-     * @param bool           $showOnlyOwnEntries  Fallback value to determine whether only own entries should be selected or not
+     * @param boolean $showOnlyOwnEntries Fallback value to determine whether only own entries should be selected or not
      */
     public function __construct(
         RequestStack $requestStack,
+        PermissionHelper $permissionHelper,
         CurrentUserApiInterface $currentUserApi,
         $showOnlyOwnEntries
     ) {
         $this->request = $requestStack->getCurrentRequest();
+        $this->permissionHelper = $permissionHelper;
         $this->currentUserApi = $currentUserApi;
         $this->showOnlyOwnEntries = $showOnlyOwnEntries;
     }
@@ -67,7 +76,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return array List of template variables to be assigned
      */
-    public function getViewQuickNavParameters($objectType = '', $context = '', $args = [])
+    public function getViewQuickNavParameters($objectType = '', $context = '', array $args = [])
     {
         if (!in_array($context, ['controllerAction', 'api', 'actionHandler', 'block', 'contentType'])) {
             $context = 'controllerAction';
@@ -118,7 +127,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return QueryBuilder Enriched query builder instance
      */
-    public function applyDefaultFilters($objectType, QueryBuilder $qb, $parameters = [])
+    public function applyDefaultFilters($objectType, QueryBuilder $qb, array $parameters = [])
     {
         if ($objectType == 'option') {
             return $this->applyDefaultFiltersForOption($qb, $parameters);
@@ -141,7 +150,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return array List of template variables to be assigned
      */
-    protected function getViewQuickNavParametersForOption($context = '', $args = [])
+    protected function getViewQuickNavParametersForOption($context = '', array $args = [])
     {
         $parameters = [];
         if (null === $this->request) {
@@ -162,7 +171,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return array List of template variables to be assigned
      */
-    protected function getViewQuickNavParametersForPoll($context = '', $args = [])
+    protected function getViewQuickNavParametersForPoll($context = '', array $args = [])
     {
         $parameters = [];
         if (null === $this->request) {
@@ -172,6 +181,7 @@ abstract class AbstractCollectionFilterHelper
         $parameters['workflowState'] = $this->request->query->get('workflowState', '');
         $parameters['q'] = $this->request->query->get('q', '');
         $parameters['multiple'] = $this->request->query->get('multiple', '');
+        $parameters['inFrontend'] = $this->request->query->get('inFrontend', '');
     
         return $parameters;
     }
@@ -184,7 +194,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return array List of template variables to be assigned
      */
-    protected function getViewQuickNavParametersForVote($context = '', $args = [])
+    protected function getViewQuickNavParametersForVote($context = '', array $args = [])
     {
         $parameters = [];
         if (null === $this->request) {
@@ -221,19 +231,24 @@ abstract class AbstractCollectionFilterHelper
                 if (!empty($v)) {
                     $qb = $this->addSearchFilter('option', $qb, $v);
                 }
-            } else if (!is_array($v)) {
-                // field filter
-                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                    if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
-                        $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                           ->setParameter($k, substr($v, 1, strlen($v)-1));
-                    } elseif (substr($v, 0, 1) == '%') {
-                        $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                           ->setParameter($k, '%' . $v . '%');
-                    } else {
-                        $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                           ->setParameter($k, $v);
-                   }
+                continue;
+            }
+    
+            if (is_array($v)) {
+                continue;
+            }
+    
+            // field filter
+            if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                    $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                       ->setParameter($k, substr($v, 1, strlen($v)-1));
+                } elseif (substr($v, 0, 1) == '%') {
+                    $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                       ->setParameter($k, '%' . substr($v, 1) . '%');
+                } else {
+                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                       ->setParameter($k, $v);
                 }
             }
         }
@@ -267,26 +282,32 @@ abstract class AbstractCollectionFilterHelper
                 if (!empty($v)) {
                     $qb = $this->addSearchFilter('poll', $qb, $v);
                 }
-            } elseif (in_array($k, ['multiple'])) {
+                continue;
+            }
+            if (in_array($k, ['multiple', 'inFrontend'])) {
                 // boolean filter
                 if ($v == 'no') {
                     $qb->andWhere('tbl.' . $k . ' = 0');
                 } elseif ($v == 'yes' || $v == '1') {
                     $qb->andWhere('tbl.' . $k . ' = 1');
                 }
-            } else if (!is_array($v)) {
-                // field filter
-                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                    if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
-                        $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                           ->setParameter($k, substr($v, 1, strlen($v)-1));
-                    } elseif (substr($v, 0, 1) == '%') {
-                        $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                           ->setParameter($k, '%' . $v . '%');
-                    } else {
-                        $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                           ->setParameter($k, $v);
-                   }
+            }
+    
+            if (is_array($v)) {
+                continue;
+            }
+    
+            // field filter
+            if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                    $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                       ->setParameter($k, substr($v, 1, strlen($v)-1));
+                } elseif (substr($v, 0, 1) == '%') {
+                    $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                       ->setParameter($k, '%' . substr($v, 1) . '%');
+                } else {
+                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                       ->setParameter($k, $v);
                 }
             }
         }
@@ -320,19 +341,24 @@ abstract class AbstractCollectionFilterHelper
                 if (!empty($v)) {
                     $qb = $this->addSearchFilter('vote', $qb, $v);
                 }
-            } else if (!is_array($v)) {
-                // field filter
-                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
-                    if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
-                        $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                           ->setParameter($k, substr($v, 1, strlen($v)-1));
-                    } elseif (substr($v, 0, 1) == '%') {
-                        $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                           ->setParameter($k, '%' . $v . '%');
-                    } else {
-                        $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                           ->setParameter($k, $v);
-                   }
+                continue;
+            }
+    
+            if (is_array($v)) {
+                continue;
+            }
+    
+            // field filter
+            if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                    $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                       ->setParameter($k, substr($v, 1, strlen($v)-1));
+                } elseif (substr($v, 0, 1) == '%') {
+                    $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                       ->setParameter($k, '%' . substr($v, 1) . '%');
+                } else {
+                    $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                       ->setParameter($k, $v);
                 }
             }
         }
@@ -350,7 +376,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return QueryBuilder Enriched query builder instance
      */
-    protected function applyDefaultFiltersForOption(QueryBuilder $qb, $parameters = [])
+    protected function applyDefaultFiltersForOption(QueryBuilder $qb, array $parameters = [])
     {
         if (null === $this->request) {
             return $qb;
@@ -362,6 +388,13 @@ abstract class AbstractCollectionFilterHelper
         }
     
         $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
+    
+        if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+            // per default we show approved options only
+            $onlineStates = ['approved'];
+            $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+               ->setParameter('onlineStates', $onlineStates);
+        }
     
         if ($showOnlyOwnEntries) {
             $qb = $this->addCreatorFilter($qb);
@@ -378,7 +411,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return QueryBuilder Enriched query builder instance
      */
-    protected function applyDefaultFiltersForPoll(QueryBuilder $qb, $parameters = [])
+    protected function applyDefaultFiltersForPoll(QueryBuilder $qb, array $parameters = [])
     {
         if (null === $this->request) {
             return $qb;
@@ -401,14 +434,8 @@ abstract class AbstractCollectionFilterHelper
         if ($showOnlyOwnEntries) {
             $qb = $this->addCreatorFilter($qb);
         }
-        
-        $startDate = $this->request->query->get('dateOfStart', date('Y-m-d H:i:s'));
-        $qb->andWhere('(tbl.dateOfStart <= :startDate OR tbl.dateOfStart IS NULL)')
-           ->setParameter('startDate', $startDate);
-        
-        $endDate = $this->request->query->get('dateOfEnd', date('Y-m-d H:i:s'));
-        $qb->andWhere('(tbl.dateOfEnd >= :endDate OR tbl.dateOfEnd IS NULL)')
-           ->setParameter('endDate', $endDate);
+    
+        $qb = $this->applyDateRangeFilterForPoll($qb);
     
         return $qb;
     }
@@ -421,7 +448,7 @@ abstract class AbstractCollectionFilterHelper
      *
      * @return QueryBuilder Enriched query builder instance
      */
-    protected function applyDefaultFiltersForVote(QueryBuilder $qb, $parameters = [])
+    protected function applyDefaultFiltersForVote(QueryBuilder $qb, array $parameters = [])
     {
         if (null === $this->request) {
             return $qb;
@@ -434,9 +461,37 @@ abstract class AbstractCollectionFilterHelper
     
         $showOnlyOwnEntries = (bool)$this->request->query->getInt('own', $this->showOnlyOwnEntries);
     
+        if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+            // per default we show approved votes only
+            $onlineStates = ['approved'];
+            $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+               ->setParameter('onlineStates', $onlineStates);
+        }
+    
         if ($showOnlyOwnEntries) {
             $qb = $this->addCreatorFilter($qb);
         }
+    
+        return $qb;
+    }
+    
+    /**
+     * Applies start and end date filters for selecting polls.
+     *
+     * @param QueryBuilder $qb    Query builder to be enhanced
+     * @param string       $alias Table alias
+     *
+     * @return QueryBuilder Enriched query builder instance
+     */
+    protected function applyDateRangeFilterForPoll(QueryBuilder $qb, $alias = 'tbl')
+    {
+        $startDate = $this->request->query->get('dateOfStart', date('Y-m-d H:i:s'));
+        $qb->andWhere('(' . $alias . '.dateOfStart <= :startDate OR ' . $alias . '.dateOfStart IS NULL)')
+           ->setParameter('startDate', $startDate);
+    
+        $endDate = $this->request->query->get('dateOfEnd', date('Y-m-d H:i:s'));
+        $qb->andWhere('(' . $alias . '.dateOfEnd >= :endDate OR ' . $alias . '.dateOfEnd IS NULL)')
+           ->setParameter('endDate', $endDate);
     
         return $qb;
     }

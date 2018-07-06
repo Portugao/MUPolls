@@ -64,18 +64,21 @@ abstract class AbstractOptionController extends AbstractController
      */
     protected function indexInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'option';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_OVERVIEW;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
         
         return $this->redirectToRoute('mupollsmodule_option_' . $templateParameters['routeArea'] . 'view');
     }
+    
     /**
      * This action provides an item list overview in the admin area.
      *
@@ -117,12 +120,14 @@ abstract class AbstractOptionController extends AbstractController
      */
     protected function viewInternal(Request $request, $sort, $sortdir, $pos, $num, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'option';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -147,10 +152,20 @@ abstract class AbstractOptionController extends AbstractController
         
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters, true);
         
+        // filter by permissions
+        $filteredEntities = [];
+        foreach ($templateParameters['items'] as $option) {
+            if (!$permissionHelper->hasEntityPermission($option, $permLevel)) {
+                continue;
+            }
+            $filteredEntities[] = $option;
+        }
+        $templateParameters['items'] = $filteredEntities;
         
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     }
+    
     /**
      * This action provides a item detail view in the admin area.
      *
@@ -188,15 +203,11 @@ abstract class AbstractOptionController extends AbstractController
      */
     protected function displayInternal(Request $request, OptionEntity $option, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'option';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
-            throw new AccessDeniedException();
-        }
-        // create identifier for permission check
-        $instanceId = $option->getKey();
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', $instanceId . '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($option, $permLevel)) {
             throw new AccessDeniedException();
         }
         
@@ -213,6 +224,7 @@ abstract class AbstractOptionController extends AbstractController
         
         return $response;
     }
+    
     /**
      * This action provides a handling of edit requests in the admin area.
      *
@@ -250,12 +262,14 @@ abstract class AbstractOptionController extends AbstractController
      */
     protected function editInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'option';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -275,6 +289,7 @@ abstract class AbstractOptionController extends AbstractController
         // fetch and return the appropriate template
         return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'edit', $templateParameters);
     }
+    
     /**
      * This action provides a handling of simple delete requests in the admin area.
      *
@@ -314,12 +329,14 @@ abstract class AbstractOptionController extends AbstractController
      */
     protected function deleteInternal(Request $request, OptionEntity $option, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'option';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_DELETE;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($option, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $logger = $this->get('logger');
         $logArgs = ['app' => 'MUPollsModule', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => 'option', 'id' => $option->getKey()];
         
@@ -402,7 +419,7 @@ abstract class AbstractOptionController extends AbstractController
         // fetch and return the appropriate template
         return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'delete', $templateParameters);
     }
-
+    
     /**
      * Process status changes for multiple items.
      *
@@ -441,7 +458,7 @@ abstract class AbstractOptionController extends AbstractController
      * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
      *
      * @param Request $request Current request instance
-     * @param Boolean $isAdmin Whether the admin area is used or not
+     * @param boolean $isAdmin Whether the admin area is used or not
      */
     protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
     {
@@ -519,7 +536,7 @@ abstract class AbstractOptionController extends AbstractController
         
         return $this->redirectToRoute('mupollsmodule_option_' . ($isAdmin ? 'admin' : '') . 'index');
     }
-
+    
     /**
      * This method cares for a redirect within an inline frame.
      *
@@ -556,4 +573,5 @@ abstract class AbstractOptionController extends AbstractController
         
         return new PlainResponse($this->get('twig')->render('@MUPollsModule/Option/inlineRedirectHandler.html.twig', $templateParameters));
     }
+    
 }

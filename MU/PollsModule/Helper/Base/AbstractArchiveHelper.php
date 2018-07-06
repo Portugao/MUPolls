@@ -12,16 +12,14 @@
 
 namespace MU\PollsModule\Helper\Base;
 
-use Doctrine\ORM\QueryBuilder;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
 use Zikula\Common\Translator\TranslatorInterface;
 use Zikula\Core\RouteUrl;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use MU\PollsModule\Entity\Factory\EntityFactory;
 use MU\PollsModule\Helper\HookHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 use MU\PollsModule\Helper\WorkflowHelper;
 
 /**
@@ -35,9 +33,9 @@ abstract class AbstractArchiveHelper
     protected $translator;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var LoggerInterface
@@ -45,14 +43,14 @@ abstract class AbstractArchiveHelper
     protected $logger;
 
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-
-    /**
      * @var EntityFactory
      */
     protected $entityFactory;
+
+    /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
 
     /**
      * @var WorkflowHelper
@@ -67,43 +65,45 @@ abstract class AbstractArchiveHelper
     /**
      * ArchiveHelper constructor.
      *
-     * @param TranslatorInterface    $translator     Translator service instance
-     * @param RequestStack           $requestStack   RequestStack service instance
-     * @param LoggerInterface        $logger         Logger service instance
-     * @param PermissionApiInterface $permissionApi  PermissionApi service instance
-     * @param EntityFactory          $entityFactory  EntityFactory service instance
-     * @param WorkflowHelper         $workflowHelper WorkflowHelper service instance
-     * @param HookHelper             $hookHelper     HookHelper service instance
+     * @param TranslatorInterface $translator       Translator service instance
+     * @param RequestStack        $requestStack     RequestStack service instance
+     * @param LoggerInterface     $logger           Logger service instance
+     * @param EntityFactory       $entityFactory    EntityFactory service instance
+     * @param PermissionHelper    $permissionHelper PermissionHelper service instance
+     * @param WorkflowHelper      $workflowHelper   WorkflowHelper service instance
+     * @param HookHelper          $hookHelper     HookHelper service instance
      */
     public function __construct(
         TranslatorInterface $translator,
         RequestStack $requestStack,
         LoggerInterface $logger,
-        PermissionApiInterface $permissionApi,
         EntityFactory $entityFactory,
+        PermissionHelper $permissionHelper,
         WorkflowHelper $workflowHelper,
         HookHelper $hookHelper
     ) {
         $this->translator = $translator;
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
         $this->logger = $logger;
-        $this->permissionApi = $permissionApi;
         $this->entityFactory = $entityFactory;
+        $this->permissionHelper = $permissionHelper;
         $this->workflowHelper = $workflowHelper;
         $this->hookHelper = $hookHelper;
     }
 
     /**
      * Moves obsolete data into the archive.
+     *
+     * @param integer $probabilityPercent Execution probability
      */
-    public function archiveObsoleteObjects()
+    public function archiveObsoleteObjects($probabilityPercent = 75)
     {
-        $randProbability = mt_rand(1, 1000);
-        if ($randProbability < 750) {
+        $randProbability = mt_rand(1, 100);
+        if ($randProbability < $probabilityPercent) {
             return;
         }
     
-        if (!$this->permissionApi->hasPermission('MUPollsModule', '.*', ACCESS_EDIT)) {
+        if (!$this->permissionHelper->hasPermission(ACCESS_EDIT)) {
             // abort if current user has no permission for executing the archive workflow action
             return;
         }
@@ -162,17 +162,20 @@ abstract class AbstractArchiveHelper
      *
      * @param object $entity The given entity instance
      *
-     * @return bool True if everything worked successfully, false otherwise
+     * @return boolean True if everything worked successfully, false otherwise
      */
     protected function archiveSingleObject($entity)
     {
+        $request = $this->requestStack->getCurrentRequest();
         if ($entity->supportsHookSubscribers()) {
             // Let any hooks perform additional validation actions
             $validationErrors = $this->hookHelper->callValidationHooks($entity, UiHooksCategory::TYPE_VALIDATE_EDIT);
             if (count($validationErrors) > 0) {
-                $flashBag = $this->request->getSession()->getFlashBag();
-                foreach ($validationErrors as $message) {
-                    $flashBag->add('error', $message);
+                if (null !== $request) {
+                    $flashBag = $request->getSession()->getFlashBag();
+                    foreach ($validationErrors as $message) {
+                        $flashBag->add('error', $message);
+                    }
                 }
     
                 return false;
@@ -184,8 +187,10 @@ abstract class AbstractArchiveHelper
             // execute the workflow action
             $success = $this->workflowHelper->executeAction($entity, 'archive');
         } catch (\Exception $exception) {
-            $flashBag = $this->request->getSession()->getFlashBag();
-            $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
+            if (null !== $request) {
+                $flashBag = $request->getSession()->getFlashBag();
+                $flashBag->add('error', $this->translator->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . '  ' . $exception->getMessage());
+            }
         }
     
         if (!$success) {
@@ -200,7 +205,9 @@ abstract class AbstractArchiveHelper
             $hasDisplayPage = in_array($objectType, ['option', 'poll', 'vote']);
             if ($hasDisplayPage) {
                 $urlArgs = $entity->createUrlArgs();
-                $urlArgs['_locale'] = $this->request->getLocale();
+                if (null !== $request) {
+                    $urlArgs['_locale'] = $request->getLocale();
+                }
                 $url = new RouteUrl('mupollsmodule_' . strtolower($objectType) . '_display', $urlArgs);
         	}
             $this->hookHelper->callProcessHooks($entity, UiHooksCategory::TYPE_PROCESS_EDIT, $url);

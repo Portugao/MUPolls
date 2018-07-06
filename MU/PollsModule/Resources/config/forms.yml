@@ -7,8 +7,7 @@ services:
             - "@translator.default"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.pollquicknav:
         class: MU\PollsModule\Form\Type\QuickNavigation\PollQuickNavType
@@ -16,8 +15,7 @@ services:
             - "@translator.default"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.votequicknav:
         class: MU\PollsModule\Form\Type\QuickNavigation\VoteQuickNavType
@@ -25,8 +23,7 @@ services:
             - "@translator.default"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.handler.common:
         abstract: true
@@ -37,12 +34,13 @@ services:
             - "@request_stack"
             - "@router"
             - "@logger"
-            - "@zikula_permissions_module.api.permission"
             - "@zikula_extensions_module.api.variable"
             - "@zikula_users_module.current_user"
+            - "@zikula_groups_module.group_application_repository"
             - "@mu_polls_module.entity_factory"
             - "@mu_polls_module.controller_helper"
             - "@mu_polls_module.model_helper"
+            - "@mu_polls_module.permission_helper"
             - "@mu_polls_module.workflow_helper"
             - "@mu_polls_module.hook_helper"
             - "@mu_polls_module.translatable_helper"
@@ -64,8 +62,7 @@ services:
             - "@mu_polls_module.translatable_helper"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.handler.poll:
         class: MU\PollsModule\Form\Handler\Poll\EditHandler
@@ -80,8 +77,7 @@ services:
             - "@mu_polls_module.translatable_helper"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.handler.vote:
         class: MU\PollsModule\Form\Handler\Vote\EditHandler
@@ -94,15 +90,13 @@ services:
             - "@mu_polls_module.entity_factory"
             - "@mu_polls_module.listentries_helper"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.block.itemlist:
         class: MU\PollsModule\Block\Form\Type\ItemListBlockType
         arguments:
             - "@translator.default"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.block.item:
         class: MU\PollsModule\Block\Form\Type\ItemBlockType
@@ -110,37 +104,32 @@ services:
             - "@translator.default"
             - "@mu_polls_module.entity_factory"
             - "@mu_polls_module.entity_display_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.optionfinder:
         class: MU\PollsModule\Form\Type\Finder\OptionFinderType
         arguments:
             - "@translator.default"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.pollfinder:
         class: MU\PollsModule\Form\Type\Finder\PollFinderType
         arguments:
             - "@translator.default"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.votefinder:
         class: MU\PollsModule\Form\Type\Finder\VoteFinderType
         arguments:
             - "@translator.default"
             - "@mu_polls_module.feature_activation_helper"
-        tags:
-            - { name: form.type }
+        tags: ['form.type']
     
     mu_polls_module.form.type.config:
         class: MU\PollsModule\Form\Type\ConfigType
         arguments:
             - "@translator.default"
-            - "@=service('zikula_extensions_module.api.variable').getAll('MUPollsModule')"
-        tags:
-            - { name: form.type }
+            - "@mu_polls_module.listentries_helper"
+        tags: ['form.type']

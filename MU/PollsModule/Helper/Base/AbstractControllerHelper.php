@@ -110,7 +110,7 @@ abstract class AbstractControllerHelper
         $this->modelHelper = $modelHelper;
         $this->featureActivationHelper = $featureActivationHelper;
 
-        $archiveHelper->archiveObsoleteObjects();
+        $archiveHelper->archiveObsoleteObjects(75);
     }
 
     /**
@@ -184,16 +184,7 @@ abstract class AbstractControllerHelper
         $repository = $this->entityFactory->getRepository($objectType);
     
         // parameter for used sorting field
-        $sort = $request->query->get('sort', '');
-        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
-            $sort = $repository->getDefaultSortingField();
-            $request->query->set('sort', $sort);
-            // set default sorting in route parameters (e.g. for the pager)
-            $routeParams = $request->attributes->get('_route_params');
-            $routeParams['sort'] = $sort;
-            $request->attributes->set('_route_params', $routeParams);
-        }
-        $sortdir = $request->query->get('sortdir', 'ASC');
+        list ($sort, $sortdir) = $this->determineDefaultViewSorting($objectType);
         $templateParameters['sort'] = $sort;
         $templateParameters['sortdir'] = strtolower($sortdir);
     
@@ -226,7 +217,7 @@ abstract class AbstractControllerHelper
                     $sort = $fieldValue;
                 } elseif ($fieldName == 'sortdir' && !empty($fieldValue)) {
                     $sortdir = $fieldValue;
-                } else {
+                } elseif (false === stripos($fieldName, 'thumbRuntimeOptions') && false === stripos($fieldName, 'featureActivationHelper')) {
                     // set filter as query argument, fetched inside repository
                     $request->query->set($fieldName, $fieldValue);
                 }
@@ -234,16 +225,18 @@ abstract class AbstractControllerHelper
         }
         $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
         $resultsPerPage = $templateParameters['num'];
+        $request->query->set('own', $templateParameters['own']);
     
         $urlParameters = $templateParameters;
         foreach ($urlParameters as $parameterName => $parameterValue) {
-            if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
-                unset($urlParameters[$parameterName]);
+            if (false === stripos($parameterName, 'thumbRuntimeOptions')
+                && false === stripos($parameterName, 'featureActivationHelper')
+            ) {
+                continue;
             }
+            unset($urlParameters[$parameterName]);
         }
     
-        $sort = $sortableColumns->getSortColumn()->getName();
-        $sortdir = $sortableColumns->getSortDirection();
         $sortableColumns->setAdditionalUrlParameters($urlParameters);
     
         $where = '';
@@ -268,7 +261,6 @@ abstract class AbstractControllerHelper
         $templateParameters['sortdir'] = $sortdir;
         $templateParameters['items'] = $entities;
     
-    
         if (true === $hasHookSubscriber) {
             // build RouteUrl instance for display hooks
             $urlParameters['_locale'] = $request->getLocale();
@@ -280,7 +272,45 @@ abstract class AbstractControllerHelper
     
         $templateParameters['canBeCreated'] = $this->modelHelper->canBeCreated($objectType);
     
+        $request->query->set('sort', $sort);
+        $request->query->set('sortdir', $sortdir);
+        // set current sorting in route parameters (e.g. for the pager)
+        $routeParams = $request->attributes->get('_route_params');
+        $routeParams['sort'] = $sort;
+        $routeParams['sortdir'] = $sortdir;
+        $request->attributes->set('_route_params', $routeParams);
+    
         return $templateParameters;
+    }
+    
+    /**
+     * Determines the default sorting criteria.
+     *
+     * @param string $objectType Name of treated entity type
+     *
+     * @return array with sort field and sort direction
+     */
+    protected function determineDefaultViewSorting($objectType)
+    {
+        $request = $this->request;
+        $repository = $this->entityFactory->getRepository($objectType);
+    
+        $sort = $request->query->get('sort', '');
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+            $sort = $repository->getDefaultSortingField();
+            $request->query->set('sort', $sort);
+            // set default sorting in route parameters (e.g. for the pager)
+            $routeParams = $request->attributes->get('_route_params');
+            $routeParams['sort'] = $sort;
+            $request->attributes->set('_route_params', $routeParams);
+        }
+        $sortdir = $request->query->get('sortdir', 'ASC');
+        if (false !== strpos($sort, ' DESC')) {
+            $sort = str_replace(' DESC', '', $sort);
+            $sortdir = 'desc';
+        }
+    
+        return [$sort, $sortdir];
     }
 
     /**
@@ -326,6 +356,7 @@ abstract class AbstractControllerHelper
                 $subscriberUrl = $assignment->getSubscriberUrl();
                 if (null !== $subscriberUrl && !empty($subscriberUrl)) {
                     $url = $this->router->generate($subscriberUrl['route'], $subscriberUrl['args']);
+    
                     $fragment = $subscriberUrl['fragment'];
                     if (!empty($fragment)) {
                         if ($fragment[0] != '#') {

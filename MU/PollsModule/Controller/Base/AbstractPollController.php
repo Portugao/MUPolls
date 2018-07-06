@@ -64,18 +64,21 @@ abstract class AbstractPollController extends AbstractController
      */
     protected function indexInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'poll';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_OVERVIEW;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
         
         return $this->redirectToRoute('mupollsmodule_poll_' . $templateParameters['routeArea'] . 'view');
     }
+    
     /**
      * This action provides an item list overview in the admin area.
      *
@@ -117,12 +120,14 @@ abstract class AbstractPollController extends AbstractController
      */
     protected function viewInternal(Request $request, $sort, $sortdir, $pos, $num, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'poll';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -142,6 +147,7 @@ abstract class AbstractPollController extends AbstractController
             new Column('multiple'),
             new Column('dateOfStart'),
             new Column('dateOfEnd'),
+            new Column('inFrontend'),
             new Column('createdBy'),
             new Column('createdDate'),
             new Column('updatedBy'),
@@ -150,10 +156,20 @@ abstract class AbstractPollController extends AbstractController
         
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters, true);
         
+        // filter by permissions
+        $filteredEntities = [];
+        foreach ($templateParameters['items'] as $poll) {
+            if (!$permissionHelper->hasEntityPermission($poll, $permLevel)) {
+                continue;
+            }
+            $filteredEntities[] = $poll;
+        }
+        $templateParameters['items'] = $filteredEntities;
         
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     }
+    
     /**
      * This action provides a item detail view in the admin area.
      *
@@ -191,15 +207,15 @@ abstract class AbstractPollController extends AbstractController
      */
     protected function displayInternal(Request $request, PollEntity $poll, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'poll';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($poll, $permLevel)) {
             throw new AccessDeniedException();
         }
-        // create identifier for permission check
-        $instanceId = $poll->getKey();
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', $instanceId . '::', $permLevel)) {
+        
+        if ($poll->getWorkflowState() != 'approved' && !$permissionHelper->hasEntityPermission($poll, ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
         
@@ -216,6 +232,7 @@ abstract class AbstractPollController extends AbstractController
         
         return $response;
     }
+    
     /**
      * This action provides a handling of edit requests in the admin area.
      *
@@ -253,12 +270,14 @@ abstract class AbstractPollController extends AbstractController
      */
     protected function editInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'poll';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -278,6 +297,7 @@ abstract class AbstractPollController extends AbstractController
         // fetch and return the appropriate template
         return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'edit', $templateParameters);
     }
+    
     /**
      * This action provides a handling of simple delete requests in the admin area.
      *
@@ -317,12 +337,14 @@ abstract class AbstractPollController extends AbstractController
      */
     protected function deleteInternal(Request $request, PollEntity $poll, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'poll';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_DELETE;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($poll, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $logger = $this->get('logger');
         $logArgs = ['app' => 'MUPollsModule', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => 'poll', 'id' => $poll->getKey()];
         
@@ -405,7 +427,7 @@ abstract class AbstractPollController extends AbstractController
         // fetch and return the appropriate template
         return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'delete', $templateParameters);
     }
-
+    
     /**
      * Process status changes for multiple items.
      *
@@ -444,7 +466,7 @@ abstract class AbstractPollController extends AbstractController
      * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
      *
      * @param Request $request Current request instance
-     * @param Boolean $isAdmin Whether the admin area is used or not
+     * @param boolean $isAdmin Whether the admin area is used or not
      */
     protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
     {
@@ -522,7 +544,7 @@ abstract class AbstractPollController extends AbstractController
         
         return $this->redirectToRoute('mupollsmodule_poll_' . ($isAdmin ? 'admin' : '') . 'index');
     }
-
+    
     /**
      * This method cares for a redirect within an inline frame.
      *
@@ -559,4 +581,5 @@ abstract class AbstractPollController extends AbstractController
         
         return new PlainResponse($this->get('twig')->render('@MUPollsModule/Poll/inlineRedirectHandler.html.twig', $templateParameters));
     }
+    
 }

@@ -15,13 +15,17 @@
                 <li role="presentation" class="active">
                     <a id="vars1Tab" href="#tab1" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
                 </li>
-                {% set tabTitle = __('List views') %}
+                {% set tabTitle = __('Moderation') %}
                 <li role="presentation">
                     <a id="vars2Tab" href="#tab2" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
                 </li>
-                {% set tabTitle = __('Integration') %}
+                {% set tabTitle = __('List views') %}
                 <li role="presentation">
                     <a id="vars3Tab" href="#tab3" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
+                </li>
+                {% set tabTitle = __('Integration') %}
+                <li role="presentation">
+                    <a id="vars4Tab" href="#tab4" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a>
                 </li>
                 {% set tabTitle = __('Workflows') %}
                 <li role="presentation">
@@ -42,6 +46,16 @@
                     </fieldset>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="tab2" aria-labelledby="vars2Tab">
+                    {% set tabTitle = __('Moderation') %}
+                    <fieldset>
+                        <legend>{{ tabTitle }}</legend>
+                    
+                        <p class="alert alert-info">{{ __('Here you can assign moderation groups for enhanced workflow actions.')|nl2br }}</p>
+                    
+                        {{ form_row(form.moderationGroupForPolls) }}
+                    </fieldset>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="tab3" aria-labelledby="vars3Tab">
                     {% set tabTitle = __('List views') %}
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>
@@ -56,7 +70,7 @@
                         {{ form_row(form.linkOwnVotesOnAccountPage) }}
                     </fieldset>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="tab3" aria-labelledby="vars3Tab">
+                <div role="tabpanel" class="tab-pane fade" id="tab4" aria-labelledby="vars4Tab">
                     {% set tabTitle = __('Integration') %}
                     <fieldset>
                         <legend>{{ tabTitle }}</legend>
@@ -76,7 +90,7 @@
                         <h4>{{ __('Options') }}</h4>
                         <p><a href="{{ path('zikula_workflow_editor_index', {workflow: 'mupollsmodule_none'}) }}" title="{{ __('Edit workflow for options') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit options workflow') }}</a>
                         <h4>{{ __('Polls') }}</h4>
-                        <p><a href="{{ path('zikula_workflow_editor_index', {workflow: 'mupollsmodule_none'}) }}" title="{{ __('Edit workflow for polls') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit polls workflow') }}</a>
+                        <p><a href="{{ path('zikula_workflow_editor_index', {workflow: 'mupollsmodule_standard'}) }}" title="{{ __('Edit workflow for polls') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit polls workflow') }}</a>
                         <h4>{{ __('Votes') }}</h4>
                         <p><a href="{{ path('zikula_workflow_editor_index', {workflow: 'mupollsmodule_none'}) }}" title="{{ __('Edit workflow for votes') }}" target="_blank"><i class="fa fa-cubes"></i> {{ __('Edit votes workflow') }}</a>
                     </fieldset>
@@ -84,12 +98,30 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group form-buttons">
             <div class="col-sm-offset-3 col-sm-9">
                 {{ form_widget(form.save) }}
+                {{ form_widget(form.reset) }}
                 {{ form_widget(form.cancel) }}
             </div>
         </div>
         {{ form_end(form) }}
     </div>
+{% endblock %}
+{% block footer %}
+    {{ parent() }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.Validation.js'), 98) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.EditFunctions.js'), 99) }}
+    {% set formInitScript %}
+        <script>
+        /* <![CDATA[ */
+            ( function($) {
+                $(document).ready(function() {
+                    mUPollsInitEditForm('edit', '1');
+                });
+            })(jQuery);
+        /* ]]> */
+        </script>
+    {% endset %}
+    {{ pageAddAsset('footer', formInitScript) }}
 {% endblock %}

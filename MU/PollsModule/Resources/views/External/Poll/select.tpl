@@ -25,6 +25,7 @@
                     <option value="multiple"{if $sort eq 'multiple'} selected="selected"{/if}>{gt text='Multiple'}</option>
                     <option value="dateOfStart"{if $sort eq 'dateOfStart'} selected="selected"{/if}>{gt text='Date of start'}</option>
                     <option value="dateOfEnd"{if $sort eq 'dateOfEnd'} selected="selected"{/if}>{gt text='Date of end'}</option>
+                    <option value="inFrontend"{if $sort eq 'inFrontend'} selected="selected"{/if}>{gt text='In frontend'}</option>
                     <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
                     <option value="createdBy"{if $sort eq 'createdBy'} selected="selected"{/if}>{gt text='Creator'}</option>
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>

@@ -3,8 +3,7 @@
 /**
  * Initialises the reset button for a certain date input.
  */
-function mUPollsInitDateField(fieldName)
-{
+function mUPollsInitDateField(fieldName) {
     jQuery('#' + fieldName + 'ResetVal').click(function (event) {
         event.preventDefault();
         jQuery('#' + fieldName).val('');
@@ -17,8 +16,7 @@ var editForm;
 var formButtons;
 var triggerValidation = true;
 
-function mUPollsTriggerFormValidation()
-{
+function mUPollsTriggerFormValidation() {
     mUPollsExecuteCustomValidationConstraints(editedObjectType, editedEntityId);
 
     if (!editForm.get(0).checkValidity()) {
@@ -28,7 +26,7 @@ function mUPollsTriggerFormValidation()
     }
 }
 
-function mUPollsHandleFormSubmit (event) {
+function mUPollsHandleFormSubmit(event) {
     if (triggerValidation) {
         mUPollsTriggerFormValidation();
         if (!editForm.get(0).checkValidity()) {
@@ -48,8 +46,7 @@ function mUPollsHandleFormSubmit (event) {
 /**
  * Initialises an entity edit form.
  */
-function mUPollsInitEditForm(mode, entityId)
-{
+function mUPollsInitEditForm(mode, entityId) {
     if (jQuery('.mupolls-edit-form').length < 1) {
         return;
     }
@@ -77,13 +74,15 @@ function mUPollsInitEditForm(mode, entityId)
     });
 
     formButtons = editForm.find('.form-buttons input');
-    editForm.find('.btn-danger').first().bind('click keypress', function (event) {
-        if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
-            event.preventDefault();
-        }
-    });
+    if (editForm.find('.btn-danger').length > 0) {
+        editForm.find('.btn-danger').first().bind('click keypress', function (event) {
+            if (!window.confirm(Translator.__('Do you really want to delete this entry?'))) {
+                event.preventDefault();
+            }
+        });
+    }
     editForm.find('button[type=submit]').bind('click keypress', function (event) {
-        triggerValidation = !jQuery(this).prop('formnovalidate');
+        triggerValidation = !jQuery(this).attr('formnovalidate');
     });
     editForm.submit(mUPollsHandleFormSubmit);
 
@@ -95,10 +94,9 @@ function mUPollsInitEditForm(mode, entityId)
 /**
  * Initialises a relation field section with autocompletion and optional edit capabilities.
  */
-function mUPollsInitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl)
-{
+function mUPollsInitRelationHandling(objectType, alias, idPrefix, includeEditing, inputType, createUrl) {
     if (inputType == 'autocomplete') {
-        mUPollsInitAutoCompletion(objectType, idPrefix, includeEditing);
+        mUPollsInitAutoCompletion(objectType, alias, idPrefix, includeEditing);
     }
     if (includeEditing) {
         mUPollsInitInlineEditingButtons(objectType, alias, idPrefix, inputType, createUrl);

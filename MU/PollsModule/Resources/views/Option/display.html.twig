@@ -7,8 +7,8 @@
     {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.options.filter')|safeHtml }}
     {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], {entity: option, area: routeArea, context: 'display'}) %}
     <div class="dropdown">
-        <a id="itemActions{{ option.getKey() }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
-        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
+        <a id="itemActions{{ option.getKey() }}DropDownToggleStart" role="button" data-toggle="dropdown" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
+        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:bootstrap_fontawesome.html.twig'}) }}
     </div>
 {% endblock %}
 {% block content %}
@@ -22,7 +22,7 @@
         {% endif %}
         {% if option.colorOfOption is not empty %}
             <dt>{{ __('Color of option') }}</dt>
-            <dd>{{ option.colorOfOption }}</dd>
+            <dd><span class="label label-default" style="background-color: {{ option.colorOfOption|e('html_attr') }}">{{ option.colorOfOption }}</span></dd>
         {% endif %}
         {% if option.idOfPoll is not empty %}
             <dt>{{ __('Id of poll') }}</dt>
@@ -37,5 +37,10 @@
 </div>
 {% endblock %}
 {% block display_hooks %}
-    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.display_view', id=option.getKey(), urlObject=currentUrlObject) }}
+    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.options.display_view', id=option.getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
+    {% if hooks is iterable and hooks|length > 0 %}
+        {% for area, hook in hooks %}
+            <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

@@ -13,8 +13,8 @@
 namespace MU\PollsModule\Form\Type\Base;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
@@ -108,7 +108,6 @@ abstract class AbstractOptionType extends AbstractType
     {
         $this->addEntityFields($builder, $options);
         $this->addModerationFields($builder, $options);
-        $this->addReturnControlField($builder, $options);
         $this->addSubmitButtons($builder, $options);
     }
 
@@ -118,7 +117,7 @@ abstract class AbstractOptionType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addEntityFields(FormBuilderInterface $builder, array $options)
+    public function addEntityFields(FormBuilderInterface $builder, array $options = [])
     {
         
         $builder->add('title', TextType::class, [
@@ -127,7 +126,7 @@ abstract class AbstractOptionType extends AbstractType
             'attr' => [
                 'maxlength' => 255,
                 'class' => '',
-                'title' => $this->__('Enter the title of the option')
+                'title' => $this->__('Enter the title of the option.')
             ],
             'required' => true,
         ]);
@@ -151,14 +150,13 @@ abstract class AbstractOptionType extends AbstractType
             }
         }
         
-        $builder->add('colorOfOption', TextType::class, [
+        $builder->add('colorOfOption', ColorType::class, [
             'label' => $this->__('Color of option') . ':',
-            'help' => $this->__('Note: this value must not contain spaces.'),
             'empty_data' => '',
             'attr' => [
                 'maxlength' => 255,
-                'class' => ' validate-nospace',
-                'title' => $this->__('Enter the color of option of the option')
+                'class' => ' validate-colour mupollsmodule-colour-picker',
+                'title' => $this->__('Choose the color of option of the option.')
             ],
             'required' => false,
         ]);
@@ -182,7 +180,7 @@ abstract class AbstractOptionType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addModerationFields(FormBuilderInterface $builder, array $options)
+    public function addModerationFields(FormBuilderInterface $builder, array $options = [])
     {
         if (!$options['has_moderate_permission']) {
             return;
@@ -193,43 +191,25 @@ abstract class AbstractOptionType extends AbstractType
             'label' => $this->__('Creator') . ':',
             'attr' => [
                 'maxlength' => 11,
-                'title' => $this->__('Here you can choose a user which will be set as creator')
+                'title' => $this->__('Here you can choose a user which will be set as creator.')
             ],
             'empty_data' => 0,
             'required' => false,
-            'help' => $this->__('Here you can choose a user which will be set as creator')
+            'help' => $this->__('Here you can choose a user which will be set as creator.')
         ]);
         $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
             'mapped' => false,
             'label' => $this->__('Creation date') . ':',
             'attr' => [
                 'class' => '',
-                'title' => $this->__('Here you can choose a custom creation date')
+                'title' => $this->__('Here you can choose a custom creation date.')
             ],
             'empty_data' => '',
             'required' => false,
             'with_seconds' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text',
-            'help' => $this->__('Here you can choose a custom creation date')
-        ]);
-    }
-
-    /**
-     * Adds the return control field.
-     *
-     * @param FormBuilderInterface $builder The form builder
-     * @param array                $options The options
-     */
-    public function addReturnControlField(FormBuilderInterface $builder, array $options)
-    {
-        if ($options['mode'] != 'create') {
-            return;
-        }
-        $builder->add('repeatCreation', CheckboxType::class, [
-            'mapped' => false,
-            'label' => $this->__('Create another item after save'),
-            'required' => false
+            'help' => $this->__('Here you can choose a custom creation date.')
         ]);
     }
 
@@ -239,7 +219,7 @@ abstract class AbstractOptionType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addSubmitButtons(FormBuilderInterface $builder, array $options)
+    public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
     {
         foreach ($options['actions'] as $action) {
             $builder->add($action['id'], SubmitType::class, [
@@ -249,6 +229,16 @@ abstract class AbstractOptionType extends AbstractType
                     'class' => $action['buttonClass']
                 ]
             ]);
+            if ($options['mode'] == 'create' && $action['id'] == 'submit') {
+                // add additional button to submit item and return to create form
+                $builder->add('submitrepeat', SubmitType::class, [
+                    'label' => $this->__('Submit and repeat'),
+                    'icon' => 'fa-repeat',
+                    'attr' => [
+                        'class' => $action['buttonClass']
+                    ]
+                ]);
+            }
         }
         $builder->add('reset', ResetType::class, [
             'label' => $this->__('Reset'),

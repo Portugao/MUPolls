@@ -74,6 +74,8 @@ abstract class AbstractVoteUiHooksSubscriber implements HookSubscriberInterface
             UiHooksCategory::TYPE_VALIDATE_EDIT => 'mupollsmodule.ui_hooks.votes.validate_edit',
             // Perform the final update actions for an edited item.
             UiHooksCategory::TYPE_PROCESS_EDIT => 'mupollsmodule.ui_hooks.votes.process_edit',
+            // Display hook for delete forms.
+            UiHooksCategory::TYPE_FORM_DELETE => 'mupollsmodule.ui_hooks.votes.form_delete',
             // Validate input from an item to be deleted.
             UiHooksCategory::TYPE_VALIDATE_DELETE => 'mupollsmodule.ui_hooks.votes.validate_delete',
             // Perform the final delete actions for a deleted item.

@@ -54,6 +54,7 @@ abstract class AbstractOptionEntity extends EntityAccess implements Translatable
     
     /**
      * the current workflow state
+     *
      * @ORM\Column(length=20)
      * @Assert\NotBlank()
      * @PollsAssert\ListEntry(entityName="option", propertyName="workflowState", multiple=false)
@@ -73,8 +74,8 @@ abstract class AbstractOptionEntity extends EntityAccess implements Translatable
     /**
      * @ORM\Column(length=255)
      * @Assert\NotNull()
-     * @Assert\Regex(pattern="/\s/", match=false, message="This value must not contain space chars.")
      * @Assert\Length(min="0", max="255")
+     * @Assert\Regex(pattern="/^#?(([a-fA-F0-9]{3}){1,2})$/", message="This value must be a valid html colour code [#123 or #123456].")
      * @var string $colorOfOption
      */
     protected $colorOfOption = '';
@@ -287,7 +288,7 @@ abstract class AbstractOptionEntity extends EntityAccess implements Translatable
     /**
      * Creates url arguments array for easy creation of display urls.
      *
-     * @return array The resulting arguments list
+     * @return array List of resulting arguments
      */
     public function createUrlArgs()
     {
@@ -329,11 +330,11 @@ abstract class AbstractOptionEntity extends EntityAccess implements Translatable
     /**
      * Returns an array of all related objects that need to be persisted after clone.
      * 
-     * @param array $objects The objects are added to this array. Default: []
+     * @param array $objects Objects that are added to this array
      * 
-     * @return array of entity objects
+     * @return array List of entity objects
      */
-    public function getRelatedObjectsToPersist(&$objects = []) 
+    public function getRelatedObjectsToPersist(&$objects = [])
     {
         return [];
     }

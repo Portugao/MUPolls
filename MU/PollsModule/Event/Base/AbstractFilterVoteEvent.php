@@ -36,7 +36,7 @@ class AbstractFilterVoteEvent extends Event
      * @param VoteEntity $vote Processed entity
      * @param array $entityChangeSet Change set for preUpdate events
      */
-    public function __construct(VoteEntity $vote, $entityChangeSet = [])
+    public function __construct(VoteEntity $vote, array $entityChangeSet = [])
     {
         $this->vote = $vote;
         $this->entityChangeSet = $entityChangeSet;
@@ -55,7 +55,7 @@ class AbstractFilterVoteEvent extends Event
     /**
      * Returns the change set.
      *
-     * @return array
+     * @return array Entity change set
      */
     public function getEntityChangeSet()
     {

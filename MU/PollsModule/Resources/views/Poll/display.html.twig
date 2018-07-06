@@ -7,8 +7,8 @@
     {{ templateTitle|notifyFilters('mupollsmodule.filter_hooks.polls.filter')|safeHtml }}{% if routeArea == 'admin' %} <small>({{ poll.workflowState|mupollsmodule_objectState(false)|lower }})</small>{% endif %}
     {% set itemActions = knp_menu_get('MUPollsModule:ItemActionsMenu:menu', [], {entity: poll, area: routeArea, context: 'display'}) %}
     <div class="dropdown">
-        <a id="itemActions{{ poll.getKey() }}DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
-        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:actions.html.twig'}) }}
+        <a id="itemActions{{ poll.getKey() }}DropDownToggleStart" role="button" data-toggle="dropdown" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i> {{ __('Actions') }} <span class="caret"></span></a>
+        {{ knp_menu_render(itemActions, {template: 'ZikulaMenuModule:Override:bootstrap_fontawesome.html.twig'}) }}
     </div>
 {% endblock %}
 {% block content %}
@@ -49,6 +49,22 @@
                 {{ poll.dateOfEnd|localizeddate('medium', 'short') }}
             {% endif %}</dd>
         {% endif %}
+        {% if poll.inFrontend is not empty %}
+            <dt>{{ __('In frontend') }}</dt>
+            <dd>{% set itemId = poll.getKey() %}
+            <a id="toggleInFrontend{{ itemId }}" href="javascript:void(0);" class="mupolls-ajax-toggle hidden" data-object-type="poll" data-field-name="inFrontend" data-item-id="{{ itemId }}">
+                <i class="fa fa-check{% if not poll.inFrontend %} hidden{% endif %}" id="yesInFrontend{{ itemId }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                <i class="fa fa-times{% if poll.inFrontend %} hidden{% endif %}" id="noInFrontend{{ itemId }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
+            </a>
+            <noscript><div id="noscriptInFrontend{{ itemId }}">
+                {% if poll.inFrontend %}
+                    <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                {% else %}
+                    <i class="fa fa-times" title="{{ __('No') }}"></i>
+                {% endif %}
+            </div></noscript>
+            </dd>
+        {% endif %}
         
     </dl>
 
@@ -69,5 +85,10 @@
 </div>
 {% endblock %}
 {% block display_hooks %}
-    {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.display_view', id=poll.getKey(), urlObject=currentUrlObject) }}
+    {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.polls.display_view', id=poll.getKey(), urlObject=currentUrlObject, outputAsArray=true) %}
+    {% if hooks is iterable and hooks|length > 0 %}
+        {% for area, hook in hooks %}
+            <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

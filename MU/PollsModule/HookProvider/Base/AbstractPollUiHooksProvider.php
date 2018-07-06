@@ -156,9 +156,12 @@ abstract class AbstractPollUiHooksProvider implements HookProviderInterface
         if (null === $url || !is_object($url)) {
             return;
         }
+        $url = $url->toArray();
+
+        $entityManager = $this->entityFactory->getObjectManager();
 
         // update url information for assignments of updated data object
-        $qb = $this->entityFactory->getObjectManager()->createQueryBuilder();
+        $qb = $entityManager->createQueryBuilder();
         $qb->select('tbl')
            ->from($this->getHookAssignmentEntity(), 'tbl');
         $qb = $this->addContextFilters($qb, $hook);
@@ -167,10 +170,10 @@ abstract class AbstractPollUiHooksProvider implements HookProviderInterface
         $assignments = $query->getResult();
 
         foreach ($assignments as $assignment) {
-            $assignment->setSubscriberUrl($url->toArray());
+            $assignment->setSubscriberUrl($url);
         }
 
-        $this->entityFactory->getObjectManager()->flush();
+        $entityManager->flush();
     }
 
     /**
@@ -257,7 +260,7 @@ abstract class AbstractPollUiHooksProvider implements HookProviderInterface
      *
      * @param Hook $hook
      *
-     * @return array
+     * @return array List of assignments and assigned entities
      */
     protected function selectAssignedEntities(Hook $hook)
     {
@@ -276,7 +279,7 @@ abstract class AbstractPollUiHooksProvider implements HookProviderInterface
      *
      * @param Hook $hook
      *
-     * @return array
+     * @return array List of assignments and identifiers of assigned entities
      */
     protected function selectAssignedIds(Hook $hook)
     {
@@ -323,7 +326,7 @@ abstract class AbstractPollUiHooksProvider implements HookProviderInterface
             $templateParameters['subscriberOwner'] = $hook->getCaller();
             $templateParameters['subscriberAreaId'] = $hook->getAreaId();
             $templateParameters['subscriberObjectId'] = $hook->getId();
-            $url = $hook->getUrl();
+            $url = method_exists($hook, 'getUrl') ? $hook->getUrl() : null;
             $templateParameters['subscriberUrl'] = (null !== $url && is_object($url)) ? $url->serialize() : serialize([]);
         }
 

@@ -15,12 +15,18 @@ namespace MU\PollsModule\Entity\Factory\Base;
 use MU\PollsModule\Entity\OptionEntity;
 use MU\PollsModule\Entity\PollEntity;
 use MU\PollsModule\Entity\VoteEntity;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * Entity initialiser class used to dynamically apply default values to newly created entities.
  */
 abstract class AbstractEntityInitialiser
 {
+    /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+
     /**
      * Initialises a given option instance.
      *
@@ -30,7 +36,6 @@ abstract class AbstractEntityInitialiser
      */
     public function initOption(OptionEntity $entity)
     {
-
         return $entity;
     }
 
@@ -43,7 +48,6 @@ abstract class AbstractEntityInitialiser
      */
     public function initPoll(PollEntity $entity)
     {
-
         return $entity;
     }
 
@@ -56,7 +60,6 @@ abstract class AbstractEntityInitialiser
      */
     public function initVote(VoteEntity $entity)
     {
-
         return $entity;
     }
 

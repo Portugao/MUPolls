@@ -23,12 +23,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Zikula\Common\Translator\TranslatorInterface;
 use Zikula\Common\Translator\TranslatorTrait;
 use Zikula\Core\RouteUrl;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use Zikula\SearchModule\Entity\SearchResultEntity;
 use Zikula\SearchModule\SearchableInterface;
 use MU\PollsModule\Entity\Factory\EntityFactory;
 use MU\PollsModule\Helper\ControllerHelper;
 use MU\PollsModule\Helper\EntityDisplayHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * Search helper base class.
@@ -38,29 +38,24 @@ abstract class AbstractSearchHelper implements SearchableInterface
     use TranslatorTrait;
     
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-    
-    /**
      * @var SessionInterface
      */
-    private $session;
+    protected $session;
     
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
     
     /**
      * @var EntityFactory
      */
-    private $entityFactory;
+    protected $entityFactory;
     
     /**
      * @var ControllerHelper
      */
-    private $controllerHelper;
+    protected $controllerHelper;
     
     /**
      * @var EntityDisplayHelper
@@ -68,32 +63,37 @@ abstract class AbstractSearchHelper implements SearchableInterface
     protected $entityDisplayHelper;
     
     /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+    
+    /**
      * SearchHelper constructor.
      *
      * @param TranslatorInterface $translator          Translator service instance
-     * @param PermissionApiInterface $permissionApi    PermissionApi service instance
      * @param SessionInterface    $session             Session service instance
      * @param RequestStack        $requestStack        RequestStack service instance
      * @param EntityFactory       $entityFactory       EntityFactory service instance
      * @param ControllerHelper    $controllerHelper    ControllerHelper service instance
      * @param EntityDisplayHelper $entityDisplayHelper EntityDisplayHelper service instance
+     * @param PermissionHelper    $permissionHelper    PermissionHelper service instance
      */
     public function __construct(
         TranslatorInterface $translator,
-        PermissionApiInterface $permissionApi,
         SessionInterface $session,
         RequestStack $requestStack,
         EntityFactory $entityFactory,
         ControllerHelper $controllerHelper,
-        EntityDisplayHelper $entityDisplayHelper
+        EntityDisplayHelper $entityDisplayHelper,
+        PermissionHelper $permissionHelper
     ) {
         $this->setTranslator($translator);
-        $this->permissionApi = $permissionApi;
         $this->session = $session;
         $this->request = $requestStack->getCurrentRequest();
         $this->entityFactory = $entityFactory;
         $this->controllerHelper = $controllerHelper;
         $this->entityDisplayHelper = $entityDisplayHelper;
+        $this->permissionHelper = $permissionHelper;
     }
     
     /**
@@ -111,7 +111,7 @@ abstract class AbstractSearchHelper implements SearchableInterface
      */
     public function amendForm(FormBuilderInterface $builder)
     {
-        if (!$this->permissionApi->hasPermission('MUPollsModule::', '::', ACCESS_READ)) {
+        if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
             return '';
         }
     
@@ -136,7 +136,7 @@ abstract class AbstractSearchHelper implements SearchableInterface
      */
     public function getResults(array $words, $searchType = 'AND', $modVars = null)
     {
-        if (!$this->permissionApi->hasPermission('MUPollsModule::', '::', ACCESS_READ)) {
+        if (!$this->permissionHelper->hasPermission(ACCESS_READ)) {
             return [];
         }
     
@@ -145,23 +145,21 @@ abstract class AbstractSearchHelper implements SearchableInterface
     
         // retrieve list of activated object types
         $searchTypes = $this->getSearchTypes();
+        $entitiesWithDisplayAction = ['option', 'poll', 'vote'];
     
         foreach ($searchTypes as $searchTypeCode => $typeInfo) {
-            $objectType = $typeInfo['value'];
             $isActivated = false;
-            if ($this->request->isMethod('GET')) {
-                $isActivated = $this->request->query->get('active_' . $searchTypeCode, false);
-            } elseif ($this->request->isMethod('POST')) {
-                $searchSettings = $this->request->request->get('zikulasearchmodule_search', []);
-                $moduleActivationInfo = $searchSettings['modules'];
-                if (isset($moduleActivationInfo['MUPollsModule'])) {
-                    $moduleActivationInfo = $moduleActivationInfo['MUPollsModule'];
-                    $isActivated = isset($moduleActivationInfo['active_' . $searchTypeCode]);
-                }
+            $searchSettings = $this->request->query->get('zikulasearchmodule_search', []);
+            $moduleActivationInfo = $searchSettings['modules'];
+            if (isset($moduleActivationInfo['MUPollsModule'])) {
+                $moduleActivationInfo = $moduleActivationInfo['MUPollsModule'];
+                $isActivated = isset($moduleActivationInfo['active_' . $searchTypeCode]);
             }
             if (!$isActivated) {
                 continue;
             }
+    
+            $objectType = $typeInfo['value'];
             $whereArray = [];
             $languageField = null;
             switch ($objectType) {
@@ -203,25 +201,23 @@ abstract class AbstractSearchHelper implements SearchableInterface
             }
     
             $descriptionFieldName = $this->entityDisplayHelper->getDescriptionFieldName($objectType);
-    
-            $entitiesWithDisplayAction = ['option', 'poll', 'vote'];
+            $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
     
             foreach ($entities as $entity) {
-                $urlArgs = $entity->createUrlArgs();
-                $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
-    
-                // perform permission check
-                if (!$this->permissionApi->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', $entity->getKey() . '::', ACCESS_OVERVIEW)) {
+                if (!$this->permissionHelper->mayRead($entity)) {
                     continue;
                 }
     
                 $description = !empty($descriptionFieldName) ? $entity[$descriptionFieldName] : '';
                 $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
     
-                $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
-    
                 $formattedTitle = $this->entityDisplayHelper->getFormattedTitle($entity);
-                $displayUrl = $hasDisplayAction ? new RouteUrl('mupollsmodule_' . strtolower($objectType) . '_display', $urlArgs) : '';
+                $displayUrl = '';
+                if ($hasDisplayAction) {
+                    $urlArgs = $entity->createUrlArgs();
+                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $this->request->getLocale();
+                    $displayUrl = new RouteUrl('mupollsmodule_' . strtolower($objectType) . '_display', $urlArgs);
+                }
     
                 $result = new SearchResultEntity();
                 $result->setTitle($formattedTitle)
@@ -240,7 +236,7 @@ abstract class AbstractSearchHelper implements SearchableInterface
     /**
      * Returns list of supported search types.
      *
-     * @return array
+     * @return array List of search types
      */
     protected function getSearchTypes()
     {
@@ -283,13 +279,13 @@ abstract class AbstractSearchHelper implements SearchableInterface
      * Construct a QueryBuilder Where orX|andX Expr instance.
      *
      * @param QueryBuilder $qb
-     * @param array $words the words to query for
-     * @param array $fields
+     * @param string[] $words  List of words to query for
+     * @param string[] $fields List of fields to include into query
      * @param string $searchtype AND|OR|EXACT
      *
      * @return null|Composite
      */
-    protected function formatWhere(QueryBuilder $qb, array $words, array $fields, $searchtype = 'AND')
+    protected function formatWhere(QueryBuilder $qb, array $words = [], array $fields = [], $searchtype = 'AND')
     {
         if (empty($words) || empty($fields)) {
             return null;

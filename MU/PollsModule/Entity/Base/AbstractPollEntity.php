@@ -54,6 +54,7 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     
     /**
      * the current workflow state
+     *
      * @ORM\Column(length=20)
      * @Assert\NotBlank()
      * @PollsAssert\ListEntry(entityName="poll", propertyName="workflowState", multiple=false)
@@ -97,10 +98,18 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Assert\DateTime()
-     * @Assert\Expression("!value or value > this.getDateOfStart()")
+     * @Assert\Expression("!value or value > this.getDateOfStart()", message="The start must be before the end.")
      * @var DateTime $dateOfEnd
      */
     protected $dateOfEnd;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull()
+     * @Assert\Type(type="bool")
+     * @var boolean $inFrontend
+     */
+    protected $inFrontend = false;
     
     
     /**
@@ -290,12 +299,12 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     public function setDateOfStart($dateOfStart)
     {
         if ($this->dateOfStart !== $dateOfStart) {
-            if (is_object($dateOfStart) && $dateOfStart instanceOf \DateTime) {
+            if (!(null == $dateOfStart && empty($dateOfStart)) && !(is_object($dateOfStart) && $dateOfStart instanceOf \DateTimeInterface)) {
+                $dateOfStart = new \DateTime($dateOfStart);
+            }
+            
+            if ($this->dateOfStart != $dateOfStart) {
                 $this->dateOfStart = $dateOfStart;
-            } elseif (null === $dateOfStart || empty($dateOfStart)) {
-                $this->dateOfStart = null;
-            } else {
-                $this->dateOfStart = new \DateTime($dateOfStart);
             }
         }
     }
@@ -320,13 +329,37 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     public function setDateOfEnd($dateOfEnd)
     {
         if ($this->dateOfEnd !== $dateOfEnd) {
-            if (is_object($dateOfEnd) && $dateOfEnd instanceOf \DateTime) {
-                $this->dateOfEnd = $dateOfEnd;
-            } elseif (null === $dateOfEnd || empty($dateOfEnd)) {
-                $this->dateOfEnd = null;
-            } else {
-                $this->dateOfEnd = new \DateTime($dateOfEnd);
+            if (!(null == $dateOfEnd && empty($dateOfEnd)) && !(is_object($dateOfEnd) && $dateOfEnd instanceOf \DateTimeInterface)) {
+                $dateOfEnd = new \DateTime($dateOfEnd);
             }
+            
+            if ($this->dateOfEnd != $dateOfEnd) {
+                $this->dateOfEnd = $dateOfEnd;
+            }
+        }
+    }
+    
+    /**
+     * Returns the in frontend.
+     *
+     * @return boolean
+     */
+    public function getInFrontend()
+    {
+        return $this->inFrontend;
+    }
+    
+    /**
+     * Sets the in frontend.
+     *
+     * @param boolean $inFrontend
+     *
+     * @return void
+     */
+    public function setInFrontend($inFrontend)
+    {
+        if (boolval($this->inFrontend) !== boolval($inFrontend)) {
+            $this->inFrontend = boolval($inFrontend);
         }
     }
     
@@ -360,7 +393,7 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     /**
      * Creates url arguments array for easy creation of display urls.
      *
-     * @return array The resulting arguments list
+     * @return array List of resulting arguments
      */
     public function createUrlArgs()
     {
@@ -402,11 +435,11 @@ abstract class AbstractPollEntity extends EntityAccess implements Translatable
     /**
      * Returns an array of all related objects that need to be persisted after clone.
      * 
-     * @param array $objects The objects are added to this array. Default: []
+     * @param array $objects Objects that are added to this array
      * 
-     * @return array of entity objects
+     * @return array List of entity objects
      */
-    public function getRelatedObjectsToPersist(&$objects = []) 
+    public function getRelatedObjectsToPersist(&$objects = [])
     {
         return [];
     }

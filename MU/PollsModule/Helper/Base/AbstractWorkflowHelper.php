@@ -16,10 +16,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Workflow\Registry;
 use Zikula\Common\Translator\TranslatorInterface;
 use Zikula\Core\Doctrine\EntityAccess;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
 use MU\PollsModule\Entity\Factory\EntityFactory;
 use MU\PollsModule\Helper\ListEntriesHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * Helper base class for workflow methods.
@@ -42,14 +42,9 @@ abstract class AbstractWorkflowHelper
     protected $logger;
 
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-
-    /**
      * @var CurrentUserApiInterface
      */
-    private $currentUserApi;
+    protected $currentUserApi;
 
     /**
      * @var EntityFactory
@@ -62,15 +57,20 @@ abstract class AbstractWorkflowHelper
     protected $listEntriesHelper;
 
     /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+
+    /**
      * WorkflowHelper constructor.
      *
      * @param TranslatorInterface     $translator        Translator service instance
      * @param Registry                $registry          Workflow registry service instance
      * @param LoggerInterface         $logger            Logger service instance
-     * @param PermissionApiInterface  $permissionApi     PermissionApi service instance
      * @param CurrentUserApiInterface $currentUserApi    CurrentUserApi service instance
      * @param EntityFactory           $entityFactory     EntityFactory service instance
      * @param ListEntriesHelper       $listEntriesHelper ListEntriesHelper service instance
+     * @param PermissionHelper        $permissionHelper  PermissionHelper service instance
      *
      * @return void
      */
@@ -78,18 +78,18 @@ abstract class AbstractWorkflowHelper
         TranslatorInterface $translator,
         Registry $registry,
         LoggerInterface $logger,
-        PermissionApiInterface $permissionApi,
         CurrentUserApiInterface $currentUserApi,
         EntityFactory $entityFactory,
-        ListEntriesHelper $listEntriesHelper
+        ListEntriesHelper $listEntriesHelper,
+        PermissionHelper $permissionHelper
     ) {
         $this->translator = $translator;
         $this->workflowRegistry = $registry;
         $this->logger = $logger;
-        $this->permissionApi = $permissionApi;
         $this->currentUserApi = $currentUserApi;
         $this->entityFactory = $entityFactory;
         $this->listEntriesHelper = $listEntriesHelper;
+        $this->permissionHelper = $permissionHelper;
     }
 
     /**
@@ -111,9 +111,19 @@ abstract class AbstractWorkflowHelper
              'ui' => 'success'
          ];
          $states[] = [
+             'value' => 'trashed',
+             'text' => $this->translator->__('Trashed'),
+             'ui' => 'danger'
+         ];
+         $states[] = [
              'value' => 'deleted',
              'text' => $this->translator->__('Deleted'),
              'ui' => 'danger'
+         ];
+         $states[] = [
+             'value' => 'waiting',
+             'text' => $this->translator->__('Waiting'),
+             'ui' => 'warning'
          ];
          $states[] = [
              'value' => 'suspended',
@@ -192,6 +202,9 @@ abstract class AbstractWorkflowHelper
             case 'submit':
                 $title = $this->translator->__('Submit');
                 break;
+            case 'approve':
+                $title = $currentState == 'initial' ? $this->translator->__('Submit and approve') : $this->translator->__('Approve');
+                break;
             case 'unpublish':
                 $title = $this->translator->__('Unpublish');
                 break;
@@ -204,13 +217,25 @@ abstract class AbstractWorkflowHelper
             case 'unarchive':
                 $title = $this->translator->__('Unarchive');
                 break;
+            case 'trash':
+                $title = $this->translator->__('Trash');
+                break;
+            case 'recover':
+                $title = $this->translator->__('Recover');
+                break;
             case 'delete':
                 $title = $this->translator->__('Delete');
                 break;
         }
     
-        if ($title == '' && substr($actionId, 0, 6) == 'update') {
-            $title = $this->translator->__('Update');
+        if ($title == '') {
+            if ($actionId == 'update') {
+                $title = $this->translator->__('Update');
+            } elseif ($actionId == 'trash') {
+                $title = $this->translator->__('Trash');
+            } elseif ($actionId == 'recover') {
+                $title = $this->translator->__('Recover');
+        	}
         }
     
         return $title;
@@ -230,6 +255,9 @@ abstract class AbstractWorkflowHelper
             case 'submit':
                 $buttonClass = 'success';
                 break;
+            case 'approve':
+                $buttonClass = '';
+                break;
             case 'unpublish':
                 $buttonClass = '';
                 break;
@@ -242,12 +270,18 @@ abstract class AbstractWorkflowHelper
             case 'unarchive':
                 $buttonClass = '';
                 break;
+            case 'trash':
+                $buttonClass = '';
+                break;
+            case 'recover':
+                $buttonClass = '';
+                break;
             case 'delete':
                 $buttonClass = 'danger';
                 break;
         }
     
-        if ($buttonClass == '' && substr($actionId, 0, 6) == 'update') {
+        if ($buttonClass == '' && $actionId == 'update') {
             $buttonClass = 'success';
     	}
     
@@ -263,9 +297,9 @@ abstract class AbstractWorkflowHelper
      *
      * @param EntityAccess $entity    The given entity instance
      * @param string       $actionId  Name of action to be executed
-     * @param bool         $recursive True if the function called itself
+     * @param boolean      $recursive True if the function called itself
      *
-     * @return bool False on error or true if everything worked well
+     * @return boolean Whether everything worked well or not
      */
     public function executeAction(EntityAccess $entity, $actionId = '', $recursive = false)
     {
@@ -283,14 +317,13 @@ abstract class AbstractWorkflowHelper
         try {
             $workflow->apply($entity, $actionId);
     
-            //$entityManager->transactional(function($entityManager) {
             if ($actionId == 'delete') {
                 $entityManager->remove($entity);
             } else {
                 $entityManager->persist($entity);
             }
             $entityManager->flush();
-            //});
+    
             $result = true;
             if ($actionId == 'delete') {
                 $this->logger->notice('{app}: User {user} deleted an entity.', $logArgs);
@@ -318,4 +351,54 @@ abstract class AbstractWorkflowHelper
         return (false !== $result);
     }
     
+    /**
+     * Collects amount of moderation items foreach object type.
+     *
+     * @return array List of collected amounts
+     */
+    public function collectAmountOfModerationItems()
+    {
+        $amounts = [];
+    
+    
+        // check if objects are waiting for approval
+        $state = 'waiting';
+        $objectType = 'poll';
+        if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_ADD)) {
+            $amount = $this->getAmountOfModerationItems($objectType, $state);
+            if ($amount > 0) {
+                $amounts[] = [
+                    'aggregateType' => 'pollsApproval',
+                    'description' => $this->translator->__('Polls pending approval'),
+                    'amount' => $amount,
+                    'objectType' => $objectType,
+                    'state' => $state,
+                    'message' => $this->translator->_fn('One poll is waiting for approval.', '%amount% polls are waiting for approval.', $amount, ['%amount%' => $amount])
+                ];
+        
+                $this->logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => 'MUPollsModule', 'amount' => $amount, 'entities' => 'polls']);
+            }
+        }
+    
+        return $amounts;
+    }
+    
+    /**
+     * Retrieves the amount of moderation items for a given object type
+     * and a certain workflow state.
+     *
+     * @param string $objectType Name of treated object type
+     * @param string $state The given state value
+     *
+     * @return integer The affected amount of objects
+     */
+    public function getAmountOfModerationItems($objectType, $state)
+    {
+        $repository = $this->entityFactory->getRepository($objectType);
+    
+        $where = 'tbl.workflowState = \'' . $state . '\'';
+        $parameters = ['workflowState' => $state];
+    
+        return $repository->selectCount($where, false, $parameters);
+    }
 }

@@ -1,0 +1,10 @@
+{# Purpose of this template: Display votes within an external context #}
+<dl>
+    {% for vote in items %}
+        <dt>{{ vote|mupollsmodule_formattedTitle }}</dt>
+        <dd><a href="{{ path('mupollsmodule_vote_display', {'id': vote.getId()}) }}" title="{{ __('Read more')|e('html_attr') }}">{{ __('Read more') }}</a>
+        </dd>
+    {% else %}
+        <dt>{{ __('No entries found.') }}</dt>
+    {% endfor %}
+</dl>

@@ -29,14 +29,17 @@ use Zikula\Common\Translator\TranslatorTrait;
 use Zikula\Core\Doctrine\EntityAccess;
 use Zikula\Core\RouteUrl;
 use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
+use Zikula\GroupsModule\Constant as GroupsConstant;
+use Zikula\GroupsModule\Entity\Repository\GroupApplicationRepository;
 use Zikula\PageLockModule\Api\ApiInterface\LockingApiInterface;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use Zikula\UsersModule\Api\ApiInterface\CurrentUserApiInterface;
+use Zikula\UsersModule\Constant as UsersConstant;
 use MU\PollsModule\Entity\Factory\EntityFactory;
 use MU\PollsModule\Helper\FeatureActivationHelper;
 use MU\PollsModule\Helper\ControllerHelper;
 use MU\PollsModule\Helper\HookHelper;
 use MU\PollsModule\Helper\ModelHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 use MU\PollsModule\Helper\TranslatableHelper;
 use MU\PollsModule\Helper\WorkflowHelper;
 
@@ -68,13 +71,6 @@ abstract class AbstractEditHandler
      * @var string
      */
     protected $objectTypeLower;
-
-    /**
-     * Permission component based on object type.
-     *
-     * @var string
-     */
-    protected $permissionComponent;
 
     /**
      * Reference to treated entity instance.
@@ -169,11 +165,6 @@ abstract class AbstractEditHandler
     protected $logger;
 
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-
-    /**
      * @var VariableApiInterface
      */
     protected $variableApi;
@@ -182,6 +173,11 @@ abstract class AbstractEditHandler
      * @var CurrentUserApiInterface
      */
     protected $currentUserApi;
+
+    /**
+     * @var GroupApplicationRepository
+     */
+    protected $groupApplicationRepository;
 
     /**
      * @var EntityFactory
@@ -194,19 +190,24 @@ abstract class AbstractEditHandler
     protected $controllerHelper;
 
     /**
-     * @var HookHelper
-     */
-    protected $hookHelper;
-
-    /**
      * @var ModelHelper
      */
     protected $modelHelper;
 
     /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+
+    /**
      * @var WorkflowHelper
      */
     protected $workflowHelper;
+
+    /**
+     * @var HookHelper
+     */
+    protected $hookHelper;
 
     /**
      * @var TranslatableHelper
@@ -248,12 +249,13 @@ abstract class AbstractEditHandler
      * @param RequestStack              $requestStack     RequestStack service instance
      * @param RouterInterface           $router           Router service instance
      * @param LoggerInterface           $logger           Logger service instance
-     * @param PermissionApiInterface    $permissionApi    PermissionApi service instance
      * @param VariableApiInterface      $variableApi      VariableApi service instance
      * @param CurrentUserApiInterface   $currentUserApi   CurrentUserApi service instance
+     * @param GroupApplicationRepository $groupApplicationRepository GroupApplicationRepository service instance.
      * @param EntityFactory             $entityFactory    EntityFactory service instance
      * @param ControllerHelper          $controllerHelper ControllerHelper service instance
      * @param ModelHelper               $modelHelper      ModelHelper service instance
+     * @param PermissionHelper          $permissionHelper PermissionHelper service instance
      * @param WorkflowHelper            $workflowHelper   WorkflowHelper service instance
      * @param HookHelper                $hookHelper       HookHelper service instance
      * @param TranslatableHelper        $translatableHelper TranslatableHelper service instance
@@ -266,12 +268,13 @@ abstract class AbstractEditHandler
         RequestStack $requestStack,
         RouterInterface $router,
         LoggerInterface $logger,
-        PermissionApiInterface $permissionApi,
         VariableApiInterface $variableApi,
         CurrentUserApiInterface $currentUserApi,
+        GroupApplicationRepository $groupApplicationRepository,
         EntityFactory $entityFactory,
         ControllerHelper $controllerHelper,
         ModelHelper $modelHelper,
+        PermissionHelper $permissionHelper,
         WorkflowHelper $workflowHelper,
         HookHelper $hookHelper,
         TranslatableHelper $translatableHelper,
@@ -283,12 +286,13 @@ abstract class AbstractEditHandler
         $this->request = $requestStack->getCurrentRequest();
         $this->router = $router;
         $this->logger = $logger;
-        $this->permissionApi = $permissionApi;
         $this->variableApi = $variableApi;
         $this->currentUserApi = $currentUserApi;
+        $this->groupApplicationRepository = $groupApplicationRepository;
         $this->entityFactory = $entityFactory;
         $this->controllerHelper = $controllerHelper;
         $this->modelHelper = $modelHelper;
+        $this->permissionHelper = $permissionHelper;
         $this->workflowHelper = $workflowHelper;
         $this->hookHelper = $hookHelper;
         $this->translatableHelper = $translatableHelper;
@@ -316,7 +320,7 @@ abstract class AbstractEditHandler
      *
      * @throws RuntimeException Thrown if the workflow actions can not be determined
      */
-    public function processForm(array $templateParameters)
+    public function processForm(array $templateParameters = [])
     {
         $this->templateParameters = $templateParameters;
     
@@ -337,9 +341,7 @@ abstract class AbstractEditHandler
             $this->returnTo = $this->request->getSession()->get($refererSessionVar);
         }
         // store current uri for repeated creations
-        $this->repeatReturnUrl = $this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . $this->request->getPathInfo();
-    
-        $this->permissionComponent = 'MUPollsModule:' . $this->objectTypeCapital . ':';
+        $this->repeatReturnUrl = $this->request->getUri();
     
         $this->idField = $this->entityFactory->getIdField($this->objectType);
     
@@ -361,21 +363,21 @@ abstract class AbstractEditHandler
         $this->templateParameters['mode'] = !empty($this->idValue) ? 'edit' : 'create';
     
         if ($this->templateParameters['mode'] == 'edit') {
-            if (!$this->permissionApi->hasPermission($this->permissionComponent, $this->idValue . '::', ACCESS_EDIT)) {
-                throw new AccessDeniedException();
-            }
-    
             $entity = $this->initEntityForEditing();
             if (null !== $entity) {
                 if (true === $this->hasPageLockSupport && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
                     // try to guarantee that only one person at a time can be editing this entity
                     $lockName = 'MUPollsModule' . $this->objectTypeCapital . $entity->getKey();
-                    $this->lockingApi->addLock($lockName, $this->getRedirectUrl(null));
+                    $this->lockingApi->addLock($lockName, $this->getRedirectUrl(['commandName' => '']));
                 }
             }
+    
+            if (!$this->permissionHelper->mayEdit($entity)) {
+                throw new AccessDeniedException();
+            }
         } else {
-            $permissionLevel = ACCESS_EDIT;
-            if (!$this->permissionApi->hasPermission($this->permissionComponent, '::', $permissionLevel)) {
+            $permissionLevel = in_array($this->objectType, ['poll']) ? ACCESS_COMMENT : ACCESS_EDIT;
+            if (!$this->permissionHelper->hasComponentPermission($this->objectType, $permissionLevel)) {
                 throw new AccessDeniedException();
             }
     
@@ -432,6 +434,14 @@ abstract class AbstractEditHandler
     
         // handle form request and check validity constraints of edited entity
         if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
+            if ($this->form->get('cancel')->isClicked()) {
+                if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
+                    $lockName = 'MUPollsModule' . $this->objectTypeCapital . $entity->getKey();
+                    $this->lockingApi->releaseLock($lockName);
+                }
+    
+                return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
+            }
             if ($this->form->isValid()) {
                 $result = $this->handleCommand();
                 if (false === $result) {
@@ -439,9 +449,6 @@ abstract class AbstractEditHandler
                 }
     
                 return $result;
-            }
-            if ($this->form->get('cancel')->isClicked()) {
-                return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
             }
         }
     
@@ -458,6 +465,17 @@ abstract class AbstractEditHandler
     {
         // to be customised in sub classes
         return null;
+    }
+    
+    /**
+     * Returns the form options.
+     *
+     * @return array
+     */
+    protected function getFormOptions()
+    {
+        // to be customised in sub classes
+        return [];
     }
     
     /**
@@ -583,16 +601,15 @@ abstract class AbstractEditHandler
                 $args['commandName'] = $action['id'];
             }
         }
-        if ($this->form->get('cancel')->isClicked()) {
-            $args['commandName'] = 'cancel';
+        if ($this->templateParameters['mode'] == 'create' && $this->form->has('submitrepeat') && $this->form->get('submitrepeat')->isClicked()) {
+            $args['commandName'] = 'submit';
+            $this->repeatCreateAction = true;
         }
     
         $action = $args['commandName'];
-        $isRegularAction = !in_array($action, ['delete', 'cancel']);
+        $isRegularAction = $action != 'delete';
     
-        if ($isRegularAction || $action == 'delete') {
-            $this->fetchInputData();
-        }
+        $this->fetchInputData();
     
         // get treated entity reference from persisted member var
         $entity = $this->entityRef;
@@ -611,35 +628,33 @@ abstract class AbstractEditHandler
             }
         }
     
-        if ($isRegularAction || $action == 'delete') {
-            $success = $this->applyAction($args);
-            if (!$success) {
-                // the workflow operation failed
-                return false;
+        $success = $this->applyAction($args);
+        if (!$success) {
+            // the workflow operation failed
+            return false;
+        }
+    
+        if ($isRegularAction && true === $this->hasTranslatableFields) {
+            if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                $this->processTranslationsForUpdate();
+            }
+        }
+    
+        if ($entity->supportsHookSubscribers()) {
+            $routeUrl = null;
+            if ($action != 'delete') {
+                $urlArgs = $entity->createUrlArgs();
+                $urlArgs['_locale'] = $this->request->getLocale();
+                $routeUrl = new RouteUrl('mupollsmodule_' . $this->objectTypeLower . '_display', $urlArgs);
             }
     
-            if ($isRegularAction && true === $this->hasTranslatableFields) {
-                if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                    $this->processTranslationsForUpdate();
-                }
-            }
+            // Call form aware processing hooks
+            $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
+            $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
     
-            if ($entity->supportsHookSubscribers()) {
-                $routeUrl = null;
-                if ($action != 'delete') {
-                    $urlArgs = $entity->createUrlArgs();
-                    $urlArgs['_locale'] = $this->request->getLocale();
-                    $routeUrl = new RouteUrl('mupollsmodule_' . $this->objectTypeLower . '_display', $urlArgs);
-                }
-    
-                // Call form aware processing hooks
-                $hookType = $action == 'delete' ? FormAwareCategory::TYPE_PROCESS_DELETE : FormAwareCategory::TYPE_PROCESS_EDIT;
-                $this->hookHelper->callFormProcessHooks($this->form, $entity, $hookType, $routeUrl);
-    
-                // Let any ui hooks know that we have created, updated or deleted an item
-                $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
-                $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
-            }
+            // Let any ui hooks know that we have created, updated or deleted an item
+            $hookType = $action == 'delete' ? UiHooksCategory::TYPE_PROCESS_DELETE : UiHooksCategory::TYPE_PROCESS_EDIT;
+            $this->hookHelper->callProcessHooks($entity, $hookType, $routeUrl);
         }
     
         if (true === $this->hasPageLockSupport && $this->templateParameters['mode'] == 'edit' && $this->kernel->isBundle('ZikulaPageLockModule') && null !== $this->lockingApi) {
@@ -666,8 +681,8 @@ abstract class AbstractEditHandler
     /**
      * Get success or error message for default operations.
      *
-     * @param array   $args    arguments from handleCommand method
-     * @param Boolean $success true if this is a success, false for default error
+     * @param array   $args    List of arguments from handleCommand method
+     * @param boolean $success Becomes true if this is a success, false for default error
      *
      * @return String desired status or error message
      */
@@ -704,8 +719,8 @@ abstract class AbstractEditHandler
     /**
      * Add success or error message to session.
      *
-     * @param array   $args    arguments from handleCommand method
-     * @param Boolean $success true if this is a success, false for default error
+     * @param array   $args    List of arguments from handleCommand method
+     * @param boolean $success Becomes true if this is a success, false for default error
      *
      * @throws RuntimeException Thrown if executing the workflow action fails
      */
@@ -734,10 +749,6 @@ abstract class AbstractEditHandler
         // fetch posted data input values as an associative array
         $formData = $this->form->getData();
     
-        if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
-            $this->repeatCreateAction = true;
-        }
-    
         if (method_exists($this->entityRef, 'getCreatedBy')) {
             if (isset($this->form['moderationSpecificCreator']) && null !== $this->form['moderationSpecificCreator']->getData()) {
                 $this->entityRef->setCreatedBy($this->form['moderationSpecificCreator']->getData());
@@ -758,14 +769,45 @@ abstract class AbstractEditHandler
     /**
      * This method executes a certain workflow action.
      *
-     * @param array $args Arguments from handleCommand method
+     * @param array $args List of arguments from handleCommand method
      *
-     * @return bool Whether everything worked well or not
+     * @return boolean Whether everything worked well or not
      */
     public function applyAction(array $args = [])
     {
         // stub for subclasses
         return false;
+    }
+
+    /**
+     * Prepares properties related to advanced workflows.
+     *
+     * @param boolean $enterprise Whether the enterprise workflow is used instead of the standard workflow
+     *
+     * @return array List of additional form options
+     */
+    protected function prepareWorkflowAdditions($enterprise = false)
+    {
+        $roles = [];
+        $currentUserId = $this->currentUserApi->isLoggedIn() ? $this->currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
+        $roles['is_creator'] = $this->templateParameters['mode'] == 'create'
+            || (method_exists($this->entityRef, 'getCreatedBy') && $this->entityRef->getCreatedBy()->getUid() == $currentUserId);
+    
+        $groupApplicationArgs = [
+            'user' => $currentUserId,
+            'group' => $this->variableApi->get('MUPollsModule', 'moderationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
+        ];
+        $roles['is_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+    
+        if (true === $enterprise) {
+            $groupApplicationArgs = [
+                'user' => $currentUserId,
+                'group' => $this->variableApi->get('MUPollsModule', 'superModerationGroupFor' . $this->objectTypeCapital, GroupsConstant::GROUP_ID_ADMIN)
+            ];
+            $roles['is_super_moderator'] = count($this->groupApplicationRepository->findBy($groupApplicationArgs)) > 0;
+        }
+    
+        return $roles;
     }
 
     /**

@@ -7,8 +7,7 @@ mUPollsModule.itemSelector.items = {};
 mUPollsModule.itemSelector.baseId = 0;
 mUPollsModule.itemSelector.selectedId = 0;
 
-mUPollsModule.itemSelector.onLoad = function (baseId, selectedId)
-{
+mUPollsModule.itemSelector.onLoad = function (baseId, selectedId) {
     mUPollsModule.itemSelector.baseId = baseId;
     mUPollsModule.itemSelector.selectedId = selectedId;
 
@@ -26,15 +25,13 @@ mUPollsModule.itemSelector.onLoad = function (baseId, selectedId)
     mUPollsModule.itemSelector.getItemList();
 };
 
-mUPollsModule.itemSelector.onParamChanged = function ()
-{
+mUPollsModule.itemSelector.onParamChanged = function () {
     jQuery('#ajaxIndicator').removeClass('hidden');
 
     mUPollsModule.itemSelector.getItemList();
 };
 
-mUPollsModule.itemSelector.getItemList = function ()
-{
+mUPollsModule.itemSelector.getItemList = function () {
     var baseId;
     var params;
 
@@ -51,7 +48,7 @@ mUPollsModule.itemSelector.getItemList = function ()
         params[catidsMain] = jQuery('#' + baseId + '_catidsMain').val();
     }
 
-    jQuery.getJSON(Routing.generate('mupollsmodule_ajax_getitemlistfinder'), params, function( data ) {
+    jQuery.getJSON(Routing.generate('mupollsmodule_ajax_getitemlistfinder'), params, function (data) {
         var baseId;
 
         baseId = mUPollsModule.itemSelector.baseId;
@@ -62,8 +59,7 @@ mUPollsModule.itemSelector.getItemList = function ()
     });
 };
 
-mUPollsModule.itemSelector.updateItemDropdownEntries = function ()
-{
+mUPollsModule.itemSelector.updateItemDropdownEntries = function () {
     var baseId, itemSelector, items, i, item;
 
     baseId = mUPollsModule.itemSelector.baseId;
@@ -81,8 +77,7 @@ mUPollsModule.itemSelector.updateItemDropdownEntries = function ()
     }
 };
 
-mUPollsModule.itemSelector.updatePreview = function ()
-{
+mUPollsModule.itemSelector.updatePreview = function () {
     var baseId, items, selectedElement, i;
 
     baseId = mUPollsModule.itemSelector.baseId;
@@ -111,8 +106,7 @@ mUPollsModule.itemSelector.updatePreview = function ()
     }
 };
 
-mUPollsModule.itemSelector.onItemChanged = function ()
-{
+mUPollsModule.itemSelector.onItemChanged = function () {
     var baseId, itemSelector, preview;
 
     baseId = mUPollsModule.itemSelector.baseId;
@@ -123,7 +117,7 @@ mUPollsModule.itemSelector.onItemChanged = function ()
     mUPollsModule.itemSelector.selectedId = jQuery('#' + baseId + 'Id').val();
 };
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     var infoElem;
 
     infoElem = jQuery('#itemSelectorInfo');

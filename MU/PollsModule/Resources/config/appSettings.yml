@@ -1,0 +1,6 @@
+services:
+    mu_polls_module.app_settings:
+        class: MU\PollsModule\AppSettings
+        arguments:
+            - "@zikula_extensions_module.api.variable"
+            - "@zikula_groups_module.group_repository"

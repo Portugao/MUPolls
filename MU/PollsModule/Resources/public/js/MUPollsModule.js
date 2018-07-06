@@ -1,15 +1,13 @@
 'use strict';
 
-function mUPollsCapitaliseFirstLetter(string)
-{
+function mUPollsCapitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.substring(1);
 }
 
 /**
  * Initialise the quick navigation form in list views.
  */
-function mUPollsInitQuickNavigation()
-{
+function mUPollsInitQuickNavigation() {
     var quickNavForm;
     var objectType;
 
@@ -32,10 +30,56 @@ function mUPollsInitQuickNavigation()
 }
 
 /**
+ * Toggles a certain flag for a given item.
+ */
+function mUPollsToggleFlag(objectType, fieldName, itemId) {
+    jQuery.ajax({
+        method: 'POST',
+        url: Routing.generate('mupollsmodule_ajax_toggleflag'),
+        data: {
+            ot: objectType,
+            field: fieldName,
+            id: itemId
+        },
+        success: function (data) {
+            var idSuffix;
+            var toggleLink;
+
+            idSuffix = mUPollsCapitaliseFirstLetter(fieldName) + itemId;
+            toggleLink = jQuery('#toggle' + idSuffix);
+
+            if (data.message) {
+                mUPollsSimpleAlert(toggleLink, Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+            }
+
+            toggleLink.find('.fa-check').toggleClass('hidden', true !== data.state);
+            toggleLink.find('.fa-times').toggleClass('hidden', true === data.state);
+        }
+    });
+}
+
+/**
+ * Initialise ajax-based toggle for all affected boolean fields on the current page.
+ */
+function mUPollsInitAjaxToggles() {
+    jQuery('.mupolls-ajax-toggle').click(function (event) {
+        var objectType;
+        var fieldName;
+        var itemId;
+
+        event.preventDefault();
+        objectType = jQuery(this).data('object-type');
+        fieldName = jQuery(this).data('field-name');
+        itemId = jQuery(this).data('item-id');
+
+        mUPollsToggleFlag(objectType, fieldName, itemId);
+    }).removeClass('hidden');
+}
+
+/**
  * Simulates a simple alert using bootstrap.
  */
-function mUPollsSimpleAlert(anchorElement, title, content, alertId, cssClass)
-{
+function mUPollsSimpleAlert(anchorElement, title, content, alertId, cssClass) {
     var alertBox;
 
     alertBox = ' \
@@ -56,94 +100,43 @@ function mUPollsSimpleAlert(anchorElement, title, content, alertId, cssClass)
 /**
  * Initialises the mass toggle functionality for admin view pages.
  */
-function mUPollsInitMassToggle()
-{
+function mUPollsInitMassToggle() {
     if (jQuery('.mupolls-mass-toggle').length > 0) {
         jQuery('.mupolls-mass-toggle').unbind('click').click(function (event) {
-            if (jQuery('.table.fixed-columns').length > 0) {
-                jQuery('.mupolls-toggle-checkbox').prop('checked', false);
-                jQuery('.table.fixed-columns .mupolls-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
-            } else {
-                jQuery('.mupolls-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
-            }
+            jQuery('.mupolls-toggle-checkbox').prop('checked', jQuery(this).prop('checked'));
         });
     }
 }
 
 /**
- * Initialises fixed table columns.
- */
-function mUPollsInitFixedColumns()
-{
-    jQuery('.table.fixed-columns').remove();
-    jQuery('.table').each(function() {
-        var originalTable, fixedColumnsTable, fixedTableWidth;
-
-        originalTable = jQuery(this);
-        fixedTableWidth = 0;
-        if (originalTable.find('.fixed-column').length > 0) {
-            fixedColumnsTable = originalTable.clone().insertBefore(originalTable).addClass('fixed-columns').removeAttr('id');
-            originalTable.find('.dropdown').addClass('hidden');
-            fixedColumnsTable.find('.dropdown').removeClass('hidden');
-            fixedColumnsTable.css('left', originalTable.parent().position().left);
-
-            fixedColumnsTable.find('th, td').not('.fixed-column').remove();
-            fixedColumnsTable.find('th').each(function (i, elem) {
-                jQuery(this).css('width', originalTable.find('th').eq(i).css('width'));
-                fixedTableWidth += originalTable.find('th').eq(i).width();
-            });
-            fixedColumnsTable.css('width', fixedTableWidth + 'px');
-
-            fixedColumnsTable.find('tr').each(function (i, elem) {
-                jQuery(this).height(originalTable.find('tr:eq(' + i + ')').height());
-            });
-        }
-    });
-    mUPollsInitMassToggle();
-}
-
-/**
  * Creates a dropdown menu for the item actions.
  */
-function mUPollsInitItemActions(context)
-{
+function mUPollsInitItemActions(context) {
     var containerSelector;
     var containers;
-    var listClasses;
-
+    
     containerSelector = '';
     if (context == 'view') {
         containerSelector = '.mupollsmodule-view';
-        listClasses = 'list-unstyled dropdown-menu';
     } else if (context == 'display') {
         containerSelector = 'h2, h3';
-        listClasses = 'list-unstyled dropdown-menu';
     }
-
+    
     if (containerSelector == '') {
         return;
     }
-
+    
     containers = jQuery(containerSelector);
     if (containers.length < 1) {
         return;
     }
-
-    containers.find('.dropdown > ul').removeClass('list-inline').addClass(listClasses);
-    containers.find('.dropdown > ul a').each(function (index) {
-        var title;
-
-        title = jQuery(this).find('i').first().attr('title');
-        if (title == '') {
-            title = jQuery(this).find('i').first().data('original-title');
-        }
-        jQuery(this).html(jQuery(this).html() + title);
-    });
+    
+    containers.find('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
     containers.find('.dropdown > ul a i').addClass('fa-fw');
     containers.find('.dropdown-toggle').removeClass('hidden').dropdown();
 }
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     var isViewPage;
     var isDisplayPage;
 
@@ -153,11 +146,10 @@ jQuery(document).ready(function() {
     if (isViewPage) {
         mUPollsInitQuickNavigation();
         mUPollsInitMassToggle();
-        jQuery(window).resize(mUPollsInitFixedColumns);
-        mUPollsInitFixedColumns();
-        window.setTimeout(mUPollsInitFixedColumns, 1000);
         mUPollsInitItemActions('view');
+        mUPollsInitAjaxToggles();
     } else if (isDisplayPage) {
         mUPollsInitItemActions('display');
+        mUPollsInitAjaxToggles();
     }
 });

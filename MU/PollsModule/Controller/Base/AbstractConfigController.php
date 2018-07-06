@@ -34,16 +34,16 @@ abstract class AbstractConfigController extends AbstractController
      */
     public function configAction(Request $request)
     {
-        if (!$this->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+        if (!$this->get('mu_polls_module.permission_helper')->hasPermission(ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
         
-        $form = $this->createForm(ConfigType::class);
+        $form = $this->createForm(ConfigType::class, $this->get('mu_polls_module.app_settings'));
         
         if ($form->handleRequest($request)->isValid()) {
             if ($form->get('save')->isClicked()) {
-                $formData = $form->getData();
-                $this->setVars($formData);
+                $appSettings = $form->getData();
+                $appSettings->save();
         
                 $this->addFlash('status', $this->__('Done! Module configuration updated.'));
                 $userName = $this->get('zikula_users_module.current_user')->get('uname');

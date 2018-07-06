@@ -12,14 +12,20 @@
 
 namespace MU\PollsModule\Form\Type\Base;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Zikula\Common\Translator\TranslatorInterface;
 use Zikula\Common\Translator\TranslatorTrait;
+use MU\PollsModule\Form\Type\Field\MultiListType;
+use MU\PollsModule\AppSettings;
+use MU\PollsModule\Helper\ListEntriesHelper;
 
 /**
  * Configuration form type base class.
@@ -29,22 +35,22 @@ abstract class AbstractConfigType extends AbstractType
     use TranslatorTrait;
 
     /**
-     * @var array
+     * @var ListEntriesHelper
      */
-    protected $moduleVars;
+    protected $listHelper;
 
     /**
      * ConfigType constructor.
      *
-     * @param TranslatorInterface $translator  Translator service instance
-     * @param object              $moduleVars  Existing module vars
+     * @param TranslatorInterface $translator Translator service instance
+     * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
      */
     public function __construct(
         TranslatorInterface $translator,
-        $moduleVars
+        ListEntriesHelper $listHelper
     ) {
         $this->setTranslator($translator);
-        $this->moduleVars = $moduleVars;
+        $this->listHelper = $listHelper;
     }
 
     /**
@@ -63,26 +69,11 @@ abstract class AbstractConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addSettingsFields($builder, $options);
+        $this->addModerationFields($builder, $options);
         $this->addListViewsFields($builder, $options);
         $this->addIntegrationFields($builder, $options);
 
-        $builder
-            ->add('save', SubmitType::class, [
-                'label' => $this->__('Update configuration'),
-                'icon' => 'fa-check',
-                'attr' => [
-                    'class' => 'btn btn-success'
-                ]
-            ])
-            ->add('cancel', SubmitType::class, [
-                'label' => $this->__('Cancel'),
-                'icon' => 'fa-times',
-                'attr' => [
-                    'class' => 'btn btn-default',
-                    'formnovalidate' => 'formnovalidate'
-                ]
-            ])
-        ;
+        $this->addSubmitButtons($builder, $options);
     }
 
     /**
@@ -91,24 +82,59 @@ abstract class AbstractConfigType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addSettingsFields(FormBuilderInterface $builder, array $options)
+    public function addSettingsFields(FormBuilderInterface $builder, array $options = [])
     {
-        $builder
-            ->add('kindOfVoting', ChoiceType::class, [
-                'label' => $this->__('Kind of voting') . ':',
-                'data' => isset($this->moduleVars['kindOfVoting']) ? $this->moduleVars['kindOfVoting'] : '',
-                'empty_data' => 'Session',
-                'attr' => [
-                    'title' => $this->__('Choose the kind of voting.')
-                ],'choices' => [
-                    $this->__('Cookie') => 'cookie',
-                    $this->__('Session') => 'session',
-                    $this->__('User') => 'user'
-                ],
-                'choices_as_values' => true,
-                'multiple' => false
-            ])
-        ;
+        
+        $listEntries = $this->listHelper->getEntries('appSettings', 'kindOfVoting');
+        $choices = [];
+        $choiceAttributes = [];
+        foreach ($listEntries as $entry) {
+            $choices[$entry['text']] = $entry['value'];
+            $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
+        }
+        $builder->add('kindOfVoting', ChoiceType::class, [
+            'label' => $this->__('Kind of voting') . ':',
+            'empty_data' => '',
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('Choose the kind of voting.')
+            ],
+            'required' => true,
+            'choices' => $choices,
+            'choice_attr' => $choiceAttributes,
+            'multiple' => false,
+            'expanded' => false
+        ]);
+    }
+
+    /**
+     * Adds fields for moderation fields.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options
+     */
+    public function addModerationFields(FormBuilderInterface $builder, array $options = [])
+    {
+        
+        $builder->add('moderationGroupForPolls', EntityType::class, [
+            'label' => $this->__('Moderation group for polls') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('Used to determine moderator user accounts for sending email notifications.')
+            ],
+            'help' => $this->__('Used to determine moderator user accounts for sending email notifications.'),
+            'empty_data' => '2',
+            'attr' => [
+                'maxlength' => 255,
+                'class' => '',
+                'title' => $this->__('Choose the moderation group for polls')
+            ],
+            'required' => true,
+            // Zikula core should provide a form type for this to hide entity details
+            'class' => 'ZikulaGroupsModule:GroupEntity',
+            'choice_label' => 'name',
+            'choice_value' => 'gid'
+        ]);
     }
 
     /**
@@ -117,94 +143,101 @@ abstract class AbstractConfigType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addListViewsFields(FormBuilderInterface $builder, array $options)
+    public function addListViewsFields(FormBuilderInterface $builder, array $options = [])
     {
-        $builder
-            ->add('optionEntriesPerPage', IntegerType::class, [
-                'label' => $this->__('Option entries per page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('The amount of options shown per page')
-                ],
-                'help' => $this->__('The amount of options shown per page'),
-                'required' => false,
-                'data' => isset($this->moduleVars['optionEntriesPerPage']) ? intval($this->moduleVars['optionEntriesPerPage']) : intval(10),
-                'empty_data' => intval('10'),
-                'attr' => [
-                    'maxlength' => 255,
-                    'title' => $this->__('Enter the option entries per page.') . ' ' . $this->__('Only digits are allowed.')
-                ],'scale' => 0
-            ])
-            ->add('linkOwnOptionsOnAccountPage', CheckboxType::class, [
-                'label' => $this->__('Link own options on account page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('Whether to add a link to options of the current user on his account page')
-                ],
-                'help' => $this->__('Whether to add a link to options of the current user on his account page'),
-                'required' => false,
-                'data' => (bool)(isset($this->moduleVars['linkOwnOptionsOnAccountPage']) ? $this->moduleVars['linkOwnOptionsOnAccountPage'] : true),
-                'attr' => [
-                    'title' => $this->__('The link own options on account page option.')
-                ],
-            ])
-            ->add('pollEntriesPerPage', IntegerType::class, [
-                'label' => $this->__('Poll entries per page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('The amount of polls shown per page')
-                ],
-                'help' => $this->__('The amount of polls shown per page'),
-                'required' => false,
-                'data' => isset($this->moduleVars['pollEntriesPerPage']) ? intval($this->moduleVars['pollEntriesPerPage']) : intval(10),
-                'empty_data' => intval('10'),
-                'attr' => [
-                    'maxlength' => 255,
-                    'title' => $this->__('Enter the poll entries per page.') . ' ' . $this->__('Only digits are allowed.')
-                ],'scale' => 0
-            ])
-            ->add('linkOwnPollsOnAccountPage', CheckboxType::class, [
-                'label' => $this->__('Link own polls on account page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('Whether to add a link to polls of the current user on his account page')
-                ],
-                'help' => $this->__('Whether to add a link to polls of the current user on his account page'),
-                'required' => false,
-                'data' => (bool)(isset($this->moduleVars['linkOwnPollsOnAccountPage']) ? $this->moduleVars['linkOwnPollsOnAccountPage'] : true),
-                'attr' => [
-                    'title' => $this->__('The link own polls on account page option.')
-                ],
-            ])
-            ->add('voteEntriesPerPage', IntegerType::class, [
-                'label' => $this->__('Vote entries per page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('The amount of votes shown per page')
-                ],
-                'help' => $this->__('The amount of votes shown per page'),
-                'required' => false,
-                'data' => isset($this->moduleVars['voteEntriesPerPage']) ? intval($this->moduleVars['voteEntriesPerPage']) : intval(10),
-                'empty_data' => intval('10'),
-                'attr' => [
-                    'maxlength' => 255,
-                    'title' => $this->__('Enter the vote entries per page.') . ' ' . $this->__('Only digits are allowed.')
-                ],'scale' => 0
-            ])
-            ->add('linkOwnVotesOnAccountPage', CheckboxType::class, [
-                'label' => $this->__('Link own votes on account page') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('Whether to add a link to votes of the current user on his account page')
-                ],
-                'help' => $this->__('Whether to add a link to votes of the current user on his account page'),
-                'required' => false,
-                'data' => (bool)(isset($this->moduleVars['linkOwnVotesOnAccountPage']) ? $this->moduleVars['linkOwnVotesOnAccountPage'] : true),
-                'attr' => [
-                    'title' => $this->__('The link own votes on account page option.')
-                ],
-            ])
-        ;
+        
+        $builder->add('optionEntriesPerPage', IntegerType::class, [
+            'label' => $this->__('Option entries per page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('The amount of options shown per page')
+            ],
+            'help' => $this->__('The amount of options shown per page'),
+            'empty_data' => '10',
+            'attr' => [
+                'maxlength' => 11,
+                'class' => '',
+                'title' => $this->__('Enter the option entries per page.') . ' ' . $this->__('Only digits are allowed.')
+            ],
+            'required' => true,
+            'scale' => 0
+        ]);
+        
+        $builder->add('linkOwnOptionsOnAccountPage', CheckboxType::class, [
+            'label' => $this->__('Link own options on account page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('Whether to add a link to options of the current user on his account page')
+            ],
+            'help' => $this->__('Whether to add a link to options of the current user on his account page'),
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('The link own options on account page option')
+            ],
+            'required' => false,
+        ]);
+        
+        $builder->add('pollEntriesPerPage', IntegerType::class, [
+            'label' => $this->__('Poll entries per page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('The amount of polls shown per page')
+            ],
+            'help' => $this->__('The amount of polls shown per page'),
+            'empty_data' => '10',
+            'attr' => [
+                'maxlength' => 11,
+                'class' => '',
+                'title' => $this->__('Enter the poll entries per page.') . ' ' . $this->__('Only digits are allowed.')
+            ],
+            'required' => true,
+            'scale' => 0
+        ]);
+        
+        $builder->add('linkOwnPollsOnAccountPage', CheckboxType::class, [
+            'label' => $this->__('Link own polls on account page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('Whether to add a link to polls of the current user on his account page')
+            ],
+            'help' => $this->__('Whether to add a link to polls of the current user on his account page'),
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('The link own polls on account page option')
+            ],
+            'required' => false,
+        ]);
+        
+        $builder->add('voteEntriesPerPage', IntegerType::class, [
+            'label' => $this->__('Vote entries per page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('The amount of votes shown per page')
+            ],
+            'help' => $this->__('The amount of votes shown per page'),
+            'empty_data' => '10',
+            'attr' => [
+                'maxlength' => 11,
+                'class' => '',
+                'title' => $this->__('Enter the vote entries per page.') . ' ' . $this->__('Only digits are allowed.')
+            ],
+            'required' => true,
+            'scale' => 0
+        ]);
+        
+        $builder->add('linkOwnVotesOnAccountPage', CheckboxType::class, [
+            'label' => $this->__('Link own votes on account page') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('Whether to add a link to votes of the current user on his account page')
+            ],
+            'help' => $this->__('Whether to add a link to votes of the current user on his account page'),
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('The link own votes on account page option')
+            ],
+            'required' => false,
+        ]);
     }
 
     /**
@@ -213,29 +246,68 @@ abstract class AbstractConfigType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addIntegrationFields(FormBuilderInterface $builder, array $options)
+    public function addIntegrationFields(FormBuilderInterface $builder, array $options = [])
     {
-        $builder
-            ->add('enabledFinderTypes', ChoiceType::class, [
-                'label' => $this->__('Enabled finder types') . ':',
-                'label_attr' => [
-                    'class' => 'tooltips',
-                    'title' => $this->__('Which sections are supported in the Finder component (used by Scribite plug-ins).')
-                ],
-                'help' => $this->__('Which sections are supported in the Finder component (used by Scribite plug-ins).'),
-                'data' => isset($this->moduleVars['enabledFinderTypes']) ? $this->moduleVars['enabledFinderTypes'] : '',
-                'empty_data' => '',
-                'attr' => [
-                    'title' => $this->__('Choose the enabled finder types.')
-                ],'choices' => [
-                    $this->__('Option') => 'option',
-                    $this->__('Poll') => 'poll',
-                    $this->__('Vote') => 'vote'
-                ],
-                'choices_as_values' => true,
-                'multiple' => true
-            ])
-        ;
+        
+        $listEntries = $this->listHelper->getEntries('appSettings', 'enabledFinderTypes');
+        $choices = [];
+        $choiceAttributes = [];
+        foreach ($listEntries as $entry) {
+            $choices[$entry['text']] = $entry['value'];
+            $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
+        }
+        $builder->add('enabledFinderTypes', MultiListType::class, [
+            'label' => $this->__('Enabled finder types') . ':',
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $this->__('Which sections are supported in the Finder component (used by Scribite plug-ins).')
+            ],
+            'help' => $this->__('Which sections are supported in the Finder component (used by Scribite plug-ins).'),
+            'empty_data' => '',
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('Choose the enabled finder types.')
+            ],
+            'required' => false,
+            'placeholder' => $this->__('Choose an option'),
+            'choices' => $choices,
+            'choice_attr' => $choiceAttributes,
+            'multiple' => true,
+            'expanded' => false
+        ]);
+    }
+
+    /**
+     * Adds submit buttons.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options
+     */
+    public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
+    {
+        $builder->add('save', SubmitType::class, [
+            'label' => $this->__('Update configuration'),
+            'icon' => 'fa-check',
+            'attr' => [
+                'class' => 'btn btn-success'
+            ]
+        ]);
+        $builder->add('reset', ResetType::class, [
+            'label' => $this->__('Reset'),
+            'icon' => 'fa-refresh',
+            'attr' => [
+                'class' => 'btn btn-default',
+                'formnovalidate' => 'formnovalidate'
+            ]
+        ]);
+        $builder->add('cancel', SubmitType::class, [
+            'label' => $this->__('Cancel'),
+            'icon' => 'fa-times',
+            'attr' => [
+                'class' => 'btn btn-default',
+                'formnovalidate' => 'formnovalidate'
+            ]
+        ]);
     }
 
     /**
@@ -244,5 +316,17 @@ abstract class AbstractConfigType extends AbstractType
     public function getBlockPrefix()
     {
         return 'mupollsmodule_config';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setDefaults([
+                // define class for underlying data
+                'data_class' => AppSettings::class,
+            ]);
     }
 }

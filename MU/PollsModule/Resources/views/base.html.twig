@@ -1,6 +1,5 @@
 {# purpose of this template: general base layout #}
 {% block header %}
-    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.js')) }}
 {% endblock %}
 
 {% block appTitle %}
@@ -12,9 +11,13 @@
 {% endblock %}
 {{ pageSetVar('title', block('pageTitle')|default(block('title'))) }}
 
+{{ include('@MUPollsModule/Helper/includeModerationPanel.html.twig') }}
+
 {{ showflashes() }}
 
 {% block content %}{% endblock %}
 
 {% block footer %}
+    {{ pageAddAsset('stylesheet', zasset('@MUPollsModule:css/custom.css'), 120) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.js')) }}
 {% endblock %}

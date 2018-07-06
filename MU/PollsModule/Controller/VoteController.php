@@ -15,7 +15,7 @@ namespace MU\PollsModule\Controller;
 use MU\PollsModule\Controller\Base\AbstractVoteController;
 
 use RuntimeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +35,6 @@ class VoteController extends AbstractVoteController
      * @Route("/admin/votes",
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+7 days", public=true)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -55,7 +54,6 @@ class VoteController extends AbstractVoteController
      * @Route("/votes",
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+7 days", public=true)
      *
      * @param Request $request Current request instance
      *
@@ -67,6 +65,7 @@ class VoteController extends AbstractVoteController
     {
         return parent::indexAction($request);
     }
+    
     /**
      * @inheritDoc
      *
@@ -75,7 +74,6 @@ class VoteController extends AbstractVoteController
      *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+2 hours", public=false)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -101,7 +99,6 @@ class VoteController extends AbstractVoteController
      *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+2 hours", public=false)
      *
      * @param Request $request Current request instance
      * @param string $sort         Sorting field
@@ -117,6 +114,7 @@ class VoteController extends AbstractVoteController
     {
         return parent::viewAction($request, $sort, $sortdir, $pos, $num);
     }
+    
     /**
      * @inheritDoc
      *
@@ -126,7 +124,6 @@ class VoteController extends AbstractVoteController
      *        methods = {"GET"}
      * )
      * @ParamConverter("vote", class="MUPollsModule:VoteEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="vote.getUpdatedDate()", ETag="'Vote' ~ vote.getid() ~ vote.getUpdatedDate().format('U')")
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -151,7 +148,6 @@ class VoteController extends AbstractVoteController
      *        methods = {"GET"}
      * )
      * @ParamConverter("vote", class="MUPollsModule:VoteEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="vote.getUpdatedDate()", ETag="'Vote' ~ vote.getid() ~ vote.getUpdatedDate().format('U')")
      *
      * @param Request $request Current request instance
      * @param VoteEntity $vote Treated vote instance
@@ -165,6 +161,7 @@ class VoteController extends AbstractVoteController
     {
         return parent::displayAction($request, $vote);
     }
+    
     /**
      * @inheritDoc
      *
@@ -173,7 +170,6 @@ class VoteController extends AbstractVoteController
      *        defaults = {"id" = "0", "_format" = "html"},
      *        methods = {"GET", "POST"}
      * )
-     * @Cache(expires="+30 minutes", public=false)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -197,7 +193,6 @@ class VoteController extends AbstractVoteController
      *        defaults = {"id" = "0", "_format" = "html"},
      *        methods = {"GET", "POST"}
      * )
-     * @Cache(expires="+30 minutes", public=false)
      *
      * @param Request $request Current request instance
      *
@@ -211,7 +206,56 @@ class VoteController extends AbstractVoteController
     {
         return parent::editAction($request);
     }
-
+    
+    /**
+     * @inheritDoc
+     *
+     * @Route("/admin/vote/delete/{id}.{_format}",
+     *        requirements = {"id" = "\d+", "_format" = "html"},
+     *        defaults = {"_format" = "html"},
+     *        methods = {"GET", "POST"}
+     * )
+     * @ParamConverter("vote", class="MUPollsModule:VoteEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
+     * @Theme("admin")
+     *
+     * @param Request $request Current request instance
+     * @param VoteEntity $vote Treated vote instance
+     *
+     * @return Response Output
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     * @throws NotFoundHttpException Thrown by param converter if vote to be deleted isn't found
+     * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
+     */
+    public function adminDeleteAction(Request $request, VoteEntity $vote)
+    {
+        return parent::adminDeleteAction($request, $vote);
+    }
+    
+    /**
+     * @inheritDoc
+     *
+     * @Route("/vote/delete/{id}.{_format}",
+     *        requirements = {"id" = "\d+", "_format" = "html"},
+     *        defaults = {"_format" = "html"},
+     *        methods = {"GET", "POST"}
+     * )
+     * @ParamConverter("vote", class="MUPollsModule:VoteEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
+     *
+     * @param Request $request Current request instance
+     * @param VoteEntity $vote Treated vote instance
+     *
+     * @return Response Output
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     * @throws NotFoundHttpException Thrown by param converter if vote to be deleted isn't found
+     * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
+     */
+    public function deleteAction(Request $request, VoteEntity $vote)
+    {
+        return parent::deleteAction($request, $vote);
+    }
+    
     /**
      * Process status changes for multiple items.
      *
@@ -254,7 +298,7 @@ class VoteController extends AbstractVoteController
     {
         return parent::handleSelectedEntriesAction($request);
     }
-
+    
     /**
      * This method cares for a redirect within an inline frame.
      *
@@ -274,6 +318,6 @@ class VoteController extends AbstractVoteController
     {
         return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
     }
-
+    
     // feel free to add your own controller methods here
 }

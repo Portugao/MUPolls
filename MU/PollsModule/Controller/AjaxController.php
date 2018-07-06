@@ -60,6 +60,23 @@ class AjaxController extends AbstractAjaxController
     }
     
     /**
+     * Changes a given flag (boolean field) by switching between true and false.
+     *
+     * @Route("/toggleFlag", options={"expose"=true})
+     * @Method("POST")
+     *
+     * @param Request $request Current request instance
+     *
+     * @return JsonResponse
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     */
+    public function toggleFlagAction(Request $request)
+    {
+        return parent::toggleFlagAction($request);
+    }
+    
+    /**
      * Attachs a given hook assignment by creating the corresponding assignment data record.
      *
      * @Route("/attachHookObject", options={"expose"=true})

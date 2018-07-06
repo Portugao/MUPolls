@@ -19,9 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Twig_Environment;
 use Zikula\Core\Response\PlainResponse;
 use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use Zikula\ThemeModule\Engine\ParameterBag;
 use MU\PollsModule\Helper\ControllerHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * Helper base class for view layer methods.
@@ -44,11 +44,6 @@ abstract class AbstractViewHelper
     protected $request;
 
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-
-    /**
      * @var VariableApiInterface
      */
     protected $variableApi;
@@ -64,15 +59,20 @@ abstract class AbstractViewHelper
     protected $controllerHelper;
 
     /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+
+    /**
      * ViewHelper constructor.
      *
-     * @param Twig_Environment       $twig             Twig service instance
-     * @param FilesystemLoader       $twigLoader       Twig loader service instance
-     * @param RequestStack           $requestStack     RequestStack service instance
-     * @param PermissionApiInterface $permissionApi    PermissionApi service instance
-     * @param VariableApiInterface   $variableApi      VariableApi service instance
-     * @param ParameterBag           $pageVars         ParameterBag for theme page variables
-     * @param ControllerHelper       $controllerHelper ControllerHelper service instance
+     * @param Twig_Environment     
+     * @param FilesystemLoader     $twigLoader       Twig loader service instance
+     * @param RequestStack         $requestStack     RequestStack service instance
+     * @param VariableApiInterface $variableApi      VariableApi service instance
+     * @param ParameterBag         $pageVars         ParameterBag for theme page variables
+     * @param ControllerHelper     $controllerHelper ControllerHelper service instance
+     * @param PermissionHelper     $permissionHelper PermissionHelper service instance
      *
      * @return void
      */
@@ -80,18 +80,18 @@ abstract class AbstractViewHelper
         Twig_Environment $twig,
         FilesystemLoader $twigLoader,
         RequestStack $requestStack,
-        PermissionApiInterface $permissionApi,
         VariableApiInterface $variableApi,
         ParameterBag $pageVars,
-        ControllerHelper $controllerHelper
+        ControllerHelper $controllerHelper,
+        PermissionHelper $permissionHelper
     ) {
         $this->twig = $twig;
         $this->twigLoader = $twigLoader;
         $this->request = $requestStack->getCurrentRequest();
-        $this->permissionApi = $permissionApi;
         $this->variableApi = $variableApi;
         $this->pageVars = $pageVars;
         $this->controllerHelper = $controllerHelper;
+        $this->permissionHelper = $permissionHelper;
     }
 
     /**
@@ -129,10 +129,10 @@ abstract class AbstractViewHelper
     /**
      * Helper method for managing view templates.
      *
-     * @param string  $type               Current controller (name of currently treated entity)
-     * @param string  $func               Current function (index, view, ...)
-     * @param array   $templateParameters Template data
-     * @param string  $template           Optional assignment of precalculated template file
+     * @param string $type               Current controller (name of currently treated entity)
+     * @param string $func               Current function (index, view, ...)
+     * @param array  $templateParameters Template data
+     * @param string $template           Optional assignment of precalculated template file
      *
      * @return mixed Output
      */
@@ -200,12 +200,12 @@ abstract class AbstractViewHelper
      * @param string $type Current controller (name of currently treated entity)
      * @param string $func Current function (index, view, ...)
      *
-     * @return array List of allowed template extensions
+     * @return string[] List of allowed template extensions
      */
-    public function availableExtensions($type, $func)
+    protected function availableExtensions($type, $func)
     {
         $extensions = [];
-        $hasAdminAccess = $this->permissionApi->hasPermission('MUPollsModule:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
+        $hasAdminAccess = $this->permissionHelper->hasComponentPermission($type, ACCESS_ADMIN);
         if ($func == 'view') {
             if ($hasAdminAccess) {
                 $extensions = ['rss'];

@@ -6,8 +6,8 @@ services:
             - "@translator.default"
             - "@request_stack"
             - "@logger"
-            - "@zikula_permissions_module.api.permission"
             - "@mu_polls_module.entity_factory"
+            - "@mu_polls_module.permission_helper"
             - "@mu_polls_module.workflow_helper"
             - "@mu_polls_module.hook_helper"
     
@@ -15,6 +15,7 @@ services:
         class: MU\PollsModule\Helper\CollectionFilterHelper
         arguments:
             - "@request_stack"
+            - "@mu_polls_module.permission_helper"
             - "@zikula_users_module.current_user"
             - "@=service('zikula_extensions_module.api.variable').get('MUPollsModule', 'showOnlyOwnEntries', false)"
     
@@ -57,16 +58,40 @@ services:
         arguments:
             - "@mu_polls_module.entity_factory"
     
+    mu_polls_module.notification_helper:
+        class: MU\PollsModule\Helper\NotificationHelper
+        arguments:
+            - "@kernel"
+            - "@translator.default"
+            - "@session"
+            - "@router"
+            - "@request_stack"
+            - "@zikula_extensions_module.api.variable"
+            - "@twig"
+            - "@zikula_mailer_module.api.mailer"
+            - "@zikula_groups_module.group_repository"
+            - "@mu_polls_module.entity_display_helper"
+            - "@mu_polls_module.workflow_helper"
+    
+    mu_polls_module.permission_helper:
+        class: MU\PollsModule\Helper\PermissionHelper
+        arguments:
+            - "@service_container"
+            - "@request_stack"
+            - "@zikula_permissions_module.api.permission"
+            - "@zikula_users_module.current_user"
+            - "@zikula_users_module.user_repository"
+    
     mu_polls_module.search_helper:
         class: MU\PollsModule\Helper\SearchHelper
         arguments:
             - "@translator.default"
-            - "@zikula_permissions_module.api.permission"
             - "@session"
             - "@request_stack"
             - "@mu_polls_module.entity_factory"
             - "@mu_polls_module.controller_helper"
             - "@mu_polls_module.entity_display_helper"
+            - "@mu_polls_module.permission_helper"
         tags:
             - { name: zikula.searchable_module, bundleName: MUPollsModule }
     
@@ -85,10 +110,10 @@ services:
             - "@twig"
             - "@twig.loader"
             - "@request_stack"
-            - "@zikula_permissions_module.api.permission"
             - "@zikula_extensions_module.api.variable"
             - "@zikula_core.common.theme.pagevars"
             - "@mu_polls_module.controller_helper"
+            - "@mu_polls_module.permission_helper"
     
     mu_polls_module.workflow_helper:
         class: MU\PollsModule\Helper\WorkflowHelper
@@ -96,7 +121,7 @@ services:
             - "@translator.default"
             - "@workflow.registry"
             - "@logger"
-            - "@zikula_permissions_module.api.permission"
             - "@zikula_users_module.current_user"
             - "@mu_polls_module.entity_factory"
             - "@mu_polls_module.listentries_helper"
+            - "@mu_polls_module.permission_helper"

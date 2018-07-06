@@ -1,4 +1,4 @@
-workflow:
+framework:
     workflows:
         mupollsmodule_none:
             type: state_machine
@@ -8,39 +8,22 @@ workflow:
                     - workflowState
             supports:
                 - MU\PollsModule\Entity\OptionEntity
-                - MU\PollsModule\Entity\PollEntity
                 - MU\PollsModule\Entity\VoteEntity
             places:
                 - initial
                 - approved
+                - trashed
                 - deleted
-                - suspended
-                - archived
             transitions:
-                submit:
-                    from: initial
-                    to: approved
-                unpublish:
-                    from: approved
-                    to: suspended
-                publish:
-                    from: suspended
-                    to: approved
-                updateapproved:
-                    from: approved
-                    to: approved
-                unarchive:
-                    from: archived
-                    to: approved
-                archive:
-                    from: [approved, suspended]
-                    to: archived
-                updatesuspended:
-                    from: suspended
-                    to: suspended
-                updatearchived:
-                    from: archived
-                    to: archived
-                delete:
-                    from: [approved, suspended, archived]
-                    to: deleted
+                - name: submit
+                  from: initial
+                  to: approved
+                - name: update
+                  from: approved
+                  to: approved
+                - name: trash
+                  from: approved
+                  to: trashed
+                - name: delete
+                  from: [approved, trashed]
+                  to: deleted

@@ -15,7 +15,7 @@ namespace MU\PollsModule\Controller;
 use MU\PollsModule\Controller\Base\AbstractOptionController;
 
 use RuntimeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +35,6 @@ class OptionController extends AbstractOptionController
      * @Route("/admin/options",
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+7 days", public=true)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -55,7 +54,6 @@ class OptionController extends AbstractOptionController
      * @Route("/options",
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+7 days", public=true)
      *
      * @param Request $request Current request instance
      *
@@ -67,6 +65,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::indexAction($request);
     }
+    
     /**
      * @inheritDoc
      *
@@ -75,7 +74,6 @@ class OptionController extends AbstractOptionController
      *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+2 hours", public=false)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -101,7 +99,6 @@ class OptionController extends AbstractOptionController
      *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
      *        methods = {"GET"}
      * )
-     * @Cache(expires="+2 hours", public=false)
      *
      * @param Request $request Current request instance
      * @param string $sort         Sorting field
@@ -117,6 +114,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::viewAction($request, $sort, $sortdir, $pos, $num);
     }
+    
     /**
      * @inheritDoc
      *
@@ -126,7 +124,6 @@ class OptionController extends AbstractOptionController
      *        methods = {"GET"}
      * )
      * @ParamConverter("option", class="MUPollsModule:OptionEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="option.getUpdatedDate()", ETag="'Option' ~ option.getid() ~ option.getUpdatedDate().format('U')")
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -151,7 +148,6 @@ class OptionController extends AbstractOptionController
      *        methods = {"GET"}
      * )
      * @ParamConverter("option", class="MUPollsModule:OptionEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="option.getUpdatedDate()", ETag="'Option' ~ option.getid() ~ option.getUpdatedDate().format('U')")
      *
      * @param Request $request Current request instance
      * @param OptionEntity $option Treated option instance
@@ -165,6 +161,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::displayAction($request, $option);
     }
+    
     /**
      * @inheritDoc
      *
@@ -173,7 +170,6 @@ class OptionController extends AbstractOptionController
      *        defaults = {"id" = "0", "_format" = "html"},
      *        methods = {"GET", "POST"}
      * )
-     * @Cache(expires="+30 minutes", public=false)
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -197,7 +193,6 @@ class OptionController extends AbstractOptionController
      *        defaults = {"id" = "0", "_format" = "html"},
      *        methods = {"GET", "POST"}
      * )
-     * @Cache(expires="+30 minutes", public=false)
      *
      * @param Request $request Current request instance
      *
@@ -211,6 +206,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::editAction($request);
     }
+    
     /**
      * @inheritDoc
      *
@@ -220,7 +216,6 @@ class OptionController extends AbstractOptionController
      *        methods = {"GET", "POST"}
      * )
      * @ParamConverter("option", class="MUPollsModule:OptionEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="option.getUpdatedDate()", ETag="'Option' ~ option.getid() ~ option.getUpdatedDate().format('U')")
      * @Theme("admin")
      *
      * @param Request $request Current request instance
@@ -246,7 +241,6 @@ class OptionController extends AbstractOptionController
      *        methods = {"GET", "POST"}
      * )
      * @ParamConverter("option", class="MUPollsModule:OptionEntity", options = {"repository_method" = "selectById", "mapping": {"id": "id"}, "map_method_signature" = true})
-     * @Cache(lastModified="option.getUpdatedDate()", ETag="'Option' ~ option.getid() ~ option.getUpdatedDate().format('U')")
      *
      * @param Request $request Current request instance
      * @param OptionEntity $option Treated option instance
@@ -261,7 +255,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::deleteAction($request, $option);
     }
-
+    
     /**
      * Process status changes for multiple items.
      *
@@ -304,7 +298,7 @@ class OptionController extends AbstractOptionController
     {
         return parent::handleSelectedEntriesAction($request);
     }
-
+    
     /**
      * This method cares for a redirect within an inline frame.
      *
@@ -324,6 +318,6 @@ class OptionController extends AbstractOptionController
     {
         return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
     }
-
+    
     // feel free to add your own controller methods here
 }

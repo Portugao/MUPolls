@@ -83,11 +83,12 @@ abstract class AbstractTwigExtension extends Twig_Extension
     /**
      * Returns a list of custom Twig functions.
      *
-     * @return \Twig_SimpleFunction[]
+     * @return \Twig_SimpleFunction[] List of functions
      */
     public function getFunctions()
     {
         return [
+            new \Twig_SimpleFunction('mupollsmodule_moderationObjects', [$this, 'getModerationObjects']),
             new \Twig_SimpleFunction('mupollsmodule_objectTypeSelector', [$this, 'getObjectTypeSelector']),
             new \Twig_SimpleFunction('mupollsmodule_templateSelector', [$this, 'getTemplateSelector'])
         ];
@@ -96,7 +97,7 @@ abstract class AbstractTwigExtension extends Twig_Extension
     /**
      * Returns a list of custom Twig filters.
      *
-     * @return \Twig_SimpleFilter[]
+     * @return \Twig_SimpleFilter[] List of filters
      */
     public function getFilters()
     {
@@ -151,6 +152,18 @@ abstract class AbstractTwigExtension extends Twig_Extension
         }
     
         return $this->listHelper->resolve($value, $objectType, $fieldName, $delimiter);
+    }
+    
+    
+    /**
+     * The mupollsmodule_moderationObjects function determines the amount of unapproved objects.
+     * It uses the same logic as the moderation block and the pending content listener.
+     *
+     * @return string The output of the plugin
+     */
+    public function getModerationObjects()
+    {
+        return $this->workflowHelper->collectAmountOfModerationItems();
     }
     
     

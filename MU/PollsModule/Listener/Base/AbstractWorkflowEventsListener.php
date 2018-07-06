@@ -16,7 +16,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Zikula\Core\Doctrine\EntityAccess;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
+use MU\PollsModule\Entity\Factory\EntityFactory;
+use MU\PollsModule\Helper\PermissionHelper;
+use MU\PollsModule\Helper\NotificationHelper;
 
 /**
  * Event handler implementation class for workflow events.
@@ -26,18 +28,35 @@ use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 abstract class AbstractWorkflowEventsListener implements EventSubscriberInterface
 {
     /**
-     * @var PermissionApiInterface
+     * @var EntityFactory
      */
-    protected $permissionApi;
+    protected $entityFactory;
+    
+    /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+    
+    /**
+     * @var NotificationHelper
+     */
+    protected $notificationHelper;
     
     /**
      * WorkflowEventsListener constructor.
      *
-     * @param PermissionApiInterface $permissionApi PermissionApi service instance
+     * @param EntityFactory $entityFactory EntityFactory service instance
+     * @param PermissionHelper $permissionHelper PermissionHelper service instance
+     * @param NotificationHelper $notificationHelper NotificationHelper service instance
      */
-    public function __construct(PermissionApiInterface $permissionApi)
+    public function __construct(
+        EntityFactory $entityFactory,
+        PermissionHelper $permissionHelper,
+        NotificationHelper $notificationHelper)
     {
-        $this->permissionApi = $permissionApi;
+        $this->entityFactory = $entityFactory;
+        $this->permissionHelper = $permissionHelper;
+        $this->notificationHelper = $notificationHelper;
     }
     
     /**
@@ -48,8 +67,11 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
         return [
             'workflow.guard' => ['onGuard', 5],
             'workflow.leave' => ['onLeave', 5],
+            'workflow.entered' => ['onEntered', 5],
             'workflow.transition' => ['onTransition', 5],
-            'workflow.enter' => ['onEnter', 5]
+            'workflow.enter' => ['onEnter', 5],
+            'workflow.completed' => ['onCompleted', 5],
+            'workflow.announce' => ['onAnnounce', 5]
         ];
     }
     
@@ -69,22 +91,10 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
      * The event name:
      *     `echo 'Event: ' . $event->getName();`
      *
-     * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
-     * If a listener should only be active for the master request,
-     * be sure to check that at the beginning of your method.
-     *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-     *         return;
-     *     }`
-     *
-     * The kernel instance handling the current request:
-     *     `$kernel = $event->getKernel();`
-     *
-     * The currently handled request:
-     *     `$request = $event->getRequest();`
-     *
      * Access the entity: `$entity = $event->getSubject();`
      * Access the marking: `$marking = $event->getMarking();`
      * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
      * Example for preventing a transition:
      *     `if (!$event->isBlocked()) {
      *         $event->setBlocked(true);
@@ -102,11 +112,8 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
         $objectType = $entity->get_objectType();
         $permissionLevel = ACCESS_READ;
         $transitionName = $event->getTransition()->getName();
-        if (substr($transitionName, 0, 6) == 'update') {
-            $transitionName = 'update';
-        }
         
-        $hasApproval = false;
+        $hasApproval = in_array($objectType, ['poll']);
     
         switch ($transitionName) {
             case 'defer':
@@ -132,7 +139,7 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
                 break;
         }
     
-        if (!$this->permissionApi->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', $entity->getKey() . '::', $permissionLevel)) {
+        if (!$this->permissionHelper->hasEntityPermission($entity, $permissionLevel)) {
             // no permission for this transition, so disallow it
             $event->setBlocked(true);
     
@@ -156,26 +163,46 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
      * The event name:
      *     `echo 'Event: ' . $event->getName();`
      *
-     * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
-     * If a listener should only be active for the master request,
-     * be sure to check that at the beginning of your method.
-     *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-     *         return;
-     *     }`
-     *
-     * The kernel instance handling the current request:
-     *     `$kernel = $event->getKernel();`
-     *
-     * The currently handled request:
-     *     `$request = $event->getRequest();`
-     *
      * Access the entity: `$entity = $event->getSubject();`
      * Access the marking: `$marking = $event->getMarking();`
      * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
      *
      * @param Event $event The event instance
      */
     public function onLeave(Event $event)
+    {
+        $entity = $event->getSubject();
+        if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            return;
+        }
+    }
+    
+    /**
+     * Listener for the `workflow.entered` event.
+     *
+     * Occurs just before the object enters into the new state.
+     * Carries the marking with the new places.
+     * This is a good place to flush data in Doctrine based on the entity not being updated yet.
+     *
+     * This event is also triggered for each workflow individually, so you can react only to the events
+     * of a specific workflow by listening to `workflow.<workflow_name>.entered` instead.
+     * You can even listen to some specific transitions or states for a specific workflow
+     * using `workflow.<workflow_name>.entered.<state_name>`.
+     *
+     * You can access general data available in the event.
+     *
+     * The event name:
+     *     `echo 'Event: ' . $event->getName();`
+     *
+     * Access the entity: `$entity = $event->getSubject();`
+     * Access the marking: `$marking = $event->getMarking();`
+     * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
+     *
+     * @param Event $event The event instance
+     */
+    public function onEntered(Event $event)
     {
         $entity = $event->getSubject();
         if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
@@ -199,22 +226,10 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
      * The event name:
      *     `echo 'Event: ' . $event->getName();`
      *
-     * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
-     * If a listener should only be active for the master request,
-     * be sure to check that at the beginning of your method.
-     *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-     *         return;
-     *     }`
-     *
-     * The kernel instance handling the current request:
-     *     `$kernel = $event->getKernel();`
-     *
-     * The currently handled request:
-     *     `$request = $event->getRequest();`
-     *
      * Access the entity: `$entity = $event->getSubject();`
      * Access the marking: `$marking = $event->getMarking();`
      * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
      *
      * @param Event $event The event instance
      */
@@ -242,26 +257,84 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
      * The event name:
      *     `echo 'Event: ' . $event->getName();`
      *
-     * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
-     * If a listener should only be active for the master request,
-     * be sure to check that at the beginning of your method.
-     *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-     *         return;
-     *     }`
-     *
-     * The kernel instance handling the current request:
-     *     `$kernel = $event->getKernel();`
-     *
-     * The currently handled request:
-     *     `$request = $event->getRequest();`
-     *
      * Access the entity: `$entity = $event->getSubject();`
      * Access the marking: `$marking = $event->getMarking();`
      * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
      *
      * @param Event $event The event instance
      */
     public function onEnter(Event $event)
+    {
+        $entity = $event->getSubject();
+        if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            return;
+        }
+    
+        $workflowShortName = 'none';
+        if (in_array($entity->get_objectType(), ['poll'])) {
+            $workflowShortName = 'standard';
+        } elseif (in_array($entity->get_objectType(), [''])) {
+            $workflowShortName = 'enterprise';
+        }
+        if ($workflowShortName != 'none') {
+            $this->sendNotifications($entity, $event->getTransition()->getName(), $workflowShortName);
+        }
+    }
+    
+    /**
+     * Listener for the `workflow.completed` event.
+     *
+     * Occurs after the object has completed a transition.
+     *
+     * This event is also triggered for each workflow individually, so you can react only to the events
+     * of a specific workflow by listening to `workflow.<workflow_name>.completed` instead.
+     * You can even listen to some specific transitions or states for a specific workflow
+     * using `workflow.<workflow_name>.completed.<state_name>`.
+     *
+     * You can access general data available in the event.
+     *
+     * The event name:
+     *     `echo 'Event: ' . $event->getName();`
+     *
+     * Access the entity: `$entity = $event->getSubject();`
+     * Access the marking: `$marking = $event->getMarking();`
+     * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
+     *
+     * @param Event $event The event instance
+     */
+    public function onCompleted(Event $event)
+    {
+        $entity = $event->getSubject();
+        if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
+            return;
+        }
+    }
+    
+    /**
+     * Listener for the `workflow.announce` event.
+     *
+     * Triggered for each place that now is available for the object.
+     *
+     * This event is also triggered for each workflow individually, so you can react only to the events
+     * of a specific workflow by listening to `workflow.<workflow_name>.announce` instead.
+     * You can even listen to some specific transitions or states for a specific workflow
+     * using `workflow.<workflow_name>.announce.<state_name>`.
+     *
+     * You can access general data available in the event.
+     *
+     * The event name:
+     *     `echo 'Event: ' . $event->getName();`
+     *
+     * Access the entity: `$entity = $event->getSubject();`
+     * Access the marking: `$marking = $event->getMarking();`
+     * Access the transition: `$transition = $event->getTransition();`
+     * Access the workflow name: `$workflowName = $event->getWorkflowName();`
+     *
+     * @param Event $event The event instance
+     */
+    public function onAnnounce(Event $event)
     {
         $entity = $event->getSubject();
         if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
@@ -285,5 +358,56 @@ abstract class AbstractWorkflowEventsListener implements EventSubscriberInterfac
         $entityClassParts = explode('\\', get_class($entity));
     
         return ($entityClassParts[0] == 'MU' && $entityClassParts[1] == 'PollsModule');
+    }
+    
+    /**
+     * Sends email notifications.
+     *
+     * @param object $entity            Processed entity
+     * @param string $actionId          Name of performed transition
+     * @param string $workflowShortName Name of workflow (none, standard, enterprise)
+     */
+    protected function sendNotifications($entity, $actionId, $workflowShortName)
+    {
+        $newState = $entity->getWorkflowState();
+    
+        // by default send only to creator
+        $sendToCreator = true;
+        $sendToModerator = false;
+        $sendToSuperModerator = false;
+        if ($actionId == 'submit' && $newState == 'waiting'
+            || $actionId == 'demote' && $newState == 'accepted') {
+            // only to moderator
+            $sendToCreator = false;
+            $sendToModerator = true;
+        } elseif ($actionId == 'accept' && $newState == 'accepted') {
+            // to creator and super moderator
+            $sendToSuperModerator = true;
+        } elseif ($actionId == 'approve' && $newState == 'approved' && $workflowShortName == 'enterprise') {
+            // to creator and moderator
+            $sendToModerator = true;
+        }
+        $recipientTypes = [];
+        if (true === $sendToCreator) {
+            $recipientTypes[] = 'creator';
+        }
+        if (true === $sendToModerator) {
+            $recipientTypes[] = 'moderator';
+        }
+        if (true === $sendToSuperModerator) {
+            $recipientTypes[] = 'superModerator';
+        }
+    
+        foreach ($recipientTypes as $recipientType) {
+            $notifyArgs = [
+                'recipientType' => $recipientType,
+                'action' => $actionId,
+                'entity' => $entity
+            ];
+            $result = $this->notificationHelper->process($notifyArgs);
+        }
+    
+        // example for custom recipient type using designated entity fields:
+        // recipientType => 'field-email^lastname'
     }
 }

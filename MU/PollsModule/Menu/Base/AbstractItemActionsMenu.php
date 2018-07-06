@@ -44,11 +44,11 @@ class AbstractItemActionsMenu implements ContainerAwareInterface
      * Builds the menu.
      *
      * @param FactoryInterface $factory Menu factory
-     * @param array            $options Additional options
+     * @param array            $options List of additional options
      *
      * @return MenuItem The assembled menu
      */
-    public function menu(FactoryInterface $factory, array $options)
+    public function menu(FactoryInterface $factory, array $options = [])
     {
         $menu = $factory->createItem('itemActions');
         if (!isset($options['entity']) || !isset($options['area']) || !isset($options['context'])) {
@@ -61,144 +61,178 @@ class AbstractItemActionsMenu implements ContainerAwareInterface
         $routeArea = $options['area'];
         $context = $options['context'];
 
-        $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+        $permissionHelper = $this->container->get('mu_polls_module.permission_helper');
         $currentUserApi = $this->container->get('zikula_users_module.current_user');
         $entityDisplayHelper = $this->container->get('mu_polls_module.entity_display_helper');
-        $menu->setChildrenAttribute('class', 'list-inline');
+        $menu->setChildrenAttribute('class', 'list-inline item-actions');
 
         $currentUserId = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uid') : UsersConstant::USER_ID_ANONYMOUS;
         if ($entity instanceof OptionEntity) {
-            $component = 'MUPollsModule:Option:';
-            $instance = $entity->getKey() . '::';
             $routePrefix = 'mupollsmodule_option_';
         
             if ($routeArea == 'admin') {
-                $menu->addChild($this->__('Preview'), [
+                $title = $this->__('Preview', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-search-plus');
-                $menu[$this->__('Preview')]->setLinkAttribute('target', '_blank');
-                $menu[$this->__('Preview')]->setLinkAttribute('title', $this->__('Open preview page'));
+                ]);
+                $menu[$title]->setLinkAttribute('target', '_blank');
+                $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-search-plus');
             }
             if ($context != 'display') {
-                $menu->addChild($this->__('Details'), [
+                $title = $this->__('Details', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-eye');
-                $menu[$this->__('Details')]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                ]);
+                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                $menu[$title]->setAttribute('icon', 'fa fa-eye');
             }
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_EDIT)) {
-                $menu->addChild($this->__('Edit'), [
+            if ($permissionHelper->mayEdit($entity)) {
+                $title = $this->__('Edit', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-pencil-square-o');
-                $menu[$this->__('Edit')]->setLinkAttribute('title', $this->__('Edit this option'));
-                $menu->addChild($this->__('Reuse'), [
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Edit this option', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-pencil-square-o');
+                $title = $this->__('Reuse', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => ['astemplate' => $entity->getKey()]
-                ])->setAttribute('icon', 'fa fa-files-o');
-                $menu[$this->__('Reuse')]->setLinkAttribute('title', $this->__('Reuse for new option'));
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new option', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-files-o');
             }
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)) {
-                $menu->addChild($this->__('Delete'), [
+            if ($permissionHelper->mayDelete($entity)) {
+                $title = $this->__('Delete', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-trash-o');
-                $menu[$this->__('Delete')]->setLinkAttribute('title', $this->__('Delete this option'));
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Delete this option', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-trash-o');
             }
             if ($context == 'display') {
-                $title = $this->__('Back to overview');
+                $title = $this->__('Options list', 'mupollsmodule');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
-                ])->setAttribute('icon', 'fa fa-reply');
+                ]);
                 $menu[$title]->setLinkAttribute('title', $title);
+                $menu[$title]->setAttribute('icon', 'fa fa-reply');
             }
         }
         if ($entity instanceof PollEntity) {
-            $component = 'MUPollsModule:Poll:';
-            $instance = $entity->getKey() . '::';
             $routePrefix = 'mupollsmodule_poll_';
         
             if ($routeArea == 'admin') {
-                $menu->addChild($this->__('Preview'), [
+                $title = $this->__('Preview', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-search-plus');
-                $menu[$this->__('Preview')]->setLinkAttribute('target', '_blank');
-                $menu[$this->__('Preview')]->setLinkAttribute('title', $this->__('Open preview page'));
+                ]);
+                $menu[$title]->setLinkAttribute('target', '_blank');
+                $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-search-plus');
             }
             if ($context != 'display') {
-                $menu->addChild($this->__('Details'), [
+                $title = $this->__('Details', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-eye');
-                $menu[$this->__('Details')]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                ]);
+                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                $menu[$title]->setAttribute('icon', 'fa fa-eye');
             }
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_EDIT)) {
-                $menu->addChild($this->__('Edit'), [
+            if ($permissionHelper->mayEdit($entity)) {
+                $title = $this->__('Edit', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-pencil-square-o');
-                $menu[$this->__('Edit')]->setLinkAttribute('title', $this->__('Edit this poll'));
-                $menu->addChild($this->__('Reuse'), [
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Edit this poll', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-pencil-square-o');
+                $title = $this->__('Reuse', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => ['astemplate' => $entity->getKey()]
-                ])->setAttribute('icon', 'fa fa-files-o');
-                $menu[$this->__('Reuse')]->setLinkAttribute('title', $this->__('Reuse for new poll'));
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new poll', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-files-o');
             }
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_DELETE)) {
-                $menu->addChild($this->__('Delete'), [
+            if ($permissionHelper->mayDelete($entity)) {
+                $title = $this->__('Delete', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'delete',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-trash-o');
-                $menu[$this->__('Delete')]->setLinkAttribute('title', $this->__('Delete this poll'));
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Delete this poll', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-trash-o');
             }
             if ($context == 'display') {
-                $title = $this->__('Back to overview');
+                $title = $this->__('Polls list', 'mupollsmodule');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
-                ])->setAttribute('icon', 'fa fa-reply');
+                ]);
                 $menu[$title]->setLinkAttribute('title', $title);
+                $menu[$title]->setAttribute('icon', 'fa fa-reply');
             }
         }
         if ($entity instanceof VoteEntity) {
-            $component = 'MUPollsModule:Vote:';
-            $instance = $entity->getKey() . '::';
             $routePrefix = 'mupollsmodule_vote_';
         
             if ($routeArea == 'admin') {
-                $menu->addChild($this->__('Preview'), [
+                $title = $this->__('Preview', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-search-plus');
-                $menu[$this->__('Preview')]->setLinkAttribute('target', '_blank');
-                $menu[$this->__('Preview')]->setLinkAttribute('title', $this->__('Open preview page'));
+                ]);
+                $menu[$title]->setLinkAttribute('target', '_blank');
+                $menu[$title]->setLinkAttribute('title', $this->__('Open preview page', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-search-plus');
             }
             if ($context != 'display') {
-                $menu->addChild($this->__('Details'), [
+                $title = $this->__('Details', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'display',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-eye');
-                $menu[$this->__('Details')]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                ]);
+                $menu[$title]->setLinkAttribute('title', str_replace('"', '', $entityDisplayHelper->getFormattedTitle($entity)));
+                $menu[$title]->setAttribute('icon', 'fa fa-eye');
             }
-            if ($permissionApi->hasPermission($component, $instance, ACCESS_EDIT)) {
-                $menu->addChild($this->__('Edit'), [
+            if ($permissionHelper->mayEdit($entity)) {
+                $title = $this->__('Edit', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => $entity->createUrlArgs()
-                ])->setAttribute('icon', 'fa fa-pencil-square-o');
-                $menu[$this->__('Edit')]->setLinkAttribute('title', $this->__('Edit this vote'));
-                $menu->addChild($this->__('Reuse'), [
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Edit this vote', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-pencil-square-o');
+                $title = $this->__('Reuse', 'mupollsmodule');
+                $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'edit',
                     'routeParameters' => ['astemplate' => $entity->getKey()]
-                ])->setAttribute('icon', 'fa fa-files-o');
-                $menu[$this->__('Reuse')]->setLinkAttribute('title', $this->__('Reuse for new vote'));
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Reuse for new vote', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-files-o');
+            }
+            if ($permissionHelper->mayDelete($entity)) {
+                $title = $this->__('Delete', 'mupollsmodule');
+                $menu->addChild($title, [
+                    'route' => $routePrefix . $routeArea . 'delete',
+                    'routeParameters' => $entity->createUrlArgs()
+                ]);
+                $menu[$title]->setLinkAttribute('title', $this->__('Delete this vote', 'mupollsmodule'));
+                $menu[$title]->setAttribute('icon', 'fa fa-trash-o');
             }
             if ($context == 'display') {
-                $title = $this->__('Back to overview');
+                $title = $this->__('Votes list', 'mupollsmodule');
                 $menu->addChild($title, [
                     'route' => $routePrefix . $routeArea . 'view'
-                ])->setAttribute('icon', 'fa fa-reply');
+                ]);
                 $menu[$title]->setLinkAttribute('title', $title);
+                $menu[$title]->setAttribute('icon', 'fa fa-reply');
             }
         }
 

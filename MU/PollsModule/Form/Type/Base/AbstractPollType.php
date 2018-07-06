@@ -108,8 +108,8 @@ abstract class AbstractPollType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addEntityFields($builder, $options);
+        $this->addAdditionalNotificationRemarksField($builder, $options);
         $this->addModerationFields($builder, $options);
-        $this->addReturnControlField($builder, $options);
         $this->addSubmitButtons($builder, $options);
     }
 
@@ -119,7 +119,7 @@ abstract class AbstractPollType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addEntityFields(FormBuilderInterface $builder, array $options)
+    public function addEntityFields(FormBuilderInterface $builder, array $options = [])
     {
         
         $builder->add('title', TextType::class, [
@@ -128,7 +128,7 @@ abstract class AbstractPollType extends AbstractType
             'attr' => [
                 'maxlength' => 255,
                 'class' => '',
-                'title' => $this->__('Enter the title of the poll')
+                'title' => $this->__('Enter the title of the poll.')
             ],
             'required' => true,
         ]);
@@ -140,7 +140,7 @@ abstract class AbstractPollType extends AbstractType
             'attr' => [
                 'maxlength' => 3000,
                 'class' => '',
-                'title' => $this->__('Enter the description of the poll')
+                'title' => $this->__('Enter the description of the poll.')
             ],
             'required' => false,
         ]);
@@ -177,7 +177,7 @@ abstract class AbstractPollType extends AbstractType
             'label' => $this->__('Date of start') . ':',
             'attr' => [
                 'class' => ' validate-daterange-poll',
-                'title' => $this->__('Enter the date of start of the poll')
+                'title' => $this->__('Enter the date of start of the poll.')
             ],
             'required' => false,
             'empty_data' => '',
@@ -190,13 +190,52 @@ abstract class AbstractPollType extends AbstractType
             'label' => $this->__('Date of end') . ':',
             'attr' => [
                 'class' => ' validate-daterange-poll',
-                'title' => $this->__('Enter the date of end of the poll')
+                'title' => $this->__('Enter the date of end of the poll.')
             ],
             'required' => false,
             'empty_data' => '',
             'with_seconds' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text'
+        ]);
+        
+        $builder->add('inFrontend', CheckboxType::class, [
+            'label' => $this->__('In frontend') . ':',
+            'attr' => [
+                'class' => '',
+                'title' => $this->__('in frontend ?')
+            ],
+            'required' => false,
+        ]);
+    }
+
+    /**
+     * Adds a field for additional notification remarks.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options
+     */
+    public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options = [])
+    {
+        $helpText = '';
+        if ($options['is_moderator']) {
+            $helpText = $this->__('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
+        } elseif ($options['is_creator']) {
+            $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
+        }
+    
+        $builder->add('additionalNotificationRemarks', TextareaType::class, [
+            'mapped' => false,
+            'label' => $this->__('Additional remarks'),
+            'label_attr' => [
+                'class' => 'tooltips',
+                'title' => $helpText
+            ],
+            'attr' => [
+                'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
+            ],
+            'required' => false,
+            'help' => $helpText
         ]);
     }
 
@@ -206,7 +245,7 @@ abstract class AbstractPollType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addModerationFields(FormBuilderInterface $builder, array $options)
+    public function addModerationFields(FormBuilderInterface $builder, array $options = [])
     {
         if (!$options['has_moderate_permission']) {
             return;
@@ -217,43 +256,25 @@ abstract class AbstractPollType extends AbstractType
             'label' => $this->__('Creator') . ':',
             'attr' => [
                 'maxlength' => 11,
-                'title' => $this->__('Here you can choose a user which will be set as creator')
+                'title' => $this->__('Here you can choose a user which will be set as creator.')
             ],
             'empty_data' => 0,
             'required' => false,
-            'help' => $this->__('Here you can choose a user which will be set as creator')
+            'help' => $this->__('Here you can choose a user which will be set as creator.')
         ]);
         $builder->add('moderationSpecificCreationDate', DateTimeType::class, [
             'mapped' => false,
             'label' => $this->__('Creation date') . ':',
             'attr' => [
                 'class' => '',
-                'title' => $this->__('Here you can choose a custom creation date')
+                'title' => $this->__('Here you can choose a custom creation date.')
             ],
             'empty_data' => '',
             'required' => false,
             'with_seconds' => true,
             'date_widget' => 'single_text',
             'time_widget' => 'single_text',
-            'help' => $this->__('Here you can choose a custom creation date')
-        ]);
-    }
-
-    /**
-     * Adds the return control field.
-     *
-     * @param FormBuilderInterface $builder The form builder
-     * @param array                $options The options
-     */
-    public function addReturnControlField(FormBuilderInterface $builder, array $options)
-    {
-        if ($options['mode'] != 'create') {
-            return;
-        }
-        $builder->add('repeatCreation', CheckboxType::class, [
-            'mapped' => false,
-            'label' => $this->__('Create another item after save'),
-            'required' => false
+            'help' => $this->__('Here you can choose a custom creation date.')
         ]);
     }
 
@@ -263,7 +284,7 @@ abstract class AbstractPollType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addSubmitButtons(FormBuilderInterface $builder, array $options)
+    public function addSubmitButtons(FormBuilderInterface $builder, array $options = [])
     {
         foreach ($options['actions'] as $action) {
             $builder->add($action['id'], SubmitType::class, [
@@ -273,6 +294,16 @@ abstract class AbstractPollType extends AbstractType
                     'class' => $action['buttonClass']
                 ]
             ]);
+            if ($options['mode'] == 'create' && $action['id'] == 'submit') {
+                // add additional button to submit item and return to create form
+                $builder->add('submitrepeat', SubmitType::class, [
+                    'label' => $this->__('Submit and repeat'),
+                    'icon' => 'fa-repeat',
+                    'attr' => [
+                        'class' => $action['buttonClass']
+                    ]
+                ]);
+            }
         }
         $builder->add('reset', ResetType::class, [
             'label' => $this->__('Reset'),
@@ -316,12 +347,16 @@ abstract class AbstractPollType extends AbstractType
                     'isDateOfStartBeforeDateOfEnd' => 'dateOfStart',
                 ],
                 'mode' => 'create',
+                'is_moderator' => false,
+                'is_creator' => false,
                 'actions' => [],
                 'has_moderate_permission' => false,
                 'translations' => [],
             ])
             ->setRequired(['mode', 'actions'])
             ->setAllowedTypes('mode', 'string')
+            ->setAllowedTypes('is_moderator', 'bool')
+            ->setAllowedTypes('is_creator', 'bool')
             ->setAllowedTypes('actions', 'array')
             ->setAllowedTypes('has_moderate_permission', 'bool')
             ->setAllowedTypes('translations', 'array')

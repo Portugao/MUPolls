@@ -66,7 +66,7 @@ abstract class AbstractItemListBlockType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addObjectTypeField(FormBuilderInterface $builder, array $options)
+    public function addObjectTypeField(FormBuilderInterface $builder, array $options = [])
     {
         $builder->add('objectType', ChoiceType::class, [
             'label' => $this->__('Object type') . ':',
@@ -80,7 +80,6 @@ abstract class AbstractItemListBlockType extends AbstractType
                 $this->__('Polls') => 'poll',
                 $this->__('Votes') => 'vote'
             ],
-            'choices_as_values' => true,
             'multiple' => false,
             'expanded' => false
         ]);
@@ -92,7 +91,7 @@ abstract class AbstractItemListBlockType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addSortingField(FormBuilderInterface $builder, array $options)
+    public function addSortingField(FormBuilderInterface $builder, array $options = [])
     {
         $builder->add('sorting', ChoiceType::class, [
             'label' => $this->__('Sorting') . ':',
@@ -102,7 +101,6 @@ abstract class AbstractItemListBlockType extends AbstractType
                 $this->__('Newest') => 'newest',
                 $this->__('Default') => 'default'
             ],
-            'choices_as_values' => true,
             'multiple' => false,
             'expanded' => false
         ]);
@@ -114,7 +112,7 @@ abstract class AbstractItemListBlockType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addAmountField(FormBuilderInterface $builder, array $options)
+    public function addAmountField(FormBuilderInterface $builder, array $options = [])
     {
         $builder->add('amount', IntegerType::class, [
             'label' => $this->__('Amount') . ':',
@@ -134,7 +132,7 @@ abstract class AbstractItemListBlockType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addTemplateFields(FormBuilderInterface $builder, array $options)
+    public function addTemplateFields(FormBuilderInterface $builder, array $options = [])
     {
         $builder
             ->add('template', ChoiceType::class, [
@@ -145,7 +143,6 @@ abstract class AbstractItemListBlockType extends AbstractType
                     $this->__('With description') => 'itemlist_display_description.html.twig',
                     $this->__('Custom template') => 'custom'
                 ],
-                'choices_as_values' => true,
                 'multiple' => false,
                 'expanded' => false
             ])
@@ -167,7 +164,7 @@ abstract class AbstractItemListBlockType extends AbstractType
      * @param FormBuilderInterface $builder The form builder
      * @param array                $options The options
      */
-    public function addFilterField(FormBuilderInterface $builder, array $options)
+    public function addFilterField(FormBuilderInterface $builder, array $options = [])
     {
         $builder->add('filter', TextType::class, [
             'label' => $this->__('Filter (expert option)') . ':',

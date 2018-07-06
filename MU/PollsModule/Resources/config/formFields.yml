@@ -1,7 +1,12 @@
 services:
     # Form field types
     
+    mu_polls_module.form.type.field.multilist:
+        class: MU\PollsModule\Form\Type\Field\MultiListType
+        arguments:
+            - "@mu_polls_module.listentries_helper"
+        tags: ['form.type']
+    
     mu_polls_module.form.type.field.translation:
         class: MU\PollsModule\Form\Type\Field\TranslationType
-        tags:
-            - { name: form.type }
+        tags: ['form.type']

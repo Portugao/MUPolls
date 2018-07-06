@@ -71,17 +71,17 @@ abstract class AbstractAjaxController extends AbstractController
         }
         
         $slimItems = [];
-        $component = 'MUPollsModule:' . ucfirst($objectType) . ':';
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
         foreach ($entities as $item) {
-            $itemId = $item->getKey();
-            if (!$this->hasPermission($component, $itemId . '::', ACCESS_READ)) {
+            if (!$permissionHelper->mayRead($item)) {
                 continue;
             }
+            $itemId = $item->getKey();
             $slimItems[] = $this->prepareSlimItem($repository, $objectType, $item, $itemId, $descriptionFieldName);
         }
         
         // return response
-        return new JsonResponse($slimItems);
+        return $this->json($slimItems);
     }
     
     /**
@@ -151,7 +151,10 @@ abstract class AbstractAjaxController extends AbstractController
             $routeParams['sort'] = $sort;
             $request->attributes->set('_route_params', $routeParams);
         }
-        $sortParam = $sort . ' asc';
+        $sortParam = $sort;
+        if (false === strpos(strtolower($sort), ' asc') && false === strpos(strtolower($sort), ' desc')) {
+            $sortParam .= ' asc';
+        }
         
         $currentPage = 1;
         $resultsPerPage = 20;
@@ -168,7 +171,7 @@ abstract class AbstractAjaxController extends AbstractController
                 $itemTitle = $entityDisplayHelper->getFormattedTitle($item);
                 $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.')
                 if (!empty($itemDescription)) {
-                    $itemDescription = substr($itemDescription, 0, 50) . '&hellip;';
+                    $itemDescription = substr(strip_tags($itemDescription), 0, 50) . '&hellip;';
                 }
         
                 $resultItem = [
@@ -182,7 +185,59 @@ abstract class AbstractAjaxController extends AbstractController
             }
         }
         
-        return new JsonResponse($resultItems);
+        return $this->json($resultItems);
+    }
+    
+    /**
+     * Changes a given flag (boolean field) by switching between true and false.
+     *
+     * @param Request $request Current request instance
+     *
+     * @return JsonResponse
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     */
+    public function toggleFlagAction(Request $request)
+    {
+        if (!$this->hasPermission('MUPollsModule::Ajax', '::', ACCESS_EDIT)) {
+            throw new AccessDeniedException();
+        }
+        
+        $objectType = $request->request->getAlnum('ot', 'poll');
+        $field = $request->request->getAlnum('field', '');
+        $id = $request->request->getInt('id', 0);
+        
+        if ($id == 0
+            || ($objectType != 'poll')
+        || ($objectType == 'poll' && !in_array($field, ['inFrontend']))
+        ) {
+            return $this->json($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+        }
+        
+        // select data from data source
+        $entityFactory = $this->get('mu_polls_module.entity_factory');
+        $repository = $entityFactory->getRepository($objectType);
+        $entity = $repository->selectById($id, false);
+        if (null === $entity) {
+            return $this->json($this->__('No such item.'), JsonResponse::HTTP_NOT_FOUND);
+        }
+        
+        // toggle the flag
+        $entity[$field] = !$entity[$field];
+        
+        // save entity back to database
+        $entityFactory->getObjectManager()->flush();
+        
+        $logger = $this->get('logger');
+        $logArgs = ['app' => 'MUPollsModule', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
+        $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
+        
+        // return response
+        return $this->json([
+            'id' => $id,
+            'state' => $entity[$field],
+            'message' => $this->__('The setting has been successfully changed.')
+        ]);
     }
     
     /**
@@ -208,7 +263,7 @@ abstract class AbstractAjaxController extends AbstractController
         $assignedId = $request->request->getInt('assignedId', 0);
         
         if (!$subscriberOwner || !$subscriberAreaId || !$subscriberObjectId || !$assignedEntity || !$assignedId) {
-            return new JsonResponse($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
         
         $subscriberUrl = !empty($subscriberUrl) ? unserialize($subscriberUrl) : [];
@@ -223,11 +278,11 @@ abstract class AbstractAjaxController extends AbstractController
         $assignment->setUpdatedDate(new \DateTime());
         
         $entityManager = $this->get('mu_polls_module.entity_factory')->getObjectManager();
-        $qb = $entityManager->persist($assignment);
-        $qb = $entityManager->flush();
+        $entityManager->persist($assignment);
+        $entityManager->flush();
         
         // return response
-        return new JsonResponse([
+        return $this->json([
             'id' => $assignment->getId()
         ]);
     }
@@ -249,7 +304,7 @@ abstract class AbstractAjaxController extends AbstractController
         
         $id = $request->request->getInt('id', 0);
         if (!$id) {
-            return new JsonResponse($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
+            return $this->json($this->__('Error: invalid input.'), JsonResponse::HTTP_BAD_REQUEST);
         }
         
         $entityFactory = $this->get('mu_polls_module.entity_factory');
@@ -262,7 +317,7 @@ abstract class AbstractAjaxController extends AbstractController
         $query->execute();
         
         // return response
-        return new JsonResponse([
+        return $this->json([
             'id' => $id
         ]);
     }

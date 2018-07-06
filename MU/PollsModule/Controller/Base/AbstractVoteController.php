@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Zikula\Bundle\HookBundle\Category\FormAwareCategory;
 use Zikula\Bundle\HookBundle\Category\UiHooksCategory;
 use Zikula\Component\SortableColumns\Column;
 use Zikula\Component\SortableColumns\SortableColumns;
@@ -63,18 +64,21 @@ abstract class AbstractVoteController extends AbstractController
      */
     protected function indexInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'vote';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_OVERVIEW;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
         
         return $this->redirectToRoute('mupollsmodule_vote_' . $templateParameters['routeArea'] . 'view');
     }
+    
     /**
      * This action provides an item list overview in the admin area.
      *
@@ -116,12 +120,14 @@ abstract class AbstractVoteController extends AbstractController
      */
     protected function viewInternal(Request $request, $sort, $sortdir, $pos, $num, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'vote';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -145,10 +151,20 @@ abstract class AbstractVoteController extends AbstractController
         
         $templateParameters = $controllerHelper->processViewActionParameters($objectType, $sortableColumns, $templateParameters, true);
         
+        // filter by permissions
+        $filteredEntities = [];
+        foreach ($templateParameters['items'] as $vote) {
+            if (!$permissionHelper->hasEntityPermission($vote, $permLevel)) {
+                continue;
+            }
+            $filteredEntities[] = $vote;
+        }
+        $templateParameters['items'] = $filteredEntities;
         
         // fetch and return the appropriate template
         return $viewHelper->processTemplate($objectType, 'view', $templateParameters);
     }
+    
     /**
      * This action provides a item detail view in the admin area.
      *
@@ -186,15 +202,11 @@ abstract class AbstractVoteController extends AbstractController
      */
     protected function displayInternal(Request $request, VoteEntity $vote, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'vote';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_READ;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
-            throw new AccessDeniedException();
-        }
-        // create identifier for permission check
-        $instanceId = $vote->getKey();
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', $instanceId . '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($vote, $permLevel)) {
             throw new AccessDeniedException();
         }
         
@@ -211,6 +223,7 @@ abstract class AbstractVoteController extends AbstractController
         
         return $response;
     }
+    
     /**
      * This action provides a handling of edit requests in the admin area.
      *
@@ -248,12 +261,14 @@ abstract class AbstractVoteController extends AbstractController
      */
     protected function editInternal(Request $request, $isAdmin = false)
     {
-        // parameter specifying which type of objects we are treating
         $objectType = 'vote';
+        // permission check
         $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_EDIT;
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', $permLevel)) {
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasComponentPermission($objectType, $permLevel)) {
             throw new AccessDeniedException();
         }
+        
         $templateParameters = [
             'routeArea' => $isAdmin ? 'admin' : ''
         ];
@@ -273,7 +288,137 @@ abstract class AbstractVoteController extends AbstractController
         // fetch and return the appropriate template
         return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'edit', $templateParameters);
     }
-
+    
+    /**
+     * This action provides a handling of simple delete requests in the admin area.
+     *
+     * @param Request $request Current request instance
+     * @param VoteEntity $vote Treated vote instance
+     *
+     * @return Response Output
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     * @throws NotFoundHttpException Thrown by param converter if vote to be deleted isn't found
+     * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
+     */
+    public function adminDeleteAction(Request $request, VoteEntity $vote)
+    {
+        return $this->deleteInternal($request, $vote, true);
+    }
+    
+    /**
+     * This action provides a handling of simple delete requests.
+     *
+     * @param Request $request Current request instance
+     * @param VoteEntity $vote Treated vote instance
+     *
+     * @return Response Output
+     *
+     * @throws AccessDeniedException Thrown if the user doesn't have required permissions
+     * @throws NotFoundHttpException Thrown by param converter if vote to be deleted isn't found
+     * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
+     */
+    public function deleteAction(Request $request, VoteEntity $vote)
+    {
+        return $this->deleteInternal($request, $vote, false);
+    }
+    
+    /**
+     * This method includes the common implementation code for adminDelete() and delete().
+     */
+    protected function deleteInternal(Request $request, VoteEntity $vote, $isAdmin = false)
+    {
+        $objectType = 'vote';
+        // permission check
+        $permLevel = $isAdmin ? ACCESS_ADMIN : ACCESS_DELETE;
+        $permissionHelper = $this->get('mu_polls_module.permission_helper');
+        if (!$permissionHelper->hasEntityPermission($vote, $permLevel)) {
+            throw new AccessDeniedException();
+        }
+        
+        $logger = $this->get('logger');
+        $logArgs = ['app' => 'MUPollsModule', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => 'vote', 'id' => $vote->getKey()];
+        
+        // determine available workflow actions
+        $workflowHelper = $this->get('mu_polls_module.workflow_helper');
+        $actions = $workflowHelper->getActionsForObject($vote);
+        if (false === $actions || !is_array($actions)) {
+            $this->addFlash('error', $this->__('Error! Could not determine workflow actions.'));
+            $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
+            throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
+        }
+        
+        // redirect to the list of votes
+        $redirectRoute = 'mupollsmodule_vote_' . ($isAdmin ? 'admin' : '') . 'view';
+        
+        // check whether deletion is allowed
+        $deleteActionId = 'delete';
+        $deleteAllowed = false;
+        foreach ($actions as $actionId => $action) {
+            if ($actionId != $deleteActionId) {
+                continue;
+            }
+            $deleteAllowed = true;
+            break;
+        }
+        if (!$deleteAllowed) {
+            $this->addFlash('error', $this->__('Error! It is not allowed to delete this vote.'));
+            $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
+        
+            return $this->redirectToRoute($redirectRoute);
+        }
+        
+        $form = $this->createForm('Zikula\Bundle\FormExtensionBundle\Form\Type\DeletionType', $vote);
+        $hookHelper = $this->get('mu_polls_module.hook_helper');
+        
+        // Call form aware display hooks
+        $formHook = $hookHelper->callFormDisplayHooks($form, $vote, FormAwareCategory::TYPE_DELETE);
+        
+        if ($form->handleRequest($request)->isValid()) {
+            if ($form->get('delete')->isClicked()) {
+                // Let any ui hooks perform additional validation actions
+                $validationErrors = $hookHelper->callValidationHooks($vote, UiHooksCategory::TYPE_VALIDATE_DELETE);
+                if (count($validationErrors) > 0) {
+                    foreach ($validationErrors as $message) {
+                        $this->addFlash('error', $message);
+                    }
+                } else {
+                    // execute the workflow action
+                    $success = $workflowHelper->executeAction($vote, $deleteActionId);
+                    if ($success) {
+                        $this->addFlash('status', $this->__('Done! Item deleted.'));
+                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
+                    }
+                    
+                    // Call form aware processing hooks
+                    $hookHelper->callFormProcessHooks($form, $vote, FormAwareCategory::TYPE_PROCESS_DELETE);
+                    
+                    // Let any ui hooks know that we have deleted the vote
+                    $hookHelper->callProcessHooks($vote, UiHooksCategory::TYPE_PROCESS_DELETE);
+                    
+                    return $this->redirectToRoute($redirectRoute);
+                }
+            } elseif ($form->get('cancel')->isClicked()) {
+                $this->addFlash('status', $this->__('Operation cancelled.'));
+        
+                return $this->redirectToRoute($redirectRoute);
+            }
+        }
+        
+        $templateParameters = [
+            'routeArea' => $isAdmin ? 'admin' : '',
+            'deleteForm' => $form->createView(),
+            $objectType => $vote,
+            'formHookTemplates' => $formHook->getTemplates()
+        ];
+        
+        $controllerHelper = $this->get('mu_polls_module.controller_helper');
+        $templateParameters = $controllerHelper->processDeleteActionParameters($objectType, $templateParameters, true);
+        
+        // fetch and return the appropriate template
+        return $this->get('mu_polls_module.view_helper')->processTemplate($objectType, 'delete', $templateParameters);
+    }
+    
     /**
      * Process status changes for multiple items.
      *
@@ -312,7 +457,7 @@ abstract class AbstractVoteController extends AbstractController
      * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
      *
      * @param Request $request Current request instance
-     * @param Boolean $isAdmin Whether the admin area is used or not
+     * @param boolean $isAdmin Whether the admin area is used or not
      */
     protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
     {
@@ -390,7 +535,7 @@ abstract class AbstractVoteController extends AbstractController
         
         return $this->redirectToRoute('mupollsmodule_vote_' . ($isAdmin ? 'admin' : '') . 'index');
     }
-
+    
     /**
      * This method cares for a redirect within an inline frame.
      *
@@ -419,4 +564,5 @@ abstract class AbstractVoteController extends AbstractController
         
         return new PlainResponse($this->get('twig')->render('@MUPollsModule/Vote/inlineRedirectHandler.html.twig', $templateParameters));
     }
+    
 }

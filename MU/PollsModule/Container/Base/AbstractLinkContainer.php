@@ -18,8 +18,8 @@ use Zikula\Common\Translator\TranslatorTrait;
 use Zikula\Core\Doctrine\EntityAccess;
 use Zikula\Core\LinkContainer\LinkContainerInterface;
 use Zikula\ExtensionsModule\Api\ApiInterface\VariableApiInterface;
-use Zikula\PermissionsModule\Api\ApiInterface\PermissionApiInterface;
 use MU\PollsModule\Helper\ControllerHelper;
+use MU\PollsModule\Helper\PermissionHelper;
 
 /**
  * This is the link container service implementation class.
@@ -34,11 +34,6 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
     protected $router;
 
     /**
-     * @var PermissionApiInterface
-     */
-    protected $permissionApi;
-
-    /**
      * @var VariableApiInterface
      */
     protected $variableApi;
@@ -49,26 +44,31 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
     protected $controllerHelper;
 
     /**
+     * @var PermissionHelper
+     */
+    protected $permissionHelper;
+
+    /**
      * LinkContainer constructor.
      *
-     * @param TranslatorInterface    $translator       Translator service instance
-     * @param Routerinterface        $router           Router service instance
-     * @param PermissionApiInterface $permissionApi    PermissionApi service instance
-     * @param VariableApiInterface   $variableApi      VariableApi service instance
-     * @param ControllerHelper       $controllerHelper ControllerHelper service instance
+     * @param TranslatorInterface  $translator       Translator service instance
+     * @param Routerinterface      $router           Router service instance
+     * @param VariableApiInterface $variableApi      VariableApi service instance
+     * @param ControllerHelper     $controllerHelper ControllerHelper service instance
+     * @param PermissionHelper     $permissionHelper PermissionHelper service instance
      */
     public function __construct(
         TranslatorInterface $translator,
         RouterInterface $router,
-        PermissionApiInterface $permissionApi,
         VariableApiInterface $variableApi,
-        ControllerHelper $controllerHelper
+        ControllerHelper $controllerHelper,
+        PermissionHelper $permissionHelper
     ) {
         $this->setTranslator($translator);
         $this->router = $router;
-        $this->permissionApi = $permissionApi;
         $this->variableApi = $variableApi;
         $this->controllerHelper = $controllerHelper;
+        $this->permissionHelper = $permissionHelper;
     }
 
     /**
@@ -86,7 +86,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
      *
      * @param string $type The type to collect links for
      *
-     * @return array Array of header links
+     * @return array List of header links
      */
     public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
     {
@@ -99,13 +99,13 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
         $links = [];
 
         if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
-            if (!$this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_OVERVIEW)) {
+            if (!$this->permissionHelper->hasPermission(ACCESS_OVERVIEW)) {
                 return $links;
             }
 
             if (true === $this->variableApi->get('MUPollsModule', 'linkOwnOptionsOnAccountPage', true)) {
                 $objectType = 'option';
-                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                     $links[] = [
                         'url' => $this->router->generate('mupollsmodule_' . strtolower($objectType) . '_view', ['own' => 1]),
                         'text' => $this->__('My options', 'mupollsmodule'),
@@ -116,7 +116,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
 
             if (true === $this->variableApi->get('MUPollsModule', 'linkOwnPollsOnAccountPage', true)) {
                 $objectType = 'poll';
-                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                     $links[] = [
                         'url' => $this->router->generate('mupollsmodule_' . strtolower($objectType) . '_view', ['own' => 1]),
                         'text' => $this->__('My polls', 'mupollsmodule'),
@@ -127,7 +127,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
 
             if (true === $this->variableApi->get('MUPollsModule', 'linkOwnVotesOnAccountPage', true)) {
                 $objectType = 'vote';
-                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                if ($this->permissionHelper->hasComponentPermission($objectType, ACCESS_READ)) {
                     $links[] = [
                         'url' => $this->router->generate('mupollsmodule_' . strtolower($objectType) . '_view', ['own' => 1]),
                         'text' => $this->__('My votes', 'mupollsmodule'),
@@ -136,7 +136,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
                 }
             }
 
-            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+            if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('mupollsmodule_poll_adminindex'),
                     'text' => $this->__('Polls Backend', 'mupollsmodule'),
@@ -150,7 +150,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
 
         $routeArea = LinkContainerInterface::TYPE_ADMIN == $type ? 'admin' : '';
         if (LinkContainerInterface::TYPE_ADMIN == $type) {
-            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_READ)) {
+            if ($this->permissionHelper->hasPermission(ACCESS_READ)) {
                 $links[] = [
                     'url' => $this->router->generate('mupollsmodule_poll_index'),
                     'text' => $this->__('Frontend', 'mupollsmodule'),
@@ -159,7 +159,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
                 ];
             }
         } else {
-            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+            if ($this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
                 $links[] = [
                     'url' => $this->router->generate('mupollsmodule_poll_adminindex'),
                     'text' => $this->__('Backend', 'mupollsmodule'),
@@ -170,7 +170,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
         }
         
         if (in_array('option', $allowedObjectTypes)
-            && $this->permissionApi->hasPermission($this->getBundleName() . ':Option:', '::', $permLevel)) {
+            && $this->permissionHelper->hasComponentPermission('option', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('mupollsmodule_option_' . $routeArea . 'view'),
                 'text' => $this->__('Options', 'mupollsmodule'),
@@ -178,7 +178,7 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
             ];
         }
         if (in_array('poll', $allowedObjectTypes)
-            && $this->permissionApi->hasPermission($this->getBundleName() . ':Poll:', '::', $permLevel)) {
+            && $this->permissionHelper->hasComponentPermission('poll', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('mupollsmodule_poll_' . $routeArea . 'view'),
                 'text' => $this->__('Polls', 'mupollsmodule'),
@@ -186,17 +186,17 @@ abstract class AbstractLinkContainer implements LinkContainerInterface
             ];
         }
         if (in_array('vote', $allowedObjectTypes)
-            && $this->permissionApi->hasPermission($this->getBundleName() . ':Vote:', '::', $permLevel)) {
+            && $this->permissionHelper->hasComponentPermission('vote', $permLevel)) {
             $links[] = [
                 'url' => $this->router->generate('mupollsmodule_vote_' . $routeArea . 'view'),
                 'text' => $this->__('Votes', 'mupollsmodule'),
                 'title' => $this->__('Votes list', 'mupollsmodule')
             ];
         }
-        if ($routeArea == 'admin' && $this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
+        if ($routeArea == 'admin' && $this->permissionHelper->hasPermission(ACCESS_ADMIN)) {
             $links[] = [
                 'url' => $this->router->generate('mupollsmodule_config_config'),
-                'text' => $this->__('Configuration', 'mupollsmodule'),
+                'text' => $this->__('Settings', 'mupollsmodule'),
                 'title' => $this->__('Manage settings for this application', 'mupollsmodule'),
                 'icon' => 'wrench'
             ];

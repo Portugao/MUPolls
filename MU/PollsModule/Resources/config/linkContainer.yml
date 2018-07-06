@@ -4,8 +4,7 @@ services:
         arguments:
             - "@translator.default"
             - "@router"
-            - "@zikula_permissions_module.api.permission"
             - "@zikula_extensions_module.api.variable"
             - "@mu_polls_module.controller_helper"
-        tags:
-            - { name: zikula.link_container }
+            - "@mu_polls_module.permission_helper"
+        tags: ['zikula.link_container']

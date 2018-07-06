@@ -3,8 +3,7 @@
 /**
  * Adds a hook assignment for a certain object.
  */
-function mUPollsAttachHookObject(attachLink, entityId)
-{
+function mUPollsAttachHookObject(attachLink, entityId) {
     jQuery.ajax({
         method: 'POST',
         url: Routing.generate('mupollsmodule_ajax_attachhookobject'),
@@ -16,7 +15,7 @@ function mUPollsAttachHookObject(attachLink, entityId)
             assignedEntity: attachLink.data('assigned-entity'),
             assignedId: entityId
         },
-        success: function(data) {
+        success: function (data) {
             window.location.reload();
         }
     });
@@ -25,21 +24,20 @@ function mUPollsAttachHookObject(attachLink, entityId)
 /**
  * Removes a hook assignment for a certain object.
  */
-function mUPollsDetachHookObject()
-{
+function mUPollsDetachHookObject() {
     jQuery.ajax({
         method: 'POST',
         url: Routing.generate('mupollsmodule_ajax_detachhookobject'),
         data: {
             id: jQuery(this).data('assignment-id')
         },
-        success: function(data) {
+        success: function (data) {
             window.location.reload();
         }
     });
 }
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     jQuery('.detach-mupollsmodule-object')
         .click(mUPollsDetachHookObject)
         .removeClass('hidden');

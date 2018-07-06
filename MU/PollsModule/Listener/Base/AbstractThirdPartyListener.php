@@ -14,7 +14,10 @@ namespace MU\PollsModule\Listener\Base;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Zikula\Common\Collection\Collectible\PendingContentCollectible;
+use Zikula\Common\Collection\Container;
 use Zikula\Core\Event\GenericEvent;
+use MU\PollsModule\Helper\WorkflowHelper;
 
 /**
  * Event handler implementation class for special purposes and 3rd party api support.
@@ -22,53 +25,64 @@ use Zikula\Core\Event\GenericEvent;
 abstract class AbstractThirdPartyListener implements EventSubscriberInterface
 {
     /**
+     * @var WorkflowHelper
+     */
+    protected $workflowHelper;
+    
+    /**
+     * ThirdPartyListener constructor.
+     *
+     * @param WorkflowHelper $workflowHelper WorkflowHelper service instance
+     *
+     * @return void
+     */
+    public function __construct(WorkflowHelper $workflowHelper)
+    {
+        $this->workflowHelper = $workflowHelper;
+    }
+    
+    /**
      * Makes our handlers known to the event system.
      */
     public static function getSubscribedEvents()
     {
         return [
-            'module.content.gettypes'                 => ['contentGetTypes', 5],
+            'get.pending_content'                     => ['pendingContentListener', 5],
         ];
     }
     
-    
     /**
-     * Listener for the `module.content.gettypes` event.
-     *
-     * This event occurs when the Content module is 'searching' for Content plugins.
-     * The subject is an instance of Content_Types.
-     * You can register custom content types as well as custom layout types.
+     * Listener for the `get.pending_content` event which collects information from modules
+     * about pending content items waiting for approval.
      *
      * You can access general data available in the event.
      *
      * The event name:
      *     `echo 'Event: ' . $event->getName();`
      *
-     * The current request's type: `MASTER_REQUEST` or `SUB_REQUEST`.
-     * If a listener should only be active for the master request,
-     * be sure to check that at the beginning of your method.
-     *     `if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-     *         return;
-     *     }`
-     *
-     * The kernel instance handling the current request:
-     *     `$kernel = $event->getKernel();`
-     *
-     * The currently handled request:
-     *     `$request = $event->getRequest();`
-     *
-     * @param \Zikula_Event $event The event instance
+     * @param GenericEvent $event The event instance
      */
-    public function contentGetTypes(\Zikula_Event $event)
+    public function pendingContentListener(GenericEvent $event)
     {
-        // intended is using the add() method to add a plugin like below
-        $types = $event->getSubject();
+        $collection = new Container('MUPollsModule');
+        $amounts = $this->workflowHelper->collectAmountOfModerationItems();
+        if (count($amounts) > 0) {
+            foreach ($amounts as $amountInfo) {
+                $aggregateType = $amountInfo['aggregateType'];
+                $description = $amountInfo['description'];
+                $amount = $amountInfo['amount'];
+                $route = 'mupollsmodule_' . strtolower($amountInfo['objectType']) . '_adminview';
+                $routeArgs = [
+                    'workflowState' => $amountInfo['state']
+                ];
+                $item = new PendingContentCollectible($aggregateType, $description, $amount, $route, $routeArgs);
+                $collection->add($item);
+            }
         
-        
-        // plugin for showing a single item
-        $types->add('MUPollsModule_ContentType_Item');
-        
-        // plugin for showing a list of multiple items
-        $types->add('MUPollsModule_ContentType_ItemList');
+            // add collected items for pending content
+            if ($collection->count() > 0) {
+                $event->getSubject()->add($collection);
+            }
+        }
     }
 }

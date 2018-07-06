@@ -7,8 +7,7 @@ var currentMUPollsModuleInput = null;
  * Returns the attributes used for the popup window. 
  * @return {String}
  */
-function getMUPollsModulePopupAttributes()
-{
+function getMUPollsModulePopupAttributes() {
     var pWidth, pHeight;
 
     pWidth = screen.width * 0.75;
@@ -20,8 +19,7 @@ function getMUPollsModulePopupAttributes()
 /**
  * Open a popup window with the finder triggered by an editor button.
  */
-function MUPollsModuleFinderOpenPopup(editor, editorName)
-{
+function MUPollsModuleFinderOpenPopup(editor, editorName) {
     var popupUrl;
 
     // Save editor for access in selector window
@@ -41,8 +39,7 @@ var mUPollsModule = {};
 
 mUPollsModule.finder = {};
 
-mUPollsModule.finder.onLoad = function (baseId, selectedId)
-{
+mUPollsModule.finder.onLoad = function (baseId, selectedId) {
     if (jQuery('#mUPollsModuleSelectorForm').length < 1) {
         return;
     }
@@ -57,13 +54,11 @@ mUPollsModule.finder.onLoad = function (baseId, selectedId)
     });
 };
 
-mUPollsModule.finder.onParamChanged = function ()
-{
+mUPollsModule.finder.onParamChanged = function () {
     jQuery('#mUPollsModuleSelectorForm').submit();
 };
 
-mUPollsModule.finder.handleCancel = function (event)
-{
+mUPollsModule.finder.handleCancel = function (event) {
     var editor;
 
     event.preventDefault();
@@ -82,8 +77,7 @@ mUPollsModule.finder.handleCancel = function (event)
 };
 
 
-function mUPollsGetPasteSnippet(mode, itemId)
-{
+function mUPollsGetPasteSnippet(mode, itemId) {
     var quoteFinder;
     var itemPath;
     var itemUrl;
@@ -117,8 +111,7 @@ function mUPollsGetPasteSnippet(mode, itemId)
 
 
 // User clicks on "select item" button
-mUPollsModule.finder.selectItem = function (itemId)
-{
+mUPollsModule.finder.selectItem = function (itemId) {
     var editor, html;
 
     html = mUPollsGetPasteSnippet('html', itemId);
@@ -144,12 +137,11 @@ mUPollsModule.finder.selectItem = function (itemId)
     mUPollsClosePopup();
 };
 
-function mUPollsClosePopup()
-{
+function mUPollsClosePopup() {
     window.opener.focus();
     window.close();
 }
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     mUPollsModule.finder.onLoad();
 });

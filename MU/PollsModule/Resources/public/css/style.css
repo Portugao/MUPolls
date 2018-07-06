@@ -22,6 +22,10 @@ div#z-maincontent.z-module-polls table tbody tr td {
     margin-left: 18px;
 }
 
+.mupollsmodule-colour-picker {
+    cursor: pointer;
+}
+
 
 /* validation */
 div.form-group input:required, div.form-group textarea:required, div.form-group select:required {

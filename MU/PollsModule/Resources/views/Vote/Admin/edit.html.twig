@@ -2,13 +2,6 @@
 {% set baseTemplate = app.request.query.getBoolean('raw', false) ? 'raw' : 'adminBase' %}
 {% extends 'MUPollsModule::' ~ baseTemplate ~ '.html.twig' %}
 
-{% block header %}
-    {{ parent() }}
-    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.Validation.js'), 98) }}
-    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.EditFunctions.js'), 99) }}
-    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.InlineEditing.js'), 99) }}
-    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.AutoCompletion.js'), 99) }}
-{% endblock %}
 {% block title mode == 'create' ? __('Create vote') : __('Edit vote') %}
 {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
 {% block content %}
@@ -47,19 +40,15 @@
             </fieldset>
         {% endif %}
         
-        {# include return control #}
-        {% if mode == 'create' %}
-            <fieldset>
-                <legend>{{ __('Return control') }}</legend>
-                {{ form_row(form.repeatCreation) }}
-            </fieldset>
-        {% endif %}
         
         {# include possible submit actions #}
         <div class="form-group form-buttons">
             <div class="col-sm-offset-3 col-sm-9">
                 {% for action in actions %}
                     {{ form_widget(attribute(form, action.id)) }}
+                    {% if mode == 'create' and action.id == 'submit' and form.submitrepeat is defined %}
+                        {{ form_widget(attribute(form, 'submitrepeat')) }}
+                    {% endif %}
                 {% endfor %}
                 {{ form_widget(form.reset) }}
                 {{ form_widget(form.cancel) }}
@@ -67,23 +56,31 @@
         </div>
         {{ form_end(form) }}
         {% set hookId = mode != 'create' ? vote.id : null %}
-        {{ notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.votes.form_edit', id=hookId) }}
+        {% set hooks = notifyDisplayHooks(eventName='mupollsmodule.ui_hooks.votes.form_edit', id=hookId, outputAsArray=true) %}
+        {% if hooks is iterable and hooks|length > 0 %}
+            {% for area, hook in hooks %}
+                <div class="z-displayhook" data-area="{{ area|e('html_attr') }}">{{ hook|raw }}</div>
+            {% endfor %}
+        {% endif %}
         
     </div>
 {% endblock %}
 {% block footer %}
     {{ parent() }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.Validation.js'), 98) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.EditFunctions.js'), 99) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.InlineEditing.js'), 99) }}
+    {{ pageAddAsset('javascript', zasset('@MUPollsModule:js/MUPollsModule.AutoCompletion.js'), 99) }}
     {% set formInitScript %}
-        <script type="text/javascript">
+        <script>
         /* <![CDATA[ */
             
             ( function($) {
                 $(document).ready(function() {
-                    // initialise auto completion for user fields
+                    mUPollsInitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ vote.id }}{% endif %}');
                     {% if form.moderationSpecificCreator is defined %}
                         initUserLiveSearch('mupollsmodule_vote_moderationSpecificCreator');
                     {% endif %}
-                    mUPollsInitEditForm('{{ mode }}', '{% if mode != 'create' %}{{ vote.id }}{% endif %}');
                 });
             })(jQuery);
         /* ]]> */

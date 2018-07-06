@@ -151,6 +151,16 @@ abstract class AbstractListEntriesHelper
                         break;
                 }
                 break;
+            case 'appSettings':
+                switch ($fieldName) {
+                    case 'kindOfVoting':
+                        $result = false;
+                        break;
+                    case 'enabledFinderTypes':
+                        $result = true;
+                        break;
+                }
+                break;
         }
     
         return $result;
@@ -194,6 +204,16 @@ abstract class AbstractListEntriesHelper
                         break;
                 }
                 break;
+            case 'appSettings':
+                switch ($fieldName) {
+                    case 'kindOfVoting':
+                        $entries = $this->getKindOfVotingEntriesForAppSettings();
+                        break;
+                    case 'enabledFinderTypes':
+                        $entries = $this->getEnabledFinderTypesEntriesForAppSettings();
+                        break;
+                }
+                break;
         }
     
         return $entries;
@@ -216,9 +236,23 @@ abstract class AbstractListEntriesHelper
             'default' => false
         ];
         $states[] = [
+            'value'   => 'trashed',
+            'text'    => $this->__('Trashed'),
+            'title'   => $this->__('Content has been marked as deleted, but is still persisted in the database.'),
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
             'value'   => '!approved',
             'text'    => $this->__('All except approved'),
             'title'   => $this->__('Shows all items except these which are approved'),
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
+            'value'   => '!trashed',
+            'text'    => $this->__('All except trashed'),
+            'title'   => $this->__('Shows all items except these which are trashed'),
             'image'   => '',
             'default' => false
         ];
@@ -234,6 +268,13 @@ abstract class AbstractListEntriesHelper
     public function getWorkflowStateEntriesForPoll()
     {
         $states = [];
+        $states[] = [
+            'value'   => 'waiting',
+            'text'    => $this->__('Waiting'),
+            'title'   => $this->__('Content has been submitted and waits for approval.'),
+            'image'   => '',
+            'default' => false
+        ];
         $states[] = [
             'value'   => 'approved',
             'text'    => $this->__('Approved'),
@@ -252,6 +293,20 @@ abstract class AbstractListEntriesHelper
             'value'   => 'archived',
             'text'    => $this->__('Archived'),
             'title'   => $this->__('Content has reached the end and became archived.'),
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
+            'value'   => 'trashed',
+            'text'    => $this->__('Trashed'),
+            'title'   => $this->__('Content has been marked as deleted, but is still persisted in the database.'),
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
+            'value'   => '!waiting',
+            'text'    => $this->__('All except waiting'),
+            'title'   => $this->__('Shows all items except these which are waiting'),
             'image'   => '',
             'default' => false
         ];
@@ -276,6 +331,13 @@ abstract class AbstractListEntriesHelper
             'image'   => '',
             'default' => false
         ];
+        $states[] = [
+            'value'   => '!trashed',
+            'text'    => $this->__('All except trashed'),
+            'title'   => $this->__('Shows all items except these which are trashed'),
+            'image'   => '',
+            'default' => false
+        ];
     
         return $states;
     }
@@ -296,11 +358,91 @@ abstract class AbstractListEntriesHelper
             'default' => false
         ];
         $states[] = [
+            'value'   => 'trashed',
+            'text'    => $this->__('Trashed'),
+            'title'   => $this->__('Content has been marked as deleted, but is still persisted in the database.'),
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
             'value'   => '!approved',
             'text'    => $this->__('All except approved'),
             'title'   => $this->__('Shows all items except these which are approved'),
             'image'   => '',
             'default' => false
+        ];
+        $states[] = [
+            'value'   => '!trashed',
+            'text'    => $this->__('All except trashed'),
+            'title'   => $this->__('Shows all items except these which are trashed'),
+            'image'   => '',
+            'default' => false
+        ];
+    
+        return $states;
+    }
+    
+    /**
+     * Get 'kind of voting' list entries.
+     *
+     * @return array Array with desired list entries
+     */
+    public function getKindOfVotingEntriesForAppSettings()
+    {
+        $states = [];
+        $states[] = [
+            'value'   => 'cookie',
+            'text'    => $this->__('Cookie'),
+            'title'   => '',
+            'image'   => '',
+            'default' => false
+        ];
+        $states[] = [
+            'value'   => 'session',
+            'text'    => $this->__('Session'),
+            'title'   => '',
+            'image'   => '',
+            'default' => true
+        ];
+        $states[] = [
+            'value'   => 'user',
+            'text'    => $this->__('User'),
+            'title'   => '',
+            'image'   => '',
+            'default' => false
+        ];
+    
+        return $states;
+    }
+    
+    /**
+     * Get 'enabled finder types' list entries.
+     *
+     * @return array Array with desired list entries
+     */
+    public function getEnabledFinderTypesEntriesForAppSettings()
+    {
+        $states = [];
+        $states[] = [
+            'value'   => 'option',
+            'text'    => $this->__('Option'),
+            'title'   => '',
+            'image'   => '',
+            'default' => true
+        ];
+        $states[] = [
+            'value'   => 'poll',
+            'text'    => $this->__('Poll'),
+            'title'   => '',
+            'image'   => '',
+            'default' => true
+        ];
+        $states[] = [
+            'value'   => 'vote',
+            'text'    => $this->__('Vote'),
+            'title'   => '',
+            'image'   => '',
+            'default' => true
         ];
     
         return $states;

@@ -47,6 +47,13 @@
             {% if multipleFilter is defined and multipleFilter != true %}
                 </div>
             {% endif %}
+            {% if inFrontendFilter is defined and inFrontendFilter != true %}
+                <div class="hidden">
+            {% endif %}
+                {{ form_row(quickNavForm.inFrontend) }}
+            {% if inFrontendFilter is defined and inFrontendFilter != true %}
+                </div>
+            {% endif %}
             {{ form_widget(quickNavForm.updateview) }}
         </fieldset>
     </div>

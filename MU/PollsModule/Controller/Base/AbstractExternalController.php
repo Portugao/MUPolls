@@ -31,7 +31,7 @@ abstract class AbstractExternalController extends AbstractController
      * @param Request $request     The current request
      * @param string  $objectType  The currently treated object type
      * @param int     $id          Identifier of the entity to be shown
-     * @param string  $source      Source of this call (contentType or scribite)
+     * @param string  $source      Source of this call (block, contentType, scribite)
      * @param string  $displayMode Display mode (link or embed)
      *
      * @return string Desired data output
@@ -44,11 +44,6 @@ abstract class AbstractExternalController extends AbstractController
             $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $contextArgs);
         }
         
-        $component = 'MUPollsModule:' . ucfirst($objectType) . ':';
-        if (!$this->hasPermission($component, $id . '::', ACCESS_READ)) {
-            return '';
-        }
-        
         $entityFactory = $this->get('mu_polls_module.entity_factory');
         $repository = $entityFactory->getRepository($objectType);
         
@@ -56,6 +51,10 @@ abstract class AbstractExternalController extends AbstractController
         $entity = $repository->selectById($id);
         if (null === $entity) {
             return new Response($this->__('No such item.'));
+        }
+        
+        if (!$this->get('mu_polls_module.permission_helper')->mayRead($entity)) {
+            return '';
         }
         
         $template = $request->query->has('template') ? $request->query->get('template', null) : null;
@@ -97,6 +96,7 @@ abstract class AbstractExternalController extends AbstractController
         $assetHelper = $this->get('zikula_core.common.theme.asset_helper');
         $cssAssetBag = $this->get('zikula_core.common.theme.assets_css');
         $cssAssetBag->add($assetHelper->resolve('@MUPollsModule:css/style.css'));
+        $cssAssetBag->add([$assetHelper->resolve('@MUPollsModule:css/custom.css') => 120]);
         
         $activatedObjectTypes = $this->getVar('enabledFinderTypes', []);
         if (!in_array($objectType, $activatedObjectTypes)) {
@@ -110,7 +110,7 @@ abstract class AbstractExternalController extends AbstractController
             return new RedirectResponse($redirectUrl);
         }
         
-        if (!$this->hasPermission('MUPollsModule:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
+        if (!$this->get('mu_polls_module.permission_helper')->hasComponentPermission($objectType, ACCESS_COMMENT)) {
             throw new AccessDeniedException();
         }
         
@@ -134,7 +134,7 @@ abstract class AbstractExternalController extends AbstractController
         // the number of items displayed on a page for pagination
         $resultsPerPage = (int) $num;
         if ($resultsPerPage == 0) {
-            $resultsPerPage = $this->getVar('pageSize', 20);
+            $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 20);
         }
         
         $templateParameters = [
